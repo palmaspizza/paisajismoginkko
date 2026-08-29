@@ -73,6 +73,63 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .star-picker-admin span.filled{color:var(--gold);}
 .empty-note{color:var(--ink-soft);font-size:13.5px;grid-column:1/-1;}
 .info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;margin-bottom:22px;line-height:1.5;}
+/* ══════════════════════════════════════════
+   SISTEMA DE SUSCRIPCIÓN — GINKKO PAISAJISMO
+   ══════════════════════════════════════════ */
+#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
+#gpSusOverlay.activo{display:flex;}
+.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:auto;box-sizing:border-box;}
+.gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
+.gpSusSubtitulo{font-size:0.8rem;color:#888;text-align:center;margin-bottom:20px;line-height:1.5;}
+.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.gpDatosFila:last-child{border-bottom:none;}
+.gpDatosLabel{font-size:0.72rem;color:#888;width:90px;flex-shrink:0;}
+.gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;}
+.gpBtnCopiar{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:6px;padding:4px 9px;font-size:0.7rem;cursor:pointer;white-space:nowrap;}
+.gpBtnCopiarTodo{width:100%;padding:11px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;margin-top:12px;}
+.gpBtnBanco{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0f2a45);border:1px solid rgba(41,182,246,0.4);color:#29B6F6;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:8px;}
+.gpSusInfoPago{background:#12121f;border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:14px;margin-bottom:18px;}
+.gpSusUploadArea{border:2px dashed rgba(255,215,0,0.3);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:#12121f;}
+.gpSusUploadArea:hover{border-color:#FFD700;}
+.gpSusUploadArea.con-imagen{border-color:#33d17a;border-style:solid;}
+#gpSusPreview{width:100%;max-height:100px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;border:1px solid rgba(255,215,0,0.2);}
+.gpSusBtn{width:100%;padding:13px;background:linear-gradient(135deg,#FFD700,#b8960c);color:#000;font-weight:800;font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
+.gpSusBtn:disabled{opacity:0.5;cursor:not-allowed;}
+.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;}
+.gpSusEstado.error{color:#ff6b6b;}
+.gpSusEstado.ok{color:#33d17a;}
+#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#cdeedb;margin-bottom:14px;align-items:center;gap:8px;}
+.gpSusExitoIcono{font-size:3.5rem;text-align:center;display:block;animation:gpBounce .5s both;}
+@keyframes gpBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+.gpSusExitoTitulo{font-size:1.3rem;font-weight:800;color:#33d17a;text-align:center;margin:10px 0 6px;}
+.gpSusExitoSub{font-size:0.82rem;color:#888;text-align:center;}
+.gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999999;pointer-events:none;}
+.gpToastCopy.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* Loader */
+#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;}
+#gpSusLoader.activo{display:flex;}
+.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;}
+.gpLoaderOrb::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:gpOrbSpin 3s linear infinite;}
+@keyframes gpOrbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+@keyframes gpOrbSpin{to{transform:rotate(360deg);}}
+.gpLoaderTitulo{font-size:1.1rem;font-weight:800;color:#FFD700;margin-bottom:6px;text-align:center;}
+.gpLoaderSub{font-size:0.78rem;color:#666;margin-bottom:24px;text-align:center;}
+.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:280px;margin-bottom:24px;}
+.gpLoaderPaso{display:flex;align-items:center;gap:10px;background:#13141C;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;font-size:0.78rem;color:#555;transition:all .4s;}
+.gpLoaderPaso.activo{color:#fff;border-color:rgba(255,215,0,0.4);background:#1a1b10;}
+.gpLoaderPaso.listo{color:#33d17a;border-color:rgba(51,209,122,0.3);background:#0d1a12;}
+.gpLoaderPasoIcono{font-size:1rem;width:22px;text-align:center;flex-shrink:0;}
+.gpLoaderPasoSpinner{width:14px;height:14px;border:2px solid rgba(255,215,0,0.2);border-top-color:#FFD700;border-radius:50%;animation:gpSpin .7s linear infinite;flex-shrink:0;display:none;}
+.gpLoaderPaso.activo .gpLoaderPasoSpinner{display:block;}
+.gpLoaderPaso.activo .gpLoaderPasoIcono{display:none;}
+.gpLoaderPaso.listo .gpLoaderPasoSpinner{display:none;}
+@keyframes gpSpin{to{transform:rotate(360deg);}}
+.gpLoaderBarra{width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;}
+.gpLoaderBarraFill{height:100%;width:0%;background:linear-gradient(90deg,#7a6000,#FFD700);border-radius:99px;transition:width .6s ease;}
+.gpLoaderMsg{font-size:0.72rem;color:#555;text-align:center;min-height:18px;}
+.gpLoaderParticulas{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
+@keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
 </style>
 </head>
 <body>
@@ -204,6 +261,24 @@ const db = firebase.database();
 const CLOUDINARY_CLOUD_NAME = "dkszomv2f";
 const CLOUDINARY_UPLOAD_PRESET = "paisajismoginkko";
 
+// --- CLOUDINARY: credenciales para BORRAR imágenes (Settings > Access Keys) ---
+// ⚠️ AVISO DE SEGURIDAD IMPORTANTE:
+// El borrado real en Cloudinary requiere una firma hecha con tu API Secret.
+// Como este panel NO tiene servidor propio, el secreto queda visible en el
+// código fuente de esta página para cualquiera que la abra. Es un compromiso
+// aceptable SOLO SI mantienes esta URL de admin privada (no la enlaces desde
+// el sitio público, no la compartas, considera cambiar el nombre del archivo
+// a algo no adivinable). Si en el futuro quieres seguridad real, esto debería
+// moverse a una función serverless (Cloud Function) que guarde el secreto
+// fuera del navegador.
+const CLOUDINARY_API_KEY = "TU_API_KEY_DE_CLOUDINARY";
+const CLOUDINARY_API_SECRET = "TU_API_SECRET_DE_CLOUDINARY";
+
+// --- LÍMITES PARA PROTEGER LOS CRÉDITOS DEL PLAN GRATUITO ---
+const MAX_CAROUSEL_ITEMS = 10;   // el carrusel es una vitrina, no necesita más
+const MAX_GALLERY_ITEMS  = 300;  // portafolio amplio pero acotado
+const MAX_FILE_SIZE_MB   = 10;   // rechaza fotos más pesadas que esto
+
 /* ================================================================
    2) LOGIN
    ================================================================ */
@@ -290,7 +365,7 @@ function uploadToCloudinary(file, progressBarEl, progressWrapEl){
       progressWrapEl.style.display='none';
       if(xhr.status>=200 && xhr.status<300){
         const res = JSON.parse(xhr.responseText);
-        resolve(res.secure_url);
+        resolve({ url: res.secure_url, publicId: res.public_id }); // devolvemos también el public_id para poder borrarla después
       } else {
         reject(new Error('Error al subir la imagen a Cloudinary. Revisa el cloud name y el upload preset.'));
       }
@@ -298,6 +373,33 @@ function uploadToCloudinary(file, progressBarEl, progressWrapEl){
     xhr.onerror = ()=>{ progressWrapEl.style.display='none'; reject(new Error('Error de red al subir la imagen.')); };
     xhr.send(formData);
   });
+}
+
+/* ---------- Borrado real en Cloudinary (requiere firma) ---------- */
+async function sha1Hex(message){
+  const enc = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-1', enc);
+  return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function deleteFromCloudinary(publicId){
+  if(!publicId) return; // fotos subidas antes de esta función no tienen public_id guardado
+  const timestamp = Math.floor(Date.now()/1000);
+  const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
+  const signature = await sha1Hex(paramsToSign + CLOUDINARY_API_SECRET);
+  const formData = new FormData();
+  formData.append('public_id', publicId);
+  formData.append('timestamp', timestamp);
+  formData.append('api_key', CLOUDINARY_API_KEY);
+  formData.append('signature', signature);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`, { method:'POST', body:formData });
+  const data = await res.json();
+  if(data.result !== 'ok' && data.result !== 'not found'){
+    throw new Error('Cloudinary respondió: ' + (data.result || 'error desconocido'));
+  }
+}
+async function countItems(path){
+  const snap = await db.ref(path).once('value');
+  return snap.exists() ? Object.keys(snap.val()).length : 0;
 }
 
 /* ================================================================
@@ -316,10 +418,17 @@ function initApp(){
     const msg = document.getElementById('carouselMsg');
     const btn = document.getElementById('carouselSubmit');
     if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-    btn.disabled = true; msg.textContent='Subiendo imagen…'; msg.className='msg';
+    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
+    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
     try{
-      const imageUrl = await uploadToCloudinary(file, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
-      await db.ref('carousel').push({ imageUrl, title, subtitle, order, createdAt: Date.now() });
+      const current = await countItems('carousel');
+      if(current >= MAX_CAROUSEL_ITEMS){
+        msg.textContent = `Alcanzaste el máximo de ${MAX_CAROUSEL_ITEMS} elementos en el carrusel. Elimina alguno para agregar otro.`;
+        msg.className='msg err'; btn.disabled=false; return;
+      }
+      msg.textContent='Subiendo imagen…';
+      const { url:imageUrl, publicId } = await uploadToCloudinary(file, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
+      await db.ref('carousel').push({ imageUrl, publicId, title, subtitle, order, createdAt: Date.now() });
       msg.textContent='¡Agregado al carrusel!'; msg.className='msg ok';
       document.getElementById('carouselFile').value='';
       document.getElementById('carouselTitle').value='';
@@ -335,6 +444,7 @@ function initApp(){
   db.ref('carousel').on('value', snap=>{
     const val = snap.val() || {};
     const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
+    document.getElementById('carouselCount').textContent = `${items.length} / ${MAX_CAROUSEL_ITEMS} usadas`;
     const list = document.getElementById('carouselList');
     if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en el carrusel.</div>'; return; }
     list.innerHTML = items.map(it=>`
@@ -345,15 +455,21 @@ function initApp(){
           <p>${escapeHTML(it.subtitle||'')}</p>
           <div class="item-actions">
             <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
           </div>
         </div>
       </div>`).join('');
     list.querySelectorAll('.btn-danger').forEach(b=>{
-      b.onclick = ()=>{
-        if(confirm('¿Eliminar este elemento del carrusel? (la imagen en Cloudinary no se borra automáticamente)')){
-          db.ref('carousel/'+b.dataset.id).remove();
+      b.onclick = async ()=>{
+        if(!confirm('¿Eliminar este elemento del carrusel? Esto también borrará la imagen de Cloudinary.')) return;
+        b.disabled = true; b.textContent='Eliminando…';
+        try{
+          await deleteFromCloudinary(b.dataset.publicId);
+        }catch(err){
+          console.error(err);
+          alert('No se pudo borrar la imagen en Cloudinary (' + err.message + '). Se eliminará igual la referencia del sitio.');
         }
+        await db.ref('carousel/'+b.dataset.id).remove();
       };
     });
   });
@@ -367,10 +483,17 @@ function initApp(){
     const msg = document.getElementById('galleryMsg');
     const btn = document.getElementById('gallerySubmit');
     if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-    btn.disabled = true; msg.textContent='Subiendo imagen…'; msg.className='msg';
+    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
+    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
     try{
-      const imageUrl = await uploadToCloudinary(file, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
-      await db.ref('gallery').push({ imageUrl, title, description, order, createdAt: Date.now() });
+      const current = await countItems('gallery');
+      if(current >= MAX_GALLERY_ITEMS){
+        msg.textContent = `Alcanzaste el máximo de ${MAX_GALLERY_ITEMS} fotos en la galería. Elimina alguna para agregar otra.`;
+        msg.className='msg err'; btn.disabled=false; return;
+      }
+      msg.textContent='Subiendo imagen…';
+      const { url:imageUrl, publicId } = await uploadToCloudinary(file, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
+      await db.ref('gallery').push({ imageUrl, publicId, title, description, order, createdAt: Date.now() });
       msg.textContent='¡Agregado a la galería!'; msg.className='msg ok';
       document.getElementById('galleryFile').value='';
       document.getElementById('galleryTitle').value='';
@@ -462,6 +585,351 @@ function initApp(){
     });
   });
 }
+</script>
+<!-- ══ OVERLAY SUSCRIPCIÓN ══ -->
+<div id="gpSusOverlay">
+  <div class="gpSusCard" id="gpSusContenido">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <div class="gpSusTitulo" style="margin-bottom:0;">🔐 Suscripción requerida</div>
+      <button id="gpSusBtnCerrar" onclick="gpCerrarOverlay()" style="display:none;background:none;border:none;color:#666;font-size:1.3rem;cursor:pointer;">✕</button>
+    </div>
+    <p class="gpSusSubtitulo">Para usar este panel necesitas una suscripción activa.<br>Realiza la transferencia y sube el comprobante.</p>
+
+    <div class="gpSusInfoPago">
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">💰 Monto</span>
+        <span class="gpDatosValor">$25.000</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('5000',this)">Copiar</button>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">👤 Nombre</span>
+        <span class="gpDatosValor">Diego Francisco Palma</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🪪 RUT</span>
+        <span class="gpDatosValor">22.141.143-9</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🏦 Banco</span>
+        <span class="gpDatosValor">BancoEstado</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">💳 Tipo</span>
+        <span class="gpDatosValor">CuentaRUT</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🔢 N° Cuenta</span>
+        <span class="gpDatosValor">22141143</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('22141143',this)">Copiar</button>
+      </div>
+      <button class="gpBtnCopiarTodo" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
+      <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
+    </div>
+
+  <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
+    <p class="gpSusEstado" id="gpSusEstado"></p>
+    <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
+      <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+      
+      <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
+    </div>
+    <input type="file" id="gpSusInput" accept="image/*" hidden>
+  <img id="gpSusPreview" alt="Vista previa">    
+  </div>
+</div>
+
+<!-- Banner suscripción activa -->
+<div id="gpBannerSus">✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
+
+<!-- Toast copiado -->
+<div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
+
+<!-- Loader IA -->
+<div id="gpSusLoader">
+  <div class="gpLoaderParticulas" id="gpLoaderParticulas"></div>
+  <div class="gpLoaderOrb"></div>
+  <div class="gpLoaderTitulo">Verificando comprobante</div>
+  <div class="gpLoaderSub">La IA está analizando tu transferencia</div>
+  <div class="gpLoaderPasos">
+    <div class="gpLoaderPaso" id="gpPaso1"><span class="gpLoaderPasoIcono">📄</span><div class="gpLoaderPasoSpinner"></div><span>Leyendo imagen</span></div>
+    <div class="gpLoaderPaso" id="gpPaso2"><span class="gpLoaderPasoIcono">🔍</span><div class="gpLoaderPasoSpinner"></div><span>Extrayendo datos bancarios</span></div>
+    <div class="gpLoaderPaso" id="gpPaso3"><span class="gpLoaderPasoIcono">💰</span><div class="gpLoaderPasoSpinner"></div><span>Verificando monto</span></div>
+    <div class="gpLoaderPaso" id="gpPaso4"><span class="gpLoaderPasoIcono">🏦</span><div class="gpLoaderPasoSpinner"></div><span>Confirmando destinatario</span></div>
+    <div class="gpLoaderPaso" id="gpPaso5"><span class="gpLoaderPasoIcono">🔐</span><div class="gpLoaderPasoSpinner"></div><span>Validando número de operación</span></div>
+  </div>
+  <div class="gpLoaderBarra"><div class="gpLoaderBarraFill" id="gpLoaderBarraFill"></div></div>
+  <div class="gpLoaderMsg" id="gpLoaderMsg">Iniciando análisis...</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG — CAMBIA ESTOS VALORES SI ES NECESARIO
+// ══════════════════════════════════════════════
+; // aistudio.google.com → Get API Key
+const GP_MONTO_MIN    = 25000;      // ← CAMBIA AQUÍ EL MONTO CUANDO LO DEFINAS
+const GP_DESTINATARIO = 'diego francisco palma';
+const GP_BANCO_DEST   = 'bancoestado';
+const GP_RTDB_PATH    = 'configuracion/suscripcion';
+const GP_DIAS_GRACIA1 = 5;   // días con solo banner amarillo
+const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
+
+// ══════════════════════════════════════════════
+// VERIFICAR SUSCRIPCIÓN AL CARGAR
+// ══════════════════════════════════════════════
+(function gpChequear(){
+  const intervalo = setInterval(()=>{
+    if(typeof db==='undefined') return;
+    clearInterval(intervalo);
+    db.ref(GP_RTDB_PATH).on('value', snap=>{
+      const sus = snap.val() || {};
+      const ahora = Date.now();
+      const pagadoHasta = sus.paidUntil || 0;
+      const activo = sus.isPaid===true && pagadoHasta > ahora;
+
+      if(activo){
+        document.getElementById('gpSusOverlay').classList.remove('activo');
+        const banner = document.getElementById('gpBannerSus');
+        banner.style.display = 'flex';
+        document.getElementById('gpBannerSusVence').textContent =
+          new Date(pagadoHasta).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
+      } else {
+        const diasVencido = pagadoHasta > 0
+          ? Math.floor((ahora - pagadoHasta)/(1000*60*60*24))
+          : 999;
+
+        if(diasVencido <= GP_DIAS_GRACIA1){
+          const banner = document.getElementById('gpBannerSus');
+          banner.style.display = 'flex';
+          banner.style.background = 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))';
+          banner.style.borderColor = 'rgba(255,204,0,0.4)';
+          banner.style.color = '#FFD166';
+          document.getElementById('gpBannerSusVence').textContent =
+            `⚠️ Suscripción vencida — ${GP_DIAS_GRACIA1 - diasVencido} día(s) para renovar`;
+
+        } else if(diasVencido <= GP_DIAS_GRACIA2){
+          document.getElementById('gpSusBtnCerrar').style.display = 'block';
+          const ya = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
+          if(!ya){
+            setTimeout(()=>{
+              if(confirm(`⚠️ Tu suscripción venció hace ${diasVencido} días.\nTe quedan ${GP_DIAS_GRACIA2-diasVencido} día(s) antes del bloqueo.\n¿Ir a renovar ahora?`)){
+                document.getElementById('gpSusOverlay').classList.add('activo');
+              } else {
+                sessionStorage.setItem('gpSusRecordar_'+Math.floor(ahora/3600000),'1');
+              }
+            },1500);
+          }
+        } else {
+          document.getElementById('gpSusOverlay').classList.add('activo');
+        }
+      }
+    });
+  },300);
+})();
+
+function gpCerrarOverlay(){
+  document.getElementById('gpSusOverlay').classList.remove('activo');
+  sessionStorage.setItem('gpSusRecordar_'+Math.floor(Date.now()/3600000),'1');
+}
+
+// ══════════════════════════════════════════════
+// PREVIEW IMAGEN
+// ══════════════════════════════════════════════
+let gpImagenBase64 = null;
+
+document.getElementById('gpSusInput').addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    gpImagenBase64 = e.target.result;
+    const preview = document.getElementById('gpSusPreview');
+    preview.src = gpImagenBase64;
+    preview.style.display = 'block';
+    document.getElementById('gpSusUploadArea').classList.add('con-imagen');
+    document.getElementById('gpSusUploadArea').innerHTML =
+      '<div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-size:0.8rem;color:#33d17a;font-weight:700;">Imagen lista · Toca para cambiarla</div>';
+    document.getElementById('gpSusBtn').disabled = false;
+    document.getElementById('gpSusEstado').textContent = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ══════════════════════════════════════════════
+// GEMINI — ANALIZAR COMPROBANTE
+// ══════════════════════════════════════════════
+async function gpAnalizarConGemini(){
+  const body = {
+    contents:[{parts:[
+      {text:`Eres un sistema estricto de verificación de comprobantes bancarios chilenos.
+Analiza ÚNICAMENTE la imagen proporcionada y responde SOLO con JSON plano, sin backticks ni texto extra.
+Si algún dato no es 100% legible, devuelve esValido: false.
+Estructura exacta:
+{"esValido":boolean,"monto":number,"fecha":"YYYY-MM-DD","numeroOperacion":"string","banco":"string en minúsculas","destinatario":"string en minúsculas","confianza":"alta"|"media"|"baja"}`},
+      {inline_data:{mime_type: gpImagenBase64.split(';')[0].split(':')[1], data: gpImagenBase64.split(',')[1]}}
+    ]}],
+    generationConfig:{temperature:0, maxOutputTokens:300, responseMimeType:'application/json'}
+  };
+  const res = await fetch(
+    `https://gemini-proxy.mago-diepa.workers.dev`,
+    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}
+  );
+  if(!res.ok){ const e=await res.json(); throw new Error('Gemini: '+(e.error?.message||res.status)); }
+  const data = await res.json();
+  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  const limpio = texto.replace(/```json|```/g,'').trim();
+const match = limpio.match(/\{[\s\S]*\}/);
+if(!match) throw new Error('La IA no pudo leer el comprobante. Intenta con una imagen más clara.');
+return JSON.parse(match[0]);
+}
+
+// ══════════════════════════════════════════════
+// VALIDAR Y GUARDAR EN FIREBASE
+// ══════════════════════════════════════════════
+async function gpValidarYGuardar(a){
+  const errores=[];
+  if(!a.esValido) errores.push('La imagen no parece un comprobante válido.');
+  if(a.confianza==='baja') errores.push('Imagen poco clara. Intenta con una captura más nítida.');
+  if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
+  if(!(a.banco||'').toLowerCase().includes(GP_BANCO_DEST)) errores.push('El banco del destinatario no corresponde. Debe ser BancoEstado.');
+  if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
+  if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
+  if(errores.length) throw new Error(errores.join('\n'));
+
+  const snap = await db.ref(GP_RTDB_PATH+'/usedComprobantes').once('value');
+  const usados = snap.val()||{};
+  if(Object.values(usados).includes(a.numeroOperacion.trim())) throw new Error('Este comprobante ya fue utilizado.');
+
+  const ahora = Date.now();
+  const paidUntil = ahora+(30*24*60*60*1000);
+  await db.ref(GP_RTDB_PATH+'/usedComprobantes').push(a.numeroOperacion.trim());
+  await db.ref().update({
+    [GP_RTDB_PATH+'/isPaid']: true,
+    [GP_RTDB_PATH+'/paidUntil']: paidUntil,
+    [GP_RTDB_PATH+'/ultimoPago']: {fecha:a.fecha,monto:a.monto,numeroOperacion:a.numeroOperacion.trim(),ts:ahora}
+  });
+  return paidUntil;
+}
+
+// ══════════════════════════════════════════════
+// FLUJO PRINCIPAL
+// ══════════════════════════════════════════════
+async function gpVerificarComprobante(){
+  if(!gpImagenBase64) return;
+  const btn = document.getElementById('gpSusBtn');
+  btn.disabled = true;
+  try {
+    gpLoaderMostrar();
+    let analisis;
+for(let intento=1; intento<=3; intento++){
+  try { analisis = await gpAnalizarConGemini(); break; }
+  catch(e){
+    if(intento===3) throw e;
+    await new Promise(r=>setTimeout(r, intento*4000));
+  }
+}
+    gpLoaderOcultar();
+    const paidUntil = await gpValidarYGuardar(analisis);
+    gpMostrarExito(paidUntil);
+  } catch(err){
+    gpLoaderOcultar();
+    const msg = err.message||'';
+const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
+document.getElementById('gpSusEstado').textContent = esSaturacion
+  ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
+  : msg||'Error al verificar.';
+    document.getElementById('gpSusEstado').className = 'gpSusEstado error';
+    btn.disabled = false;
+  }
+}
+
+function gpMostrarExito(paidUntil){
+  const vence = new Date(paidUntil).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('gpSusContenido').innerHTML=`
+    <span class="gpSusExitoIcono">✅</span>
+    <div class="gpSusExitoTitulo">¡Suscripción activada!</div>
+    <p class="gpSusExitoSub">Activa hasta el <b style="color:#FFD700;">${vence}</b></p>
+    <p class="gpSusExitoSub" style="margin-top:8px;font-size:0.73rem;">El panel se abrirá en 3 segundos...</p>`;
+  setTimeout(()=>document.getElementById('gpSusOverlay').classList.remove('activo'),3000);
+}
+
+// ══════════════════════════════════════════════
+// COPIAR AL PORTAPAPELES
+// ══════════════════════════════════════════════
+function gpCopiar(texto, btn){
+  navigator.clipboard.writeText(texto).then(()=>{
+    const t=document.getElementById('gpToastCopy');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2000);
+    if(btn){const o=btn.textContent;btn.textContent='✅';setTimeout(()=>btn.textContent=o,2000);}
+  });
+}
+function gpCopiarTodo(){
+  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
+  const btn=document.querySelector('.gpBtnCopiarTodo');
+  if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
+}
+function gpAbrirBanco(){
+  const links=[
+    {n:'BancoEstado',u:'bancoestado://'},
+    {n:'Santander',u:'santander://'},
+    {n:'BCI',u:'bci://'},
+    {n:'Scotiabank',u:'scotiabank://'},
+    {n:'Mercado Pago',u:'mercadopago://'}
+  ];
+  let m=document.getElementById('gpBancoModal');
+  if(!m){m=document.createElement('div');m.id='gpBancoModal';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;';
+    m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
+  m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
+    <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
+    ${links.map(b=>`<button onclick="window.location.href='${b.u}';document.getElementById('gpBancoModal').remove();"
+      style="width:100%;padding:12px;margin-bottom:7px;background:#12121f;border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;text-align:left;">🏦 ${b.n}</button>`).join('')}
+    <button onclick="document.getElementById('gpBancoModal').remove()"
+      style="width:100%;padding:10px;margin-top:4px;background:none;border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:10px;font-size:0.8rem;cursor:pointer;">Cancelar</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// LOADER ANIMADO
+// ══════════════════════════════════════════════
+const GP_LOADER_MSGS=['Procesando imagen con visión artificial...','Identificando campos del comprobante...','Comparando datos bancarios...','Verificando autenticidad...','Comprobando número de operación único...','Aplicando validaciones de seguridad...','Casi listo...'];
+let gpLoaderInterval=null, gpLoaderMsgIdx=0;
+
+function gpLoaderMostrar(){
+  document.getElementById('gpSusLoader').classList.add('activo');
+  gpLoaderBarraFill(0);
+  ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
+  gpLoaderMsgIdx=0;
+  document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
+  // Partículas
+  const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
+  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
+    p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
+    p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
+  // Pasos
+  setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
+  setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
+  setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
+  setTimeout(()=>{gpLoaderListo('gpPaso3');gpLoaderActivar('gpPaso4');gpLoaderBarraFill(60);},2400);
+  setTimeout(()=>{gpLoaderListo('gpPaso4');gpLoaderActivar('gpPaso5');gpLoaderBarraFill(80);},3200);
+  gpLoaderInterval=setInterval(()=>{
+    gpLoaderMsgIdx=(gpLoaderMsgIdx+1)%GP_LOADER_MSGS.length;
+    document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[gpLoaderMsgIdx];
+  },1100);
+}
+function gpLoaderOcultar(){
+  gpLoaderListo('gpPaso5');gpLoaderBarraFill(100);
+  clearInterval(gpLoaderInterval);
+  setTimeout(()=>document.getElementById('gpSusLoader').classList.remove('activo'),600);
+}
+function gpLoaderActivar(id){document.getElementById(id).classList.add('activo');}
+function gpLoaderListo(id){
+  const el=document.getElementById(id);
+  el.classList.remove('activo');el.classList.add('listo');
+  el.querySelector('.gpLoaderPasoIcono').textContent='✅';
+}
+function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').style.width=pct+'%';}
 </script>
 </body>
 </html>
