@@ -73,18 +73,25 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .star-picker-admin span.filled{color:var(--gold);}
 .empty-note{color:var(--ink-soft);font-size:13.5px;grid-column:1/-1;}
 .info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;margin-bottom:22px;line-height:1.5;}
+
 /* ══════════════════════════════════════════
    SISTEMA DE SUSCRIPCIÓN — GINKKO PAISAJISMO
-   ══════════════════════════════════════════ */
-#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
-#gpSusOverlay.activo{display:flex;}
-.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:auto;box-sizing:border-box;}
+   ══════════════════════════════════════════
+   FIX APLICADO: el overlay usaba display:flex + align-items:center,
+   lo que en varios navegadores móviles (Safari iOS en particular)
+   IMPIDE hacer scroll hasta la parte superior de un contenido más
+   alto que la pantalla ("flexbox centering scroll trap"). La solución
+   es usar display:block con overflow-y:auto y centrar la tarjeta con
+   margin:auto en vez de con align-items. */
+#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
+#gpSusOverlay.activo{display:block;}
+.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:24px auto;box-sizing:border-box;}
 .gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
 .gpSusSubtitulo{font-size:0.8rem;color:#888;text-align:center;margin-bottom:20px;line-height:1.5;}
-.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);gap:8px;}
 .gpDatosFila:last-child{border-bottom:none;}
 .gpDatosLabel{font-size:0.72rem;color:#888;width:90px;flex-shrink:0;}
-.gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;}
+.gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;word-break:break-word;}
 .gpBtnCopiar{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:6px;padding:4px 9px;font-size:0.7rem;cursor:pointer;white-space:nowrap;}
 .gpBtnCopiarTodo{width:100%;padding:11px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;margin-top:12px;}
 .gpBtnBanco{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0f2a45);border:1px solid rgba(41,182,246,0.4);color:#29B6F6;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:8px;}
@@ -95,26 +102,26 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 #gpSusPreview{width:100%;max-height:100px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;border:1px solid rgba(255,215,0,0.2);}
 .gpSusBtn{width:100%;padding:13px;background:linear-gradient(135deg,#FFD700,#b8960c);color:#000;font-weight:800;font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
 .gpSusBtn:disabled{opacity:0.5;cursor:not-allowed;}
-.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;}
+.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
 .gpSusEstado.error{color:#ff6b6b;}
 .gpSusEstado.ok{color:#33d17a;}
-#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#cdeedb;margin-bottom:14px;align-items:center;gap:8px;}
+#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#cdeedb;margin:0 26px 14px;align-items:center;gap:8px;}
 .gpSusExitoIcono{font-size:3.5rem;text-align:center;display:block;animation:gpBounce .5s both;}
 @keyframes gpBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
 .gpSusExitoTitulo{font-size:1.3rem;font-weight:800;color:#33d17a;text-align:center;margin:10px 0 6px;}
 .gpSusExitoSub{font-size:0.82rem;color:#888;text-align:center;}
 .gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999999;pointer-events:none;}
 .gpToastCopy.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* Loader */
-#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;}
+/* Loader — mismo fix: sin justify-content:center para no atrapar el scroll en pantallas bajas */
+#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;align-items:center;font-family:inherit;padding:60px 16px 40px;box-sizing:border-box;}
 #gpSusLoader.activo{display:flex;}
-.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;}
+.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;flex-shrink:0;}
 .gpLoaderOrb::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:gpOrbSpin 3s linear infinite;}
 @keyframes gpOrbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
 @keyframes gpOrbSpin{to{transform:rotate(360deg);}}
 .gpLoaderTitulo{font-size:1.1rem;font-weight:800;color:#FFD700;margin-bottom:6px;text-align:center;}
 .gpLoaderSub{font-size:0.78rem;color:#666;margin-bottom:24px;text-align:center;}
-.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:280px;margin-bottom:24px;}
+.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-bottom:24px;}
 .gpLoaderPaso{display:flex;align-items:center;gap:10px;background:#13141C;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;font-size:0.78rem;color:#555;transition:all .4s;}
 .gpLoaderPaso.activo{color:#fff;border-color:rgba(255,215,0,0.4);background:#1a1b10;}
 .gpLoaderPaso.listo{color:#33d17a;border-color:rgba(51,209,122,0.3);background:#0d1a12;}
@@ -124,10 +131,10 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpLoaderPaso.activo .gpLoaderPasoIcono{display:none;}
 .gpLoaderPaso.listo .gpLoaderPasoSpinner{display:none;}
 @keyframes gpSpin{to{transform:rotate(360deg);}}
-.gpLoaderBarra{width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;}
+.gpLoaderBarra{width:100%;max-width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;flex-shrink:0;}
 .gpLoaderBarraFill{height:100%;width:0%;background:linear-gradient(90deg,#7a6000,#FFD700);border-radius:99px;transition:width .6s ease;}
 .gpLoaderMsg{font-size:0.72rem;color:#555;text-align:center;min-height:18px;}
-.gpLoaderParticulas{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.gpLoaderParticulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
 .gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
 @keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
 </style>
@@ -162,7 +169,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
     <div class="info-banner">El <b>carrusel</b> es la vitrina principal del inicio: úsalo para 4–8 proyectos muy destacados, con un título y subtítulo llamativos. La <b>galería</b> (otra pestaña) es el portafolio completo donde puedes subir todos los proyectos que quieras.</div>
     <div class="grid2">
       <div class="card">
-        <h3>Agregar al carrusel</h3>
+        <h3>Agregar al carrusel <span class="order-badge" id="carouselCount" style="float:right;"></span></h3>
         <div class="upload-drop" id="carouselDrop">
           📷 Haz clic o arrastra una imagen aquí
           <input type="file" id="carouselFile" accept="image/*">
@@ -185,7 +192,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
   <div class="panel" id="panel-gallery">
     <div class="grid2">
       <div class="card">
-        <h3>Agregar a la galería</h3>
+        <h3>Agregar a la galería <span class="order-badge" id="galleryCount" style="float:right;"></span></h3>
         <div class="upload-drop" id="galleryDrop">
           📷 Haz clic o arrastra una imagen aquí
           <input type="file" id="galleryFile" accept="image/*">
@@ -509,6 +516,7 @@ function initApp(){
   db.ref('gallery').on('value', snap=>{
     const val = snap.val() || {};
     const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
+    document.getElementById('galleryCount').textContent = `${items.length} / ${MAX_GALLERY_ITEMS} usadas`;
     const list = document.getElementById('galleryList');
     if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en la galería.</div>'; return; }
     list.innerHTML = items.map(it=>`
@@ -519,15 +527,21 @@ function initApp(){
           <p>${escapeHTML(it.description||'')}</p>
           <div class="item-actions">
             <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
           </div>
         </div>
       </div>`).join('');
     list.querySelectorAll('.btn-danger').forEach(b=>{
-      b.onclick = ()=>{
-        if(confirm('¿Eliminar este proyecto de la galería? (la imagen en Cloudinary no se borra automáticamente)')){
-          db.ref('gallery/'+b.dataset.id).remove();
+      b.onclick = async ()=>{
+        if(!confirm('¿Eliminar este proyecto de la galería? Esto también borrará la imagen de Cloudinary.')) return;
+        b.disabled = true; b.textContent='Eliminando…';
+        try{
+          await deleteFromCloudinary(b.dataset.publicId);
+        }catch(err){
+          console.error(err);
+          alert('No se pudo borrar la imagen en Cloudinary (' + err.message + '). Se eliminará igual la referencia del sitio.');
         }
+        await db.ref('gallery/'+b.dataset.id).remove();
       };
     });
   });
@@ -586,7 +600,14 @@ function initApp(){
   });
 }
 </script>
-<!-- ══ OVERLAY SUSCRIPCIÓN ══ -->
+
+<!-- ══════════════════════════════════════════════════════════════
+     SISTEMA DE SUSCRIPCIÓN (mensualidad) — bloquea el panel hasta
+     que se verifique una transferencia bancaria mediante IA (Gemini,
+     a través de un Cloudflare Worker que oculta la API key).
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- Overlay de suscripción -->
 <div id="gpSusOverlay">
   <div class="gpSusCard" id="gpSusContenido">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -599,7 +620,7 @@ function initApp(){
       <div class="gpDatosFila">
         <span class="gpDatosLabel">💰 Monto</span>
         <span class="gpDatosValor">$25.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('5000',this)">Copiar</button>
+        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
       </div>
       <div class="gpDatosFila">
         <span class="gpDatosLabel">👤 Nombre</span>
@@ -627,19 +648,18 @@ function initApp(){
       <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
     </div>
 
-  <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
+    <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
     <p class="gpSusEstado" id="gpSusEstado"></p>
     <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
       <div style="font-size:2rem;margin-bottom:8px;">📄</div>
-      
       <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
     </div>
     <input type="file" id="gpSusInput" accept="image/*" hidden>
-  <img id="gpSusPreview" alt="Vista previa">    
+    <img id="gpSusPreview" alt="Vista previa">
   </div>
 </div>
 
-<!-- Banner suscripción activa -->
+<!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
 <div id="gpBannerSus">✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
 
 <!-- Toast copiado -->
@@ -664,10 +684,16 @@ function initApp(){
 
 <script>
 // ══════════════════════════════════════════════
-// CONFIG — CAMBIA ESTOS VALORES SI ES NECESARIO
+// CONFIG SUSCRIPCIÓN — CAMBIA ESTOS VALORES SI ES NECESARIO
 // ══════════════════════════════════════════════
-; // aistudio.google.com → Get API Key
-const GP_MONTO_MIN    = 25000;      // ← CAMBIA AQUÍ EL MONTO CUANDO LO DEFINAS
+// ⚠️ ME LLEGARON DOS ARCHIVOS DE PRUEBA CON UNA WORKER URL DISTINTA CADA UNO:
+//   - gemini-proxy.mago-diepa.workers.dev
+//   - wandering-cell-a87e.mago-diepa.workers.dev
+// Dejé la primera por ser la de nombre más descriptivo/estable, pero
+// CONFIRMA cuál de tus dos Workers está realmente desplegado y activo,
+// y reemplázala aquí si corresponde la otra.
+const GP_GEMINI_PROXY_URL = 'https://gemini-proxy.mago-diepa.workers.dev';
+const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
 const GP_DESTINATARIO = 'diego francisco palma';
 const GP_BANCO_DEST   = 'bancoestado';
 const GP_RTDB_PATH    = 'configuracion/suscripcion';
@@ -691,6 +717,9 @@ const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
         document.getElementById('gpSusOverlay').classList.remove('activo');
         const banner = document.getElementById('gpBannerSus');
         banner.style.display = 'flex';
+        banner.style.background = 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))';
+        banner.style.borderColor = 'rgba(51,209,122,0.3)';
+        banner.style.color = '#cdeedb';
         document.getElementById('gpBannerSusVence').textContent =
           new Date(pagadoHasta).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
       } else {
@@ -756,7 +785,7 @@ document.getElementById('gpSusInput').addEventListener('change', function(){
 });
 
 // ══════════════════════════════════════════════
-// GEMINI — ANALIZAR COMPROBANTE
+// GEMINI — ANALIZAR COMPROBANTE (vía Cloudflare Worker proxy)
 // ══════════════════════════════════════════════
 async function gpAnalizarConGemini(){
   const body = {
@@ -771,16 +800,16 @@ Estructura exacta:
     generationConfig:{temperature:0, maxOutputTokens:300, responseMimeType:'application/json'}
   };
   const res = await fetch(
-    `https://wandering-cell-a87e.mago-diepa.workers.dev`,
+    GP_GEMINI_PROXY_URL,
     {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}
   );
   if(!res.ok){ const e=await res.json(); throw new Error('Gemini: '+(e.error?.message||res.status)); }
   const data = await res.json();
   const texto = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
   const limpio = texto.replace(/```json|```/g,'').trim();
-const match = limpio.match(/\{[\s\S]*\}/);
-if(!match) throw new Error('La IA no pudo leer el comprobante. Intenta con una imagen más clara.');
-return JSON.parse(match[0]);
+  const match = limpio.match(/\{[\s\S]*\}/);
+  if(!match) throw new Error('La IA no pudo leer el comprobante. Intenta con una imagen más clara.');
+  return JSON.parse(match[0]);
 }
 
 // ══════════════════════════════════════════════
@@ -821,23 +850,23 @@ async function gpVerificarComprobante(){
   try {
     gpLoaderMostrar();
     let analisis;
-for(let intento=1; intento<=3; intento++){
-  try { analisis = await gpAnalizarConGemini(); break; }
-  catch(e){
-    if(intento===3) throw e;
-    await new Promise(r=>setTimeout(r, intento*4000));
-  }
-}
+    for(let intento=1; intento<=3; intento++){
+      try { analisis = await gpAnalizarConGemini(); break; }
+      catch(e){
+        if(intento===3) throw e;
+        await new Promise(r=>setTimeout(r, intento*4000));
+      }
+    }
     gpLoaderOcultar();
     const paidUntil = await gpValidarYGuardar(analisis);
     gpMostrarExito(paidUntil);
   } catch(err){
     gpLoaderOcultar();
     const msg = err.message||'';
-const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
-document.getElementById('gpSusEstado').textContent = esSaturacion
-  ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
-  : msg||'Error al verificar.';
+    const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
+    document.getElementById('gpSusEstado').textContent = esSaturacion
+      ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
+      : msg||'Error al verificar.';
     document.getElementById('gpSusEstado').className = 'gpSusEstado error';
     btn.disabled = false;
   }
@@ -879,7 +908,7 @@ function gpAbrirBanco(){
   ];
   let m=document.getElementById('gpBancoModal');
   if(!m){m=document.createElement('div');m.id='gpBancoModal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
     m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
   m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
     <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
@@ -902,12 +931,10 @@ function gpLoaderMostrar(){
   ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
   gpLoaderMsgIdx=0;
   document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
-  // Partículas
   const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
   for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
     p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
     p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
-  // Pasos
   setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
   setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
   setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
