@@ -122,7 +122,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
 .gpSusEstado.error{color:#ff6b6b;}
 .gpSusEstado.ok{color:#33d17a;}
-#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#000 !important;margin:0 26px 14px;align-items:center;gap:8px;}
+#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#fff !important;margin:0 26px 14px;align-items:center;gap:8px;}
 
 /* Chip de estado siempre visible en el topbar */
 .gp-chip{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;
@@ -332,7 +332,9 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando…</div>
       <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button>
-      <button class="logout" id="logoutBtn">Salir</button>
+      <button class="logout" id="logoutBtn">Salir</button><!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
+<div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
+
     </div>
   </div>
   <div class="tabs">
@@ -1015,8 +1017,6 @@ function initApp(){
   </div>
 </div>
 
-<!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
-<div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
 
 <!-- Toast copiado -->
 <div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
