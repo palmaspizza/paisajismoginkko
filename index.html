@@ -171,7 +171,7 @@ nav a:hover::after{width:100%;}
 
 /* --- nosotros --- */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
-.about-img{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5;}
+.about-img{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:7/5;}
 .about-img img{width:100%;height:100%;object-fit:cover;}
 .about-text p{font-size:16.5px;margin-bottom:16px;}
 .about-text p strong{color:var(--dark);}
@@ -395,7 +395,7 @@ footer a:hover{color:var(--gold-light);}
   .hero-inner{flex-direction:column;}
   .hero-img{display:none;}
   .hero-img-1{display:block !important;margin:0 auto 20px;}
-  #logo{width: 180px !important;}
+  #logo{width: 270px !important;}
 }
 .hero-img-1{
   display: none;
@@ -413,7 +413,7 @@ footer a:hover{color:var(--gold-light);}
 <header id="siteHeader">
   <div class="container nav-wrap">
     <a href="#inicio" class="logo">
-    <img id="logo" src="logo.png" style="width: 22%;" alt="Ginkko Paisajismo">  
+    <img id="logo" src="logo.png" style="width: 32%;" alt="Ginkko Paisajismo">  
     </a>
     <nav>
       <ul>
@@ -450,7 +450,7 @@ footer a:hover{color:var(--gold-light);}
   <div class="container hero-inner"><br>
 
   <div class="hero-text">
-     <img class="hero-img-1" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop" alt="Jardín diseñado por Ginkko Paisajismo">
+     <img class="hero-img-1" src="principalimg.jpg" alt="Jardín diseñado por Ginkko Paisajismo">
     <h1>Transformamos espacios en <em>naturaleza</em> viva</h1>
     <p class="sub">Diseñamos, construimos y mantenemos áreas verdes para condominios, empresas y hogares en Santiago, con más de una década de experiencia.</p>
     <div class="hero-actions">
@@ -470,11 +470,29 @@ footer a:hover{color:var(--gold-light);}
         <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="5"></circle></svg></div>
         <b>100%</b><span>Compromiso y calidad</span>
       </div>
-    </div>
+      <div style="margin-left: 20px; margin-top: 0px;" class="stat">
+  <div class="ring">
+    <svg width="54" height="54" viewBox="0 0 54 54">
+      <!-- Círculo de fondo -->
+      <circle class="track" cx="27" cy="27" r="23"></circle>
+      <!-- Círculo animado/relleno -->
+      <circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="5"></circle>
+      
+      <!-- Icono rotado 90 grados exactamente sobre el centro (27, 27) -->
+      <g transform="rotate(90 27 27)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Contorno del mapa/pin -->
+        <path d="M27 38C21 31 18 27.5 18 23a9 9 0 0 1 18 0c0 4.5-3 8-9 15Z"></path>
+        <!-- Círculo central -->
+        <circle cx="27" cy="23" r="3"></circle>
+      </g>
+    </svg>
+  </div>
+<b>Ubicación</b>  <span style="color: #fff;">Llegamos a todo Chile</span>
+</div>
     
   </div>   </div>
   </div>
-  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop" class="hero-img" alt="Jardín diseñado por Ginkko Paisajismo">
+  <img src="principalimg.jpg" class="hero-img" alt="Jardín diseñado por Ginkko Paisajismo">
 </div>
 </section>
 
@@ -483,7 +501,7 @@ footer a:hover{color:var(--gold-light);}
 <!-- ============ NOSOTROS ============ -->
 <section class="section" id="nosotros">
   <div class="container about-grid">
-    <div class="about-img"><img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1000&auto=format&fit=crop" alt="Equipo Ginkko Paisajismo trabajando"></div>
+    <div class="about-img"><img src="principalimg2.jpg" alt="Equipo Ginkko Paisajismo trabajando"></div>
     <div class="about-text">
       <div class="eyebrow">Nosotros</div>
       <h2 style="margin-bottom:20px;">Más de 10 años creciendo junto a nuestros clientes</h2>
