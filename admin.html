@@ -771,7 +771,7 @@ Estructura exacta:
     generationConfig:{temperature:0, maxOutputTokens:300, responseMimeType:'application/json'}
   };
   const res = await fetch(
-    `https://gemini-proxy.mago-diepa.workers.dev`,
+    `https://wandering-cell-a87e.mago-diepa.workers.dev`,
     {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}
   );
   if(!res.ok){ const e=await res.json(); throw new Error('Gemini: '+(e.error?.message||res.status)); }
