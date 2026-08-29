@@ -990,7 +990,7 @@ Estructura exacta:
   const texto = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
   const limpio = texto.replace(/```json|```/g,'').trim();
   const match = limpio.match(/\{[\s\S]*\}/);
-  if(!match) throw new Error('La IA no pudo leer el comprobante. Intenta con una imagen más clara.');
+  if(!match) throw new Error('Error al procesar. Intenta de nuevo en unos segundos.');
   return JSON.parse(match[0]);
 }
 
@@ -1142,4 +1142,3 @@ function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').sty
 </script>
 </body>
 </html>
-
