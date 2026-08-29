@@ -166,6 +166,150 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpLoaderParticulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
 .gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
 @keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE MÓVIL — BREAKPOINTS
+   ══════════════════════════════════════════ */
+
+/* --- Tablet y abajo (≤768px) --- */
+@media(max-width:768px){
+
+  /* Login */
+  .login-box{padding:32px 24px;margin:16px;}
+
+  /* Topbar: apila en dos filas */
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+    padding:14px 16px;
+  }
+  .topbar h1{font-size:16px;}
+  .topbar > div:last-child{
+    width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+  }
+  #gpSusChip{font-size:11.5px;padding:6px 11px;}
+  .logout{font-size:12px;}
+
+  /* Tabs: scroll horizontal con separador sutil */
+  .tabs{padding:0 12px;gap:0;}
+  .tab{padding:13px 14px;font-size:13px;}
+
+  /* Panel: menos padding lateral */
+  .panel{padding:16px 12px;}
+
+  /* Grid de 2 columnas → 1 columna */
+  .grid2{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  /* Cards */
+  .card{padding:16px;}
+  .card h3{font-size:15px;margin-bottom:12px;}
+
+  /* Lista de ítems: 2 columnas en tablet */
+  .items-list{
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:12px;
+  }
+
+  /* Info banner */
+  .info-banner{font-size:12.5px;padding:12px 14px;margin-bottom:16px;}
+
+  /* Inputs táctiles más altos */
+  input,textarea,select{padding:13px 14px;font-size:16px;} /* 16px evita zoom en iOS */
+
+  /* Botones de tipo publicación */
+  .gp-type-btn{font-size:12px;padding:10px 10px;}
+
+  /* Botones de acción de tarjeta */
+  .item-actions{flex-direction:column;align-items:flex-start;gap:6px;}
+
+  /* Upload drop más compacto */
+  .upload-drop{padding:18px 14px;font-size:12.5px;}
+
+  /* Overlay de suscripción: sin margen lateral extra */
+  #gpSusOverlay{padding:10px;}
+  .gpSusCard{margin:16px auto;padding:24px 16px;}
+
+  /* Loader más compacto */
+  #gpSusLoader{padding:40px 16px 30px;}
+  .gpLoaderOrb{width:72px;height:72px;margin-bottom:18px;}
+  .gpLoaderTitulo{font-size:1rem;}
+  .gpLoaderPasos{max-width:100%;}
+  .gpLoaderBarra{max-width:100%;}
+
+  /* Banner de suscripción */
+  #gpBannerSus{margin:0 12px 12px;font-size:0.78rem;}
+}
+
+/* --- Móvil chico (≤480px) --- */
+@media(max-width:480px){
+
+  /* Login más ajustado */
+  .login-box{padding:28px 18px;border-radius:12px;}
+  .login-box h1{font-size:20px;}
+
+  /* Topbar muy compacto */
+  .topbar{padding:12px 14px;gap:8px;}
+  .topbar h1{font-size:14.5px;}
+  #gpSusChip{font-size:11px;padding:5px 9px;}
+
+  /* Ocultar el subtítulo "· Panel de administración" para ganar espacio */
+  .topbar span{display:none;}
+
+  /* Tabs: texto más pequeño */
+  .tab{padding:12px 10px;font-size:12px;}
+
+  /* Panel: mínimo padding */
+  .panel{padding:12px 10px;}
+
+  /* Ítems: 1 sola columna en móvil muy chico */
+  .items-list{grid-template-columns:1fr;}
+
+  /* Botones de Exportar/Cerrar: más pequeños */
+  .logout{font-size:11.5px;}
+
+  /* Card padding mínimo */
+  .card{padding:14px 12px;border-radius:12px;}
+
+  /* Imagen preview más pequeña */
+  .preview-thumb{height:110px;}
+
+  /* Upload drop más compacto */
+  .upload-drop{padding:16px 12px;}
+
+  /* Datos de suscripción: etiqueta y valor en columna si no caben */
+  .gpDatosLabel{width:78px;font-size:0.7rem;}
+  .gpDatosValor{font-size:0.78rem;}
+  .gpBtnCopiar{padding:4px 7px;font-size:0.66rem;}
+
+  /* Loader: orb más pequeño */
+  .gpLoaderOrb{width:60px;height:60px;}
+  .gpLoaderTitulo{font-size:0.95rem;}
+  .gpLoaderSub{font-size:0.72rem;margin-bottom:16px;}
+  .gpLoaderPaso{font-size:0.74rem;padding:8px 10px;}
+
+  /* Card de suscripción */
+  .gpSusCard{padding:20px 14px;border-radius:16px;}
+  .gpSusHeroTitulo{font-size:1.1rem;}
+  .gpSusHeroSub{font-size:0.75rem;}
+  .gpSusBtn{padding:14px;font-size:0.9rem;}
+}
+
+/* --- Móvil muy chico (≤360px, ej. Galaxy A series) --- */
+@media(max-width:360px){
+  .topbar h1{font-size:13.5px;}
+  .tab{padding:11px 8px;font-size:11.5px;}
+  .panel{padding:10px 8px;}
+  .card{padding:12px 10px;}
+  .items-list{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -185,10 +329,10 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 <div id="appScreen">
   <div class="topbar">
     <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando suscripción…</div>
-      <button class="logout" id="exportBackupBtn">⬇️ Respaldo (JSON)</button>
-      <button class="logout" id="logoutBtn">Cerrar sesión</button>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando…</div>
+      <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button>
+      <button class="logout" id="logoutBtn">Salir</button>
     </div>
   </div>
   <div class="tabs">
@@ -831,8 +975,8 @@ function initApp(){
     <div class="gpSusInfoPago">
       <div class="gpDatosFila">
         <span class="gpDatosLabel">💰 Monto</span>
-        <span class="gpDatosValor">$25.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
+        <span class="gpDatosValor">$40.000</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('40000',this)">Copiar</button>
       </div>
       <div class="gpDatosFila">
         <span class="gpDatosLabel">👤 Nombre</span>
@@ -905,7 +1049,7 @@ function initApp(){
 // (contents + generationConfig + responseSchema), y luego desenvuelve la
 // respuesta nativa de Gemini (candidates[0].content.parts[0].text).
 const GP_VERIFY_ENDPOINT = 'https://wandering-cell-a87e.mago-diepa.workers.dev';
-const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
+const GP_MONTO_MIN    = 40000;      // ← monto mensual requerido
 const GP_DESTINATARIO = 'diego francisco palma';
 const GP_RUT_DEST     = '221411439'; // RUT del destinatario, SIN puntos ni guión
 const GP_BANCO_DEST   = '';  // vacío = acepta transferencias desde cualquier banco
@@ -1223,7 +1367,7 @@ function gpCopiar(texto, btn){
   });
 }
 function gpCopiarTodo(){
-  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
+  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $40.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
   const btn=document.querySelector('.gpBtnCopiarTodo');
   if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
 }
