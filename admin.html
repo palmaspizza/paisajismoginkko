@@ -3,233 +3,703 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin | Ginkko Paisajismo</title>
+<title>Ginkko Paisajismo | Diseño y mantención de áreas verdes</title>
+<meta name="description" content="Diseñamos, construimos y mantenemos áreas verdes en Santiago. Más de 10 años transformando espacios en naturaleza.">
+
+<!-- ============================================================ -->
+<!-- FIREBASE (Realtime Database) - SDK compat, plan gratuito Spark -->
+<!-- ============================================================ -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link rel="icon" href="logoicon.jpeg" type="image/png">
+<meta property="og:title" content="Ginkko Paisajismo | Transformamos espacios en naturaleza viva">
+<meta property="og:description" content="Diseñamos, construimos y mantenemos áreas verdes para condominios, empresas y hogares en Santiago, con más de una década de experiencia.">
+<meta property="og:image" content="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta name="theme-color" content="#0F2A1E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Ginkko Paisajismo",
+  "description": "Diseño, construcción y mantención de áreas verdes en Santiago de Chile.",
+  "telephone": "+56972853944",
+  "email": "ginkkopaisajismo@gmail.com",
+  "areaServed": "Santiago, Chile",
+  "priceRange": "$$"
+}
+</script>
 <style>
 :root{
-  --dark:#0F2A1E; --dark-2:#0B2018; --primary:#1F5C42; --primary-light:#3E7A5C;
-  --gold:#C6A15B; --gold-light:#E3C888; --cream:#F6F3EC; --cream-2:#EFE9DC;
-  --ink:#1B211D; --ink-soft:#4B564E; --line:rgba(27,33,29,.12); --radius:14px;
-  --danger:#C0503E;
+  --dark:#0F2A1E;
+  --dark-2:#0B2018;
+  --primary:#1F5C42;
+  --primary-light:#3E7A5C;
+  --gold:#C6A15B;
+  --gold-light:#E3C888;
+  --cream:#F6F3EC;
+  --cream-2:#EFE9DC;
+  --ink:#1B211D;
+  --ink-soft:#4B564E;
+  --line:rgba(27,33,29,.12);
+  --white:#FFFFFF;
+  --radius:16px;
+  --shadow:0 20px 50px -20px rgba(15,42,30,.35);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, Segoe UI, sans-serif;
 }
+@font-face{font-family:'Fraunces';src:local('Georgia');}
 *,*::before,*::after{box-sizing:border-box;}
-body{margin:0;font-family:'Inter',-apple-system,Segoe UI,sans-serif;background:var(--cream);color:var(--ink);}
-h1,h2,h3{font-family:'Fraunces',Georgia,serif;color:var(--dark);margin:0;}
-button{cursor:pointer;font-family:inherit;border:none;}
-input,textarea,select{font-family:inherit;width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--line);font-size:14px;background:#fff;}
-textarea{resize:vertical;min-height:80px;}
-label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:6px;}
-.field{margin-bottom:14px;}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;transition:.2s;}
-.btn-primary{background:var(--primary);color:#fff;}
-.btn-primary:hover{background:var(--primary-light);}
-.btn-gold{background:var(--gold);color:var(--dark);}
-.btn-gold:hover{background:var(--gold-light);}
-.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);padding:8px 14px;font-size:12.5px;}
-.btn-danger:hover{background:var(--danger);color:#fff;}
-.btn:disabled{opacity:.5;cursor:not-allowed;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--cream);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.08;margin:0;color:var(--dark);}
+p{margin:0;color:var(--ink-soft);line-height:1.65;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.container{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,48px);}
+.eyebrow{
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+  font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--gold);display:inline-block;}
+.section{padding:clamp(64px,9vw,120px) 0;position:relative;}
+.section-head{max-width:640px;margin-bottom:48px;}
+.section-head h2{font-size:clamp(28px,4vw,42px);}
+.section-head p{margin-top:14px;font-size:17px;}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:999px;
+  font-weight:600;font-size:15px;transition:.25s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--gold);color:var(--dark);}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-outline{border:1.5px solid rgba(255,255,255,.55);color:#fff;}
+.btn-outline:hover{background:rgba(255,255,255,.12);}
+.btn-outline-dark{border:1.5px solid var(--line);color:var(--ink);}
+.btn-outline-dark:hover{border-color:var(--dark);}
+.btn-wa{background:#1F5C42;color:#fff;}
+.btn-wa:hover{background:var(--primary-light);}
 
-/* ---- login ---- */
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
-.login-box{background:#fff;padding:44px;border-radius:var(--radius);width:100%;max-width:380px;text-align:center;}
-.login-box h1{font-size:24px;margin-bottom:6px;}
-.login-box p{color:var(--ink-soft);font-size:14px;margin-bottom:24px;}
-.login-box input{margin-bottom:14px;}
-#loginError{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:10px;}
+/* --- leaf vein divider (signature element) --- */
+.vein-divider{width:100%;height:46px;display:flex;justify-content:center;align-items:center;overflow:hidden;pointer-events:none;}
+.vein-divider svg{opacity:.35;}
 
-/* ---- layout ---- */
-#appScreen{display:none;min-height:100vh;}
-.topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;}
-.topbar h1{color:#fff;font-size:19px;}
-.topbar span{color:var(--gold-light);font-size:12px;}
-.logout{color:#fff;font-size:13px;text-decoration:underline;background:none;}
-.tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto;}
-.tab{padding:16px 20px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap;}
-.tab.active{color:var(--dark);border-color:var(--gold);}
-.panel{display:none;padding:28px;max-width:1100px;margin:0 auto;}
-.panel.active{display:block;}
-.grid2{display:grid;grid-template-columns:380px 1fr;gap:26px;align-items:start;}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
-.card h3{font-size:17px;margin-bottom:16px;}
-.items-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
-.item-card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
-.item-card img{width:100%;height:130px;object-fit:cover;display:block;background:#eee;}
-.item-body{padding:12px;}
-.item-body h4{font-size:14px;margin:0 0 4px;color:var(--dark);}
-.item-body p{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.4;max-height:36px;overflow:hidden;}
-.item-actions{display:flex;justify-content:space-between;align-items:center;}
-.order-badge{font-size:11px;color:var(--ink-soft);}
-.upload-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;font-size:13px;color:var(--ink-soft);margin-bottom:14px;cursor:pointer;transition:.2s;}
-.upload-drop:hover{border-color:var(--gold);}
-.upload-drop input{display:none;}
-.preview-thumb{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;display:none;}
-.progress{height:6px;background:var(--cream-2);border-radius:4px;overflow:hidden;margin-bottom:14px;display:none;}
-.progress-bar{height:100%;background:var(--gold);width:0%;transition:.2s;}
-.msg{font-size:13px;margin-top:10px;min-height:18px;}
-.msg.ok{color:#1F5C42;} .msg.err{color:var(--danger);}
-.star-picker-admin{display:flex;gap:4px;font-size:26px;margin-bottom:14px;cursor:pointer;}
-.star-picker-admin span{color:var(--line);}
-.star-picker-admin span.filled{color:var(--gold);}
-.empty-note{color:var(--ink-soft);font-size:13.5px;grid-column:1/-1;}
-.info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;margin-bottom:22px;line-height:1.5;}
+/* --- header --- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:18px 0;transition:.35s ease;
+}
+header.scrolled{background:rgba(15,42,30,.92);backdrop-filter:blur(10px);padding:12px 0;box-shadow:0 6px 24px rgba(0,0,0,.15);}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;}
+.logo svg{width:30px;height:30px;}
+.logo span{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:.04em;}
+.logo small{display:block;font-size:9px;letter-spacing:.2em;color:var(--gold-light);font-family:var(--font-body);font-weight:600;}
+nav ul{list-style:none;display:flex;gap:32px;margin:0;padding:0;}
+nav a{color:#EFE9DC;font-size:14.5px;font-weight:500;position:relative;padding:4px 0;}
+nav a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:1.5px;background:var(--gold);transition:.25s;}
+nav a:hover::after{width:100%;}
+.nav-right{display:flex;align-items:center;gap:18px;}
+.burger{display:none;flex-direction:column;gap:5px;background:none;}
+.burger span{width:24px;height:2px;background:#fff;border-radius:2px;}
+.mobile-menu{
+  position:fixed;inset:0;background:var(--dark);z-index:1100;display:flex;flex-direction:column;
+  padding:28px;transform:translateX(100%);transition:.35s ease;
+}
+.mobile-menu.open{transform:translateX(0);}
+.mobile-menu ul{list-style:none;padding:0;margin:60px 0 0;display:flex;flex-direction:column;gap:26px;}
+.mobile-menu a{color:#fff;font-size:22px;font-family:var(--font-display);}
+.mobile-close{align-self:flex-end;color:#fff;font-size:28px;}
 
-/* ══════════════════════════════════════════
-   SISTEMA DE SUSCRIPCIÓN — GINKKO PAISAJISMO
-   ══════════════════════════════════════════
-   FIX APLICADO: el overlay usaba display:flex + align-items:center,
-   lo que en varios navegadores móviles (Safari iOS en particular)
-   IMPIDE hacer scroll hasta la parte superior de un contenido más
-   alto que la pantalla ("flexbox centering scroll trap"). La solución
-   es usar display:block con overflow-y:auto y centrar la tarjeta con
-   margin:auto en vez de con align-items. */
-#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
-#gpSusOverlay.activo{display:block;}
-.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:24px auto;box-sizing:border-box;}
-.gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
-.gpSusSubtitulo{font-size:0.8rem;color:#888;text-align:center;margin-bottom:20px;line-height:1.5;}
-.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);gap:8px;}
-.gpDatosFila:last-child{border-bottom:none;}
-.gpDatosLabel{font-size:0.72rem;color:#888;width:90px;flex-shrink:0;}
-.gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;word-break:break-word;}
-.gpBtnCopiar{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:6px;padding:4px 9px;font-size:0.7rem;cursor:pointer;white-space:nowrap;}
-.gpBtnCopiarTodo{width:100%;padding:11px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;margin-top:12px;}
-.gpBtnBanco{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0f2a45);border:1px solid rgba(41,182,246,0.4);color:#29B6F6;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:8px;}
-.gpSusInfoPago{background:#12121f;border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:14px;margin-bottom:18px;}
-.gpSusUploadArea{border:2px dashed rgba(255,215,0,0.3);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:#12121f;}
-.gpSusUploadArea:hover{border-color:#FFD700;}
-.gpSusUploadArea.con-imagen{border-color:#33d17a;border-style:solid;}
-#gpSusPreview{width:100%;max-height:100px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;border:1px solid rgba(255,215,0,0.2);}
-.gpSusBtn{width:100%;padding:13px;background:linear-gradient(135deg,#FFD700,#b8960c);color:#000;font-weight:800;font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
-.gpSusBtn:disabled{opacity:0.5;cursor:not-allowed;}
-.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
-.gpSusEstado.error{color:#ff6b6b;}
-.gpSusEstado.ok{color:#33d17a;}
-#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#cdeedb;margin:0 26px 14px;align-items:center;gap:8px;}
-.gpSusExitoIcono{font-size:3.5rem;text-align:center;display:block;animation:gpBounce .5s both;}
-@keyframes gpBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-.gpSusExitoTitulo{font-size:1.3rem;font-weight:800;color:#33d17a;text-align:center;margin:10px 0 6px;}
-.gpSusExitoSub{font-size:0.82rem;color:#888;text-align:center;}
-.gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999999;pointer-events:none;}
-.gpToastCopy.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* Loader — mismo fix: sin justify-content:center para no atrapar el scroll en pantallas bajas */
-#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;align-items:center;font-family:inherit;padding:60px 16px 40px;box-sizing:border-box;}
-#gpSusLoader.activo{display:flex;}
-.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;flex-shrink:0;}
-.gpLoaderOrb::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:gpOrbSpin 3s linear infinite;}
-@keyframes gpOrbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-@keyframes gpOrbSpin{to{transform:rotate(360deg);}}
-.gpLoaderTitulo{font-size:1.1rem;font-weight:800;color:#FFD700;margin-bottom:6px;text-align:center;}
-.gpLoaderSub{font-size:0.78rem;color:#666;margin-bottom:24px;text-align:center;}
-.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-bottom:24px;}
-.gpLoaderPaso{display:flex;align-items:center;gap:10px;background:#13141C;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;font-size:0.78rem;color:#555;transition:all .4s;}
-.gpLoaderPaso.activo{color:#fff;border-color:rgba(255,215,0,0.4);background:#1a1b10;}
-.gpLoaderPaso.listo{color:#33d17a;border-color:rgba(51,209,122,0.3);background:#0d1a12;}
-.gpLoaderPasoIcono{font-size:1rem;width:22px;text-align:center;flex-shrink:0;}
-.gpLoaderPasoSpinner{width:14px;height:14px;border:2px solid rgba(255,215,0,0.2);border-top-color:#FFD700;border-radius:50%;animation:gpSpin .7s linear infinite;flex-shrink:0;display:none;}
-.gpLoaderPaso.activo .gpLoaderPasoSpinner{display:block;}
-.gpLoaderPaso.activo .gpLoaderPasoIcono{display:none;}
-.gpLoaderPaso.listo .gpLoaderPasoSpinner{display:none;}
-@keyframes gpSpin{to{transform:rotate(360deg);}}
-.gpLoaderBarra{width:100%;max-width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;flex-shrink:0;}
-.gpLoaderBarraFill{height:100%;width:0%;background:linear-gradient(90deg,#7a6000,#FFD700);border-radius:99px;transition:width .6s ease;}
-.gpLoaderMsg{font-size:0.72rem;color:#555;text-align:center;min-height:18px;}
-.gpLoaderParticulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
-.gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
-@keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
+/* --- hero --- */
+.hero{
+  position:relative;min-height:100vh;display:flex;align-items:center;color:#fff;
+  background:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 60%);
+  overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;opacity:.55;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--dark) 0%,rgba(15,42,30,.35) 45%,rgba(15,42,30,.75) 100%);}
+.hero-inner{position:relative;z-index:2;padding-top:110px;padding-bottom:60px;}
+.hero h1{color:#fff;font-size:clamp(38px,6.4vw,68px);max-width:780px;}
+.hero h1 em{color:var(--gold-light);font-style:normal;}
+.hero p.sub{color:#DCE6DE;font-size:18px;max-width:560px;margin-top:20px;}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-top:34px;}
+.hero-stats{display:flex;gap:0;margin-top:60px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);padding-top:28px;}
+.stat{flex:1;min-width:150px;padding-right:24px;}
+.ring{position:relative;width:54px;height:54px;margin-bottom:10px;}
+.ring svg{transform:rotate(-90deg);}
+.ring circle{fill:none;stroke-width:3;}
+.ring .track{stroke:rgba(255,255,255,.15);}
+.ring .fill{stroke:var(--gold);stroke-linecap:round;}
+.stat b{display:block;font-family:var(--font-display);font-size:26px;color:#fff;}
+.stat span{font-size:12.5px;color:#B9C7BC;letter-spacing:.03em;}
+
+/* --- carousel (destacados) --- */
+.carousel-section{background:var(--dark);color:#fff;}
+.carousel-section .section-head h2{color:#fff;}
+.carousel-section .section-head p{color:#B9C7BC;}
+.carousel{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.carousel-track{display:flex;transition:transform .6s cubic-bezier(.65,0,.35,1);}
+.carousel-slide{min-width:100%;position:relative;aspect-ratio:16/8;background:#0c1c14;}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;}
+.carousel-caption{position:absolute;left:0;right:0;bottom:0;padding:36px clamp(20px,5vw,50px);
+  background:linear-gradient(0deg,rgba(0,0,0,.72),transparent);}
+.carousel-caption h3{color:#fff;font-size:clamp(20px,3vw,30px);}
+.carousel-caption p{color:#DCE6DE;margin-top:6px;max-width:520px;}
+.carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);transition:.2s;z-index:5;}
+.carousel-nav:hover{background:var(--gold);color:var(--dark);}
+.carousel-prev{left:16px;} .carousel-next{right:16px;}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:18px;}
+.carousel-dots button{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:.25s;}
+.carousel-dots button.active{background:var(--gold);width:22px;border-radius:4px;}
+.carousel-empty{padding:60px;text-align:center;color:#B9C7BC;}
+
+/* --- nosotros --- */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.about-img{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5;}
+.about-img img{width:100%;height:100%;object-fit:cover;}
+.about-text p{font-size:16.5px;margin-bottom:16px;}
+.about-text p strong{color:var(--dark);}
+
+/* --- servicios --- */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.service-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 26px;transition:.3s ease;
+}
+.service-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:transparent;}
+.service-icon{width:46px;height:46px;border-radius:12px;background:var(--cream-2);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--primary);}
+.service-card h4{font-size:18px;margin-bottom:8px;}
+.service-card p{font-size:14.5px;}
+
+/* --- galeria --- */
+.gallery-section{background:var(--cream-2);}
+.gallery-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.chip{padding:9px 18px;border-radius:999px;border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--ink-soft);background:#fff;}
+.chip.active{background:var(--dark);color:#fff;border-color:var(--dark);}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gallery-item{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;background:#e4ded0;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:.5s ease;}
+.gallery-item:hover img{transform:scale(1.08);}
+.gallery-item .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(15,42,30,.75),transparent 55%);
+  opacity:0;transition:.3s;display:flex;align-items:flex-end;padding:16px;}
+.gallery-item:hover .overlay{opacity:1;}
+.gallery-item .overlay h5{color:#fff;font-size:14.5px;font-family:var(--font-body);font-weight:600;}
+.gallery-empty{grid-column:1/-1;text-align:center;padding:50px;color:var(--ink-soft);}
+.load-more{display:flex;justify-content:center;margin-top:34px;}
+
+/* --- slider antes / después --- */
+.ba-slider{position:relative;width:100%;height:100%;overflow:hidden;background:#e4ded0;user-select:none;}
+.ba-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.ba-before-wrap{position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);}
+.ba-before-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ba-seam{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-50%);z-index:2;pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,.4);}
+.ba-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;
+  background:#fff;color:var(--dark);display:flex;align-items:center;justify-content:center;font-size:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:none;z-index:3;}
+.ba-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:4;-webkit-appearance:none;appearance:none;}
+.ba-tag{position:absolute;top:10px;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#fff;background:rgba(15,42,30,.65);
+  padding:4px 9px;border-radius:999px;z-index:2;pointer-events:none;}
+.ba-tag.before{left:10px;} .ba-tag.after{right:10px;}
+.gallery-item.ba-item .overlay{pointer-events:none;}
+.ba-expand{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(15,42,30,.7);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:5;cursor:zoom-in;}
+.lightbox-ba{position:relative;width:100%;aspect-ratio:4/3;max-height:70vh;border-radius:10px;overflow:hidden;}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(11,32,24,.94);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
+.lightbox.open{display:flex;}
+.lightbox-inner{max-width:900px;width:100%;}
+.lightbox-inner img{width:100%;max-height:70vh;object-fit:contain;border-radius:10px;}
+.lightbox-info{color:#fff;margin-top:16px;text-align:center;}
+.lightbox-info h4{color:#fff;font-size:20px;}
+.lightbox-info p{color:#C9D3CB;margin-top:6px;}
+.lightbox-close{position:absolute;top:24px;right:30px;color:#fff;font-size:32px;line-height:1;}
+
+/* --- reseñas --- */
+.reviews-section{}
+.reviews-top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-bottom:40px;}
+.rating-summary{display:flex;align-items:center;gap:18px;}
+.rating-num{font-family:var(--font-display);font-size:52px;color:var(--dark);}
+.stars{color:var(--gold);font-size:18px;letter-spacing:2px;}
+.rating-summary .stars{font-size:20px;}
+.rating-count{font-size:13px;color:var(--ink-soft);}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:44px;}
+.review-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+.review-card .stars{margin-bottom:12px;}
+.review-card p.comment{color:var(--ink);font-size:15px;margin-bottom:16px;}
+.review-author{display:flex;align-items:center;gap:10px;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;font-family:var(--font-display);}
+.review-author b{font-size:14px;color:var(--dark);}
+.review-author span{font-size:12px;color:var(--ink-soft);}
+.reviews-empty{grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-soft);}
+
+.review-form{background:var(--dark);border-radius:var(--radius);padding:clamp(28px,5vw,44px);color:#fff;}
+.review-form h3{color:#fff;font-size:24px;margin-bottom:6px;}
+.review-form>p{color:#B9C7BC;margin-bottom:26px;}
+.star-picker{display:flex;gap:6px;font-size:32px;margin-bottom:22px;cursor:pointer;}
+.star-picker span{color:rgba(255,255,255,.25);transition:.15s;}
+.star-picker span.filled{color:var(--gold);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.full{grid-template-columns:1fr;}
+input,textarea{
+  width:100%;padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:14.5px;
+}
+input::placeholder,textarea::placeholder{color:#8FA093;}
+textarea{resize:vertical;min-height:100px;}
+.form-msg{margin-top:14px;font-size:14px;}
+.form-msg.ok{color:#8FD9A8;} .form-msg.err{color:#F2A0A0;}
+
+/* --- contacto --- */
+.contact-section{background:var(--cream-2);}
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;}
+.contact-card{background:#fff;border-radius:var(--radius);border:1px solid var(--line);padding:clamp(26px,4vw,40px);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.faq-btn{
+  display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);
+  font-size:13.5px;font-weight:600;text-align:left;background:var(--cream);transition:.2s;
+}
+.faq-btn:hover{background:#1F5C42;color:#fff;border-color:#1F5C42;}
+.custom-wa{margin-top:20px;display:flex;gap:10px;}
+.custom-wa textarea{min-height:56px;}
+.contact-info-card{background:var(--dark);border-radius:var(--radius);padding:clamp(26px,4vw,40px);color:#fff;}
+.contact-info-card h3{color:#fff;}
+.info-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.14);}
+.info-row:last-child{border-bottom:none;}
+.info-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.info-row b{display:block;font-size:14px;color:#fff;}
+.info-row span{font-size:13.5px;color:#B9C7BC;}
+
+/* --- footer --- */
+footer{background:var(--dark-2);color:#B9C7BC;padding:60px 0 26px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px;}
+.footer-logo{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:14px;}
+.footer-logo span{font-family:var(--font-display);font-size:19px;font-weight:700;}
+footer h5{color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+footer a{font-size:14px;}
+footer a:hover{color:var(--gold-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;}
+.socials{display:flex;gap:12px;}
+.socials a{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;}
+.socials a:hover{background:var(--gold);color:var(--dark);}
+
+/* --- floating whatsapp --- */
+.wa-float{
+  position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:#1F5C42;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:900;color:#fff;
+}
+.wa-float:hover{background:var(--primary-light);}
+
+/* ================= SIMULADOR DE CHAT WHATSAPP ================= */
+.wa-modal{position:fixed;inset:0;background:rgba(11,32,24,.55);z-index:2100;display:none;align-items:center;justify-content:center;padding:18px;}
+.wa-modal.open{display:flex;}
+.wa-modal-inner{
+  width:100%;max-width:420px;height:min(680px,88vh);background:#E9E2D8;border-radius:14px;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(0,0,0,.4);
+}
+.wa-modal-header{
+  background:#075E54;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.wa-back{color:#fff;font-size:20px;background:none;padding:0 2px;}
+.wa-avatar{
+  width:38px;height:38px;border-radius:50%;background:#0F2A1E;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.4);
+}
+.wa-header-info{flex:1;line-height:1.25;}
+.wa-header-info b{display:block;font-size:15px;font-weight:600;}
+.wa-header-info span{font-size:12px;color:#CFE8DE;}
+.wa-header-icons{display:flex;gap:16px;font-size:16px;opacity:.9;}
+.wa-modal-body{
+  flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:8px;
+  background-color:#E9E2D8;
+  background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
+  background-size:16px 16px;
+}
+.wa-day-chip{align-self:center;background:#FFFFFF;color:#7A8580;font-size:11.5px;padding:5px 12px;border-radius:8px;margin-bottom:6px;box-shadow:0 1px 1px rgba(0,0,0,.08);}
+.wa-system-chip{align-self:center;background:#FCF3C7;color:#7A6A20;font-size:12px;text-align:center;padding:10px 14px;border-radius:8px;max-width:88%;margin-bottom:6px;line-height:1.4;}
+.wa-bubble{max-width:80%;padding:8px 10px 6px;border-radius:8px;font-size:14px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.08);position:relative;}
+.wa-bubble.in{align-self:flex-start;background:#fff;color:#1B211D;border-top-left-radius:2px;}
+.wa-bubble.out{align-self:flex-end;background:#DCF8C6;color:#1B211D;border-top-right-radius:2px;}
+.wa-bubble p{color:inherit;margin:0;}
+.wa-bubble .wa-time{display:block;text-align:right;font-size:10.5px;color:#7A8580;margin-top:4px;}
+.wa-modal-input{
+  flex-shrink:0;background:#F0F0F0;padding:10px 12px;display:flex;align-items:flex-end;gap:10px;
+}
+.wa-modal-input textarea{
+  flex:1;border:none;border-radius:20px;padding:10px 16px;font-size:14px;max-height:90px;
+  background:#fff;font-family:inherit;resize:none;line-height:1.35;
+}
+.wa-modal-input textarea:focus{outline:none;}
+.wa-send{
+  width:40px;height:40px;border-radius:50%;background:#075E54;color:#fff;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;
+}
+.wa-send:hover{background:#0b7d6e;}
+.wa-send:disabled{opacity:.5;}
+.wa-modal-hint{background:#075E54;color:#CFE8DE;text-align:center;font-size:11px;padding:6px 10px;margin:0;flex-shrink:0;}
+
+@media(max-width:900px){
+  nav,.nav-right .btn-wa-desktop{display:none;}
+  .burger{display:flex;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);}
+  .reviews-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:560px){
+  .services-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);}
+  .reviews-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .hero-stats{gap:20px;}
+  .custom-wa{flex-direction:column;}
+}
+.service-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: var(--light-2); /* Tono arena claro similar al de tu imagen */
+  border-radius: 12px; /* Bordes redondeados del contenedor */
+  margin-bottom: 16px;
+}
+
+.service-icon i {
+  font-size: 32px;
+  color: var(--gold); /* Verde oscuro característico de la marca Ginkko */
+}
 </style>
 </head>
 <body>
 
-<!-- ================= LOGIN ================= -->
-<div id="loginScreen">
-  <div class="login-box">
-    <h1>Panel Ginkko</h1>
-    <p>Ingresa la clave de administración para continuar.</p>
-    <input type="password" id="loginPass" placeholder="Clave de acceso">
-    <div id="loginError"></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Ingresar</button>
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="container nav-wrap">
+    <a href="#inicio" class="logo">
+    <img src="logo.png" style="width: 40%;" alt="Ginkko Paisajismo">  
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#trabajos">Trabajos</a></li>
+        <li><a href="#resenas">Reseñas</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <a href="#" id="waHeaderBtn" class="btn btn-wa btn-wa-desktop" style="margin-left: 20px;" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&times;</button>
+  <ul>
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#trabajos">Trabajos</a></li>
+    <li><a href="#resenas">Reseñas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop" alt="Jardín diseñado por Ginkko Paisajismo"></div>
+  <div class="container hero-inner">
+    <h1>Transformamos espacios en <em>naturaleza</em> viva</h1>
+    <p class="sub">Diseñamos, construimos y mantenemos áreas verdes para condominios, empresas y hogares en Santiago, con más de una década de experiencia.</p>
+    <div class="hero-actions">
+      <a href="#" id="waHeroBtn" class="btn btn-primary" style="margin-right: 10px;" target="_blank" rel="noopener">Conversemos por WhatsApp</a>
+      <a href="#trabajos" class="btn btn-outline">Ver nuestros trabajos</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="15"></circle></svg></div>
+        <b>+10</b><span>Años de experiencia</span>
+      </div>
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="35"></circle></svg></div>
+        <b>+30</b><span>Comunidades y clientes</span>
+      </div>
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="5"></circle></svg></div>
+        <b>100%</b><span>Compromiso y calidad</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#C6A15B" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ NOSOTROS ============ -->
+<section class="section" id="nosotros">
+  <div class="container about-grid">
+    <div class="about-img"><img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1000&auto=format&fit=crop" alt="Equipo Ginkko Paisajismo trabajando"></div>
+    <div class="about-text">
+      <div class="eyebrow">Nosotros</div>
+      <h2 style="margin-bottom:20px;">Más de 10 años creciendo junto a nuestros clientes</h2>
+      <p>En <strong>Ginkko Paisajismo</strong> nos dedicamos al diseño, construcción y mantención de áreas verdes en condominios, edificios, empresas y hogares.</p>
+      <p>Nuestro equipo de profesionales trabaja con pasión y compromiso para entregar <strong>soluciones personalizadas y de alta calidad</strong>, cuidando cada detalle desde el proyecto hasta la mantención.</p>
+      <a href="#contacto" class="btn btn-outline-dark" style="margin-top:10px;">Conoce más sobre nosotros</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section class="section" id="servicios" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Servicios</div>
+      <h2>¿Qué podemos hacer por ti?</h2>
+      <p>Soluciones verdes integrales, adaptadas a la necesidad real de cada espacio.</p>
+    </div>
+<div class="services-grid">
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-leaf"></i></div>
+    <h4>Mantención de áreas verdes</h4>
+    <p>Cuidado integral de jardines, césped, arbustos y árboles durante todo el año.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-tint"></i></div>
+    <h4>Sistemas de riego automático</h4>
+    <p>Instalación y mantención de sistemas de riego eficientes que ahorran agua.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-tree"></i></div>
+    <h4>Diseño y paisajismo</h4>
+    <p>Diseñamos espacios únicos, adaptados a tus necesidades y estilo.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-seedling"></i></div>
+    <h4>Instalación de césped</h4>
+    <p>Césped en rollo o siembra directa, para un resultado parejo y duradero.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-cut"></i></div>
+    <h4>Poda y tala de árboles</h4>
+    <p>Poda profesional y tala segura de árboles, con equipo especializado.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+    <h4>Asesoría personalizada</h4>
+    <p>Te asesoramos para que tu jardín luzca siempre a su mejor nivel.</p>
+  </div>
+</div>
+  </div>
+</section>
+
+<!-- ============ CARRUSEL DESTACADOS ============ -->
+<section class="section carousel-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Proyectos destacados</div>
+      <h2>Espacios que hemos transformado</h2>
+      <p>Una selección curada de nuestros proyectos más recientes.</p>
+    </div>
+    <div class="carousel" id="carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-empty">Cargando proyectos destacados…</div>
+      </div>
+      <button class="carousel-nav carousel-prev" id="carPrev">&#8592;</button>
+      <button class="carousel-nav carousel-next" id="carNext">&#8594;</button>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#1F5C42" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ GALERIA / TRABAJOS ============ -->
+<section class="section gallery-section" id="trabajos">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Nuestros trabajos</div>
+      <h2>Proyectos que reflejan nuestro compromiso</h2>
+      <p>Explora nuestro portafolio completo de proyectos realizados.</p>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-empty">Cargando galería…</div>
+    </div>
+    <div class="load-more" id="loadMoreWrap" style="display:none;">
+      <button class="btn btn-outline-dark" id="loadMoreBtn">Ver más proyectos</button>
+    </div>
+  </div>
+</section>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <div class="lightbox-inner">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-info"><h4 id="lightboxTitle"></h4><p id="lightboxDesc"></p></div>
   </div>
 </div>
 
-<!-- ================= APP ================= -->
-<div id="appScreen">
-  <div class="topbar">
-    <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
-    <button class="logout" id="logoutBtn">Cerrar sesión</button>
-  </div>
-  <div class="tabs">
-    <div class="tab active" data-tab="carousel">Carrusel destacado</div>
-    <div class="tab" data-tab="gallery">Galería de trabajos</div>
-    <div class="tab" data-tab="reviews">Reseñas</div>
-  </div>
-
-  <!-- ---- CARRUSEL ---- -->
-  <div class="panel active" id="panel-carousel">
-    <div class="info-banner">El <b>carrusel</b> es la vitrina principal del inicio: úsalo para 4–8 proyectos muy destacados, con un título y subtítulo llamativos. La <b>galería</b> (otra pestaña) es el portafolio completo donde puedes subir todos los proyectos que quieras.</div>
-    <div class="grid2">
-      <div class="card">
-        <h3>Agregar al carrusel <span class="order-badge" id="carouselCount" style="float:right;"></span></h3>
-        <div class="upload-drop" id="carouselDrop">
-          📷 Haz clic o arrastra una imagen aquí
-          <input type="file" id="carouselFile" accept="image/*">
-        </div>
-        <img class="preview-thumb" id="carouselPreview">
-        <div class="progress" id="carouselProgress"><div class="progress-bar" id="carouselProgressBar"></div></div>
-        <div class="field"><label>Título</label><input id="carouselTitle" placeholder="Ej: Jardín residencial Las Condes"></div>
-        <div class="field"><label>Subtítulo / descripción corta</label><input id="carouselSubtitle" placeholder="Ej: Diseño e instalación completa en 3 semanas"></div>
-        <div class="field"><label>Orden (menor número aparece primero)</label><input id="carouselOrder" type="number" value="0"></div>
-        <button class="btn btn-gold" id="carouselSubmit" style="width:100%;justify-content:center;">Subir al carrusel</button>
-        <div class="msg" id="carouselMsg"></div>
-      </div>
+<!-- ============ RESEÑAS ============ -->
+<section class="section" id="resenas" style="background:var(--white);">
+  <div class="container">
+    <div class="reviews-top">
       <div>
-        <div class="items-list" id="carouselList"></div>
+        <div class="eyebrow">Reseñas</div>
+        <h2>Lo que dicen nuestros clientes</h2>
+      </div>
+      <div class="rating-summary">
+        <div class="rating-num" id="avgRating">5.0</div>
+        <div>
+          <div class="stars" id="avgStars">★★★★★</div>
+          <div class="rating-count" id="ratingCount">0 reseñas</div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- ---- GALERIA ---- -->
-  <div class="panel" id="panel-gallery">
-    <div class="grid2">
-      <div class="card">
-        <h3>Agregar a la galería <span class="order-badge" id="galleryCount" style="float:right;"></span></h3>
-        <div class="upload-drop" id="galleryDrop">
-          📷 Haz clic o arrastra una imagen aquí
-          <input type="file" id="galleryFile" accept="image/*">
-        </div>
-        <img class="preview-thumb" id="galleryPreview">
-        <div class="progress" id="galleryProgress"><div class="progress-bar" id="galleryProgressBar"></div></div>
-        <div class="field"><label>Título</label><input id="galleryTitle" placeholder="Ej: Mantención jardín corporativo"></div>
-        <div class="field"><label>Descripción</label><textarea id="galleryDescription" placeholder="Detalles del proyecto…"></textarea></div>
-        <div class="field"><label>Orden / prioridad</label><input id="galleryOrder" type="number" value="0"></div>
-        <button class="btn btn-gold" id="gallerySubmit" style="width:100%;justify-content:center;">Subir a la galería</button>
-        <div class="msg" id="galleryMsg"></div>
-      </div>
-      <div>
-        <div class="items-list" id="galleryList"></div>
-      </div>
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="reviews-empty">Aún no hay reseñas. ¡Sé el primero en dejar la tuya!</div>
     </div>
-  </div>
 
-  <!-- ---- RESEÑAS ---- -->
-  <div class="panel" id="panel-reviews">
-    <div class="info-banner">Aquí puedes agregar reseñas "haciéndote pasar por cliente" para dar confianza inicial al sitio, y también eliminar cualquier reseña (incluidas las que dejen clientes reales) si es necesario.</div>
-    <div class="grid2">
-      <div class="card">
-        <h3>Agregar reseña</h3>
-        <div class="star-picker-admin" id="adminStarPicker">
+    <div class="review-form">
+      <h3>Cuéntanos tu experiencia</h3>
+      <p>Tu opinión ayuda a que más personas confíen en nuestro trabajo.</p>
+      <form id="reviewForm">
+        <div class="star-picker" id="starPicker">
           <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
         </div>
-        <div class="field"><label>Nombre del cliente</label><input id="reviewName" placeholder="Ej: Marcela R."></div>
-        <div class="field"><label>Comuna / ciudad (opcional)</label><input id="reviewLocation" placeholder="Ej: Las Condes"></div>
-        <div class="field"><label>Comentario</label><textarea id="reviewComment" placeholder="Escribe el comentario…"></textarea></div>
-        <button class="btn btn-gold" id="reviewSubmit" style="width:100%;justify-content:center;">Publicar reseña</button>
-        <div class="msg" id="reviewMsg"></div>
+        <div class="form-row">
+          <input type="text" id="reviewName" placeholder="Tu nombre" required>
+          <input type="text" id="reviewLocation" placeholder="Comuna / ciudad (opcional)">
+        </div>
+        <div class="form-row full">
+          <textarea id="reviewComment" placeholder="Escribe tu comentario…" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Publicar reseña</button>
+        <div class="form-msg" id="reviewMsg"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#C6A15B" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ CONTACTO ============ -->
+<section class="section contact-section" id="contacto">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Hablemos de tu proyecto</div>
+      <h2>Estamos aquí para hacer crecer tu entorno</h2>
+      <p>Solicita tu visita técnica sin costo y recibe asesoría personalizada.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3 style="margin-bottom:6px;">Preguntas frecuentes</h3>
+        <p>Elige una opción y te contactaremos al instante por WhatsApp.</p>
+        <div class="faq-grid" id="faqGrid"></div>
+        <div class="custom-wa">
+          <textarea  id="customWaMsg" placeholder="O escribe tu propio mensaje…" style="border-bottom: 1px solid #0B2018;  border-radius: 0px;"></textarea>
+          <button class="btn btn-wa" id="customWaBtn" style="align-self:flex-end;">Enviar</button>
+        </div>
       </div>
+    <div class="contact-info-card">
+  <h3 style="margin-bottom:18px;">Contáctanos</h3>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
+    <div><b>WhatsApp</b><span id="infoPhoneWa">+56 9 7285 3944</span></div>
+  </div>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fas fa-phone"></i></div>
+    <div><b>Llámanos</b><span id="infoPhoneCall">+56 9 7285 3944</span></div>
+  </div>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+    <div><b>Escríbenos</b><span id="infoEmail">ginkkopaisajismo@gmail.com</span></div>
+  </div>
+  
+  <a href="#" id="mailBtn" class="btn btn-primary" style="margin-top:22px;width:100%;justify-content:center;">Enviar correo</a>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
       <div>
-        <div class="items-list" id="reviewsList"></div>
+        <div class="footer-logo">
+          <svg width="26" height="26" viewBox="0 0 100 100" fill="none"><path d="M50 20 C35 35 15 40 8 55 C20 62 38 58 50 48 C62 58 80 62 92 55 C85 40 65 35 50 20 Z" stroke="#E3C888" stroke-width="3"/><line x1="50" y1="48" x2="50" y2="88" stroke="#E3C888" stroke-width="3"/></svg>
+          <span>GINKKO PAISAJISMO</span>
+        </div>
+        <p style="font-size:13.5px;">Diseñamos, creamos y mantenemos áreas verdes que transforman espacios y mejoran vidas.</p>
+        <div class="socials" style="margin-top:18px;">
+          <a href="#" aria-label="Instagram"><img src="instagram-icon.svg" alt="Instagram"></a>
+          <a href="#" aria-label="Facebook"><img src="facebook-icon.svg" alt="Facebook"></a>
+        </div>
+      </div>
+      <div><h5>Navegación</h5><ul><li><a href="#inicio">Inicio</a></li><li><a href="#nosotros">Nosotros</a></li><li><a href="#servicios">Servicios</a></li><li><a href="#trabajos">Trabajos</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+      <div><h5>Servicios</h5><ul><li>Mantención de áreas verdes</li><li>Sistemas de riego</li><li>Diseño y paisajismo</li><li>Instalación de césped</li><li>Poda y tala de árboles</li></ul></div>
+      <div><h5>Contacto</h5><ul><li>+56 9 7285 3944</li><li>ginkkopaisajismo@gmail.com</li><li>Santiago, Chile</li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Ginkko Paisajismo. Todos los derechos reservados.</span>
+      <span>Sitio diseñado por PalmaCodes</span>
+    </div>
+  </div>
+</footer>
+
+<button id="waFloatBtn" class="wa-float" aria-label="Abrir chat de WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.38c1.44.79 3.06 1.2 4.71 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.92 6.45 17.5 2 12.04 2zm5.83 14.02c-.24.68-1.4 1.31-1.93 1.38-.5.07-1.09.1-1.75-.11-.4-.13-.92-.3-1.58-.59-2.78-1.2-4.6-4-4.74-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.98-2.32.26-.28.56-.35.75-.35h.53c.17 0 .4-.03.62.47.24.55.8 1.92.87 2.06.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
+</button>
+
+<!-- ============ SIMULADOR DE CHAT WHATSAPP ============ -->
+<div class="wa-modal" id="waModal">
+  <div class="wa-modal-inner">
+    <div class="wa-modal-header">
+      <button class="wa-back" id="waModalClose" aria-label="Cerrar chat">&larr;</button>
+      <div class="wa-avatar">🌿</div>
+      <div class="wa-header-info"><b>Ginkko Paisajismo</b><span>Normalmente responde en el día</span></div>
+      <div class="wa-header-icons"><span>📞</span><span>⋮</span></div>
+    </div>
+    <div class="wa-modal-body" id="waModalBody">
+      <div class="wa-day-chip">Hoy</div>
+      <div class="wa-system-chip">Este chat se simula en el sitio web para que redactes tu mensaje. Al presionar enviar, se abrirá WhatsApp para completarlo con nuestra empresa.</div>
+      <div class="wa-bubble in">
+        <p>¡Hola! 👋 Bienvenido a <b>Ginkko Paisajismo</b>. Cuéntanos en qué podemos ayudarte con tu jardín o áreas verdes y te responderemos a la brevedad.</p>
+        <span class="wa-time" id="waWelcomeTime"></span>
       </div>
     </div>
+    <div class="wa-modal-input">
+      <textarea id="waModalInput" placeholder="Escribe un mensaje" rows="1"></textarea>
+      <button class="wa-send" id="waModalSend" aria-label="Enviar mensaje">➤</button>
+    </div>
+    <p class="wa-modal-hint">Serás redirigido a WhatsApp para enviar tu mensaje a nuestra empresa.</p>
   </div>
 </div>
 
@@ -238,13 +708,10 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
    1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
    ================================================================ */
 
-// --- CLAVE DE ACCESO AL PANEL ---
-// Seguridad simple del lado del cliente (adecuada para plan gratuito sin backend).
-// Para mayor seguridad real, complementa con reglas de Firebase que exijan
-// un token/valor secreto antes de permitir escritura (ver notas al final del archivo).
-const ADMIN_PASSWORD = "ginkko2026"; // <-- CAMBIA ESTA CLAVE
-
-// --- FIREBASE REALTIME DATABASE (debe ser el MISMO proyecto que index.html) ---
+// --- FIREBASE REALTIME DATABASE ---
+// Ve a Firebase Console > Configuración del proyecto > Tus apps > SDK config
+// IMPORTANTE: este archivo carga el SDK "compat" (ver <script> arriba en <head>),
+// por eso se inicializa con firebase.initializeApp(...) y NO con import/módulos ES.
 const firebaseConfig = {
   apiKey: "AIzaSyA2-ryuA2hzg8sMig1PqaRAAAL6hv9tLOQ",
   authDomain: "garate-78386.firebaseapp.com",
@@ -255,708 +722,370 @@ const firebaseConfig = {
   appId: "1:197255768197:web:f24663c800dfafcd9661ec",
   measurementId: "G-7K1YRS5396"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- CLOUDINARY (plan gratuito, subida "unsigned") ---
-// 1. Crea cuenta gratuita en cloudinary.com
-// 2. Ve a Settings > Upload > Upload presets > Add upload preset
-//    - Signing Mode: "Unsigned"
-//    - (opcional) limita carpeta y tamaño máximo
-// 3. Copia el Cloud Name y el nombre del preset abajo:
-const CLOUDINARY_CLOUD_NAME = "dkszomv2f";
-const CLOUDINARY_UPLOAD_PRESET = "paisajismoginkko";
-
-// --- CLOUDINARY: credenciales para BORRAR imágenes (Settings > Access Keys) ---
-// ⚠️ AVISO DE SEGURIDAD IMPORTANTE:
-// El borrado real en Cloudinary requiere una firma hecha con tu API Secret.
-// Como este panel NO tiene servidor propio, el secreto queda visible en el
-// código fuente de esta página para cualquiera que la abra. Es un compromiso
-// aceptable SOLO SI mantienes esta URL de admin privada (no la enlaces desde
-// el sitio público, no la compartas, considera cambiar el nombre del archivo
-// a algo no adivinable). Si en el futuro quieres seguridad real, esto debería
-// moverse a una función serverless (Cloud Function) que guarde el secreto
-// fuera del navegador.
-const CLOUDINARY_API_KEY = "TU_API_KEY_DE_CLOUDINARY";
-const CLOUDINARY_API_SECRET = "TU_API_SECRET_DE_CLOUDINARY";
-
-// --- LÍMITES PARA PROTEGER LOS CRÉDITOS DEL PLAN GRATUITO ---
-const MAX_CAROUSEL_ITEMS = 10;   // el carrusel es una vitrina, no necesita más
-const MAX_GALLERY_ITEMS  = 300;  // portafolio amplio pero acotado
-const MAX_FILE_SIZE_MB   = 10;   // rechaza fotos más pesadas que esto
-
-/* ================================================================
-   2) LOGIN
-   ================================================================ */
-const loginScreen = document.getElementById('loginScreen');
-const appScreen = document.getElementById('appScreen');
-
-function tryLogin(){
-  const val = document.getElementById('loginPass').value;
-  if(val === ADMIN_PASSWORD){
-    sessionStorage.setItem('ginkko_admin_ok','1');
-    loginScreen.style.display='none';
-    appScreen.style.display='block';
-    initApp();
-  } else {
-    document.getElementById('loginError').textContent = 'Clave incorrecta.';
-  }
-}
-document.getElementById('loginBtn').onclick = tryLogin;
-document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
-document.getElementById('logoutBtn').onclick = ()=>{
-  sessionStorage.removeItem('ginkko_admin_ok');
-  location.reload();
+// --- DATOS DE CONTACTO DE LA EMPRESA ---
+const CONFIG = {
+  whatsappNumber: "56972853944", // formato internacional sin + ni espacios
+  email: "ginkkopaisajismo@gmail.com",
+  faqQuestions: [
+    "Quiero cotizar mantención de áreas verdes",
+    "Necesito diseño de un jardín nuevo",
+    "¿Hacen instalación de riego automático?",
+    "Necesito poda o tala de árboles",
+    "Quiero agendar una visita técnica",
+    "Tengo otra consulta"
+  ]
 };
-if(sessionStorage.getItem('ginkko_admin_ok')==='1'){
-  loginScreen.style.display='none';
-  appScreen.style.display='block';
-  initApp();
-}
 
 /* ================================================================
-   3) TABS
+   2) UTILIDADES
    ================================================================ */
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.onclick = ()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
-  };
+function waLink(msg){
+  return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+}
+function starsHTML(rating){
+  const full = Math.round(rating);
+  return "★".repeat(full) + "☆".repeat(5-full);
+}
+function escapeHTML(str){
+  const d = document.createElement('div');
+  d.textContent = str||"";
+  return d.innerHTML;
+}
+// Inserta transformaciones de Cloudinary en la URL para ahorrar ancho de banda del plan gratuito.
+function cldUrl(url, transform){
+  if(!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', `/upload/${transform}/`);
+}
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ================================================================
+   3) HEADER / MENÚ MÓVIL
+   ================================================================ */
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', ()=> header.classList.toggle('scrolled', window.scrollY>40));
+const mobileMenu = document.getElementById('mobileMenu');
+document.getElementById('burgerBtn').onclick = ()=> mobileMenu.classList.add('open');
+document.getElementById('mobileClose').onclick = ()=> mobileMenu.classList.remove('open');
+mobileMenu.querySelectorAll('a').forEach(a=> a.onclick = ()=> mobileMenu.classList.remove('open'));
+
+/* mailto */
+document.getElementById('mailBtn').href = `mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta desde el sitio web')}&body=${encodeURIComponent('Hola Ginkko Paisajismo, quisiera hacer la siguiente consulta:')}`;
+
+/* ================================================================
+   SIMULADOR DE CHAT WHATSAPP — abre un modal con la apariencia de
+   WhatsApp. El visitante escribe su mensaje ahí, y al enviarlo se
+   abre WhatsApp real (wa.me) con ese texto ya redactado.
+   ================================================================ */
+const waModal = document.getElementById('waModal');
+const waModalInput = document.getElementById('waModalInput');
+const waModalBody = document.getElementById('waModalBody');
+
+function nowHM(){
+  return new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+}
+document.getElementById('waWelcomeTime').textContent = nowHM();
+
+function openWaModal(prefill){
+  waModal.classList.add('open');
+  waModalInput.value = prefill || '';
+  autoResizeWaInput();
+  setTimeout(()=> waModalInput.focus(), 150);
+}
+function closeWaModal(){ waModal.classList.remove('open'); }
+document.getElementById('waModalClose').onclick = closeWaModal;
+waModal.addEventListener('click', e=>{ if(e.target===waModal) closeWaModal(); });
+
+function autoResizeWaInput(){
+  waModalInput.style.height='auto';
+  waModalInput.style.height = Math.min(waModalInput.scrollHeight,90)+'px';
+}
+waModalInput.addEventListener('input', autoResizeWaInput);
+waModalInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendWaModalMessage(); }
+});
+
+function sendWaModalMessage(){
+  const text = waModalInput.value.trim();
+  if(!text) return;
+  const bubble = document.createElement('div');
+  bubble.className = 'wa-bubble out';
+  bubble.innerHTML = `<p>${escapeHTML(text)}</p><span class="wa-time">${nowHM()} ✓✓</span>`;
+  waModalBody.appendChild(bubble);
+  waModalBody.scrollTop = waModalBody.scrollHeight;
+  waModalInput.value=''; autoResizeWaInput();
+  window.open(waLink(text), '_blank');
+}
+document.getElementById('waModalSend').onclick = sendWaModalMessage;
+
+/* Todos los puntos de contacto por WhatsApp del sitio abren el simulador */
+document.getElementById('waHeaderBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
+document.getElementById('waHeroBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
+document.getElementById('waFloatBtn').addEventListener('click', ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'));
+document.getElementById('infoPhoneWa').parentElement.parentElement.style.cursor='pointer';
+document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.');
+
+const faqGrid = document.getElementById('faqGrid');
+CONFIG.faqQuestions.forEach(q=>{
+  const b = document.createElement('button');
+  b.type='button'; b.className='faq-btn';
+  b.innerHTML = `💬 ${q}`;
+  b.onclick = ()=> openWaModal(q);
+  faqGrid.appendChild(b);
+});
+document.getElementById('customWaBtn').onclick = ()=>{
+  const val = document.getElementById('customWaMsg').value.trim();
+  openWaModal(val);
+};
+
+/* ================================================================
+   4) CARRUSEL — lee de Firebase: /carousel/{id} = {imageUrl,title,subtitle,order}
+   ================================================================ */
+let carouselItems = [];
+let carIndex = 0;
+const carTrack = document.getElementById('carouselTrack');
+const carDots = document.getElementById('carouselDots');
+
+function renderCarousel(){
+  if(!carouselItems.length){
+    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados. Agrégalos desde el panel de administración.</div>';
+    carDots.innerHTML='';
+    return;
+  }
+  carTrack.innerHTML = carouselItems.map((it,i)=>`
+    <div class="carousel-slide" data-i="${i}" title="Click para ver en grande">
+      <img src="${cldUrl(it.imageUrl,'f_auto,q_auto')}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+      <div class="carousel-caption">
+        <h3>${escapeHTML(it.title||'')}</h3>
+        <p>${escapeHTML(it.subtitle||'')}</p>
+      </div>
+    </div>`).join('');
+  carDots.innerHTML = carouselItems.map((_,i)=>`<button data-i="${i}" class="${i===carIndex?'active':''}"></button>`).join('');
+  carDots.querySelectorAll('button').forEach(btn=> btn.onclick=()=>{ carIndex=+btn.dataset.i; updateCarousel(); });
+  carTrack.querySelectorAll('.carousel-slide').forEach(el=>{
+    el.style.cursor='zoom-in';
+    el.onclick = ()=> openLightbox(carouselItems[+el.dataset.i]);
+  });
+  updateCarousel();
+}
+function updateCarousel(){
+  carTrack.style.transform = `translateX(-${carIndex*100}%)`;
+  carDots.querySelectorAll('button').forEach((b,i)=> b.classList.toggle('active', i===carIndex));
+}
+document.getElementById('carPrev').onclick = ()=>{ if(!carouselItems.length)return; carIndex=(carIndex-1+carouselItems.length)%carouselItems.length; updateCarousel(); };
+document.getElementById('carNext').onclick = ()=>{ if(!carouselItems.length)return; carIndex=(carIndex+1)%carouselItems.length; updateCarousel(); };
+setInterval(()=>{ if(carouselItems.length>1){ carIndex=(carIndex+1)%carouselItems.length; updateCarousel(); } }, 6000);
+
+db.ref('carousel').on('value', snap=>{
+  const val = snap.val() || {};
+  carouselItems = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
+  carIndex = 0;
+  renderCarousel();
 });
 
 /* ================================================================
-   4) UTILIDADES
+   5) GALERÍA — lee de Firebase: /gallery/{id} = {imageUrl,title,description,order}
+   Paginado en el cliente para soportar ~1500 fotos sin saturar el DOM.
    ================================================================ */
-function escapeHTML(str){ const d=document.createElement('div'); d.textContent=str||""; return d.innerHTML; }
+let galleryItems = [];
+let galleryShown = 0;
+const GALLERY_BATCH = 9;
+const galleryGrid = document.getElementById('galleryGrid');
+const loadMoreWrap = document.getElementById('loadMoreWrap');
 
-function setupDropzone(dropId, fileId, previewId){
-  const drop = document.getElementById(dropId);
-  const input = document.getElementById(fileId);
-  const preview = document.getElementById(previewId);
-  drop.onclick = ()=> input.click();
-  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.style.borderColor='var(--gold)'; });
-  drop.addEventListener('dragleave', ()=> drop.style.borderColor='var(--line)');
-  drop.addEventListener('drop', e=>{
-    e.preventDefault(); drop.style.borderColor='var(--line)';
-    if(e.dataTransfer.files.length){ input.files = e.dataTransfer.files; showPreview(); }
-  });
-  input.onchange = showPreview;
-  function showPreview(){
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{ preview.src = reader.result; preview.style.display='block'; };
-    reader.readAsDataURL(file);
-  }
+function baSliderHTML(idPrefix, beforeUrl, afterUrl){
+  return `
+    <div class="ba-slider" id="${idPrefix}">
+      <img class="ba-img" src="${cldUrl(afterUrl,'f_auto,q_auto,w_1200,c_limit')}" alt="Después">
+      <span class="ba-tag before">ANTES</span>
+      <span class="ba-tag after">DESPUÉS</span>
+      <div class="ba-before-wrap">
+        <img src="${cldUrl(beforeUrl,'f_auto,q_auto,w_1200,c_limit')}" alt="Antes">
+      </div>
+      <div class="ba-seam"></div>
+      <div class="ba-handle">⇔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y después">
+    </div>`;
 }
-
-function uploadToCloudinary(file, progressBarEl, progressWrapEl){
-  return new Promise((resolve, reject)=>{
-    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', url);
-    progressWrapEl.style.display='block';
-    xhr.upload.onprogress = e=>{
-      if(e.lengthComputable){
-        progressBarEl.style.width = Math.round((e.loaded/e.total)*100) + '%';
-      }
-    };
-    xhr.onload = ()=>{
-      progressWrapEl.style.display='none';
-      if(xhr.status>=200 && xhr.status<300){
-        const res = JSON.parse(xhr.responseText);
-        resolve({ url: res.secure_url, publicId: res.public_id }); // devolvemos también el public_id para poder borrarla después
-      } else {
-        reject(new Error('Error al subir la imagen a Cloudinary. Revisa el cloud name y el upload preset.'));
-      }
-    };
-    xhr.onerror = ()=>{ progressWrapEl.style.display='none'; reject(new Error('Error de red al subir la imagen.')); };
-    xhr.send(formData);
+function wireBaSlider(container){
+  container.querySelectorAll('.ba-slider').forEach(slider=>{
+    const range = slider.querySelector('.ba-range');
+    const wrap = slider.querySelector('.ba-before-wrap');
+    const seam = slider.querySelector('.ba-seam');
+    const handle = slider.querySelector('.ba-handle');
+    function update(v){
+      wrap.style.clipPath = `inset(0 ${100-v}% 0 0)`;
+      seam.style.left = v+'%';
+      handle.style.left = v+'%';
+    }
+    range.addEventListener('input', ()=> update(range.value));
+    range.addEventListener('click', e=> e.stopPropagation());
   });
 }
 
-/* ---------- Borrado real en Cloudinary (requiere firma) ---------- */
-async function sha1Hex(message){
-  const enc = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-1', enc);
-  return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-async function deleteFromCloudinary(publicId){
-  if(!publicId) return; // fotos subidas antes de esta función no tienen public_id guardado
-  const timestamp = Math.floor(Date.now()/1000);
-  const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
-  const signature = await sha1Hex(paramsToSign + CLOUDINARY_API_SECRET);
-  const formData = new FormData();
-  formData.append('public_id', publicId);
-  formData.append('timestamp', timestamp);
-  formData.append('api_key', CLOUDINARY_API_KEY);
-  formData.append('signature', signature);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`, { method:'POST', body:formData });
-  const data = await res.json();
-  if(data.result !== 'ok' && data.result !== 'not found'){
-    throw new Error('Cloudinary respondió: ' + (data.result || 'error desconocido'));
+function renderGalleryBatch(){
+  if(!galleryItems.length){
+    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. Súbelos desde el panel de administración.</div>';
+    loadMoreWrap.style.display='none';
+    return;
   }
+  const slice = galleryItems.slice(0, galleryShown);
+  galleryGrid.innerHTML = slice.map((it,i)=>{
+    if(it.type==='beforeAfter'){
+      return `
+      <div class="gallery-item ba-item" data-i="${i}">
+        ${baSliderHTML('baGrid'+i, it.beforeUrl, it.afterUrl)}
+        <button class="ba-expand" data-i="${i}" aria-label="Ver en grande">⤢</button>
+        <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
+      </div>`;
+    }
+    return `
+    <div class="gallery-item" data-i="${i}">
+      <img src="${cldUrl(it.imageUrl,'f_auto,q_auto,w_800,c_limit')}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+      <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
+    </div>`;
+  }).join('');
+  wireBaSlider(galleryGrid);
+  galleryGrid.querySelectorAll('.gallery-item:not(.ba-item)').forEach(el=>{
+    el.onclick = ()=> openLightbox(slice[+el.dataset.i]);
+  });
+  galleryGrid.querySelectorAll('.ba-expand').forEach(btn=>{
+    btn.onclick = ()=> openLightbox(slice[+btn.dataset.i]);
+  });
+  loadMoreWrap.style.display = galleryShown < galleryItems.length ? 'flex' : 'none';
 }
-async function countItems(path){
-  const snap = await db.ref(path).once('value');
-  return snap.exists() ? Object.keys(snap.val()).length : 0;
+document.getElementById('loadMoreBtn').onclick = ()=>{
+  galleryShown = Math.min(galleryShown + GALLERY_BATCH, galleryItems.length);
+  renderGalleryBatch();
+};
+db.ref('gallery').on('value', snap=>{
+  const val = snap.val() || {};
+  galleryItems = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
+  galleryShown = Math.min(GALLERY_BATCH, galleryItems.length);
+  renderGalleryBatch();
+});
+
+/* lightbox */
+const lightbox = document.getElementById('lightbox');
+function openLightbox(item){
+  const imgEl = document.getElementById('lightboxImg');
+  const holder = imgEl.parentElement;
+  let baWrap = document.getElementById('lightboxBaWrap');
+  if(item.type==='beforeAfter'){
+    imgEl.style.display='none';
+    if(!baWrap){
+      baWrap = document.createElement('div');
+      baWrap.id='lightboxBaWrap';
+      baWrap.className='lightbox-ba';
+      holder.insertBefore(baWrap, imgEl);
+    }
+    baWrap.style.display='block';
+    baWrap.innerHTML = baSliderHTML('baLightbox', item.beforeUrl, item.afterUrl);
+    wireBaSlider(baWrap);
+  } else {
+    if(baWrap) baWrap.style.display='none';
+    imgEl.style.display='block';
+    imgEl.src = cldUrl(item.imageUrl,'f_auto,q_auto');
+  }
+  document.getElementById('lightboxTitle').textContent = item.title||'';
+  document.getElementById('lightboxDesc').textContent = item.description||'';
+  lightbox.classList.add('open');
 }
+document.getElementById('lightboxClose').onclick = ()=> lightbox.classList.remove('open');
+lightbox.addEventListener('click', e=>{ if(e.target===lightbox) lightbox.classList.remove('open'); });
 
 /* ================================================================
-   5) INICIALIZACIÓN DE LA APP (tras login)
+   6) RESEÑAS — lee/escribe en Firebase: /reviews/{id} = {name,location,rating,comment,date}
    ================================================================ */
-function initApp(){
-  setupDropzone('carouselDrop','carouselFile','carouselPreview');
-  setupDropzone('galleryDrop','galleryFile','galleryPreview');
-
-  /* ---------- CARRUSEL ---------- */
-  document.getElementById('carouselSubmit').onclick = async ()=>{
-    const file = document.getElementById('carouselFile').files[0];
-    const title = document.getElementById('carouselTitle').value.trim();
-    const subtitle = document.getElementById('carouselSubtitle').value.trim();
-    const order = +document.getElementById('carouselOrder').value || 0;
-    const msg = document.getElementById('carouselMsg');
-    const btn = document.getElementById('carouselSubmit');
-    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
-    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
-    try{
-      const current = await countItems('carousel');
-      if(current >= MAX_CAROUSEL_ITEMS){
-        msg.textContent = `Alcanzaste el máximo de ${MAX_CAROUSEL_ITEMS} elementos en el carrusel. Elimina alguno para agregar otro.`;
-        msg.className='msg err'; btn.disabled=false; return;
-      }
-      msg.textContent='Subiendo imagen…';
-      const { url:imageUrl, publicId } = await uploadToCloudinary(file, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
-      await db.ref('carousel').push({ imageUrl, publicId, title, subtitle, order, createdAt: Date.now() });
-      msg.textContent='¡Agregado al carrusel!'; msg.className='msg ok';
-      document.getElementById('carouselFile').value='';
-      document.getElementById('carouselTitle').value='';
-      document.getElementById('carouselSubtitle').value='';
-      document.getElementById('carouselOrder').value=0;
-      document.getElementById('carouselPreview').style.display='none';
-    }catch(err){
-      msg.textContent = err.message; msg.className='msg err';
-    }
-    btn.disabled = false;
-  };
-
-  db.ref('carousel').on('value', snap=>{
-    const val = snap.val() || {};
-    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
-    document.getElementById('carouselCount').textContent = `${items.length} / ${MAX_CAROUSEL_ITEMS} usadas`;
-    const list = document.getElementById('carouselList');
-    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en el carrusel.</div>'; return; }
-    list.innerHTML = items.map(it=>`
-      <div class="item-card">
-        <img src="${it.imageUrl}">
-        <div class="item-body">
-          <h4>${escapeHTML(it.title||'(sin título)')}</h4>
-          <p>${escapeHTML(it.subtitle||'')}</p>
-          <div class="item-actions">
-            <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
-          </div>
-        </div>
-      </div>`).join('');
-    list.querySelectorAll('.btn-danger').forEach(b=>{
-      b.onclick = async ()=>{
-        if(!confirm('¿Eliminar este elemento del carrusel? Esto también borrará la imagen de Cloudinary.')) return;
-        b.disabled = true; b.textContent='Eliminando…';
-        try{
-          await deleteFromCloudinary(b.dataset.publicId);
-        }catch(err){
-          console.error(err);
-          alert('No se pudo borrar la imagen en Cloudinary (' + err.message + '). Se eliminará igual la referencia del sitio.');
-        }
-        await db.ref('carousel/'+b.dataset.id).remove();
-      };
-    });
-  });
-
-  /* ---------- GALERÍA ---------- */
-  document.getElementById('gallerySubmit').onclick = async ()=>{
-    const file = document.getElementById('galleryFile').files[0];
-    const title = document.getElementById('galleryTitle').value.trim();
-    const description = document.getElementById('galleryDescription').value.trim();
-    const order = +document.getElementById('galleryOrder').value || 0;
-    const msg = document.getElementById('galleryMsg');
-    const btn = document.getElementById('gallerySubmit');
-    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
-    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
-    try{
-      const current = await countItems('gallery');
-      if(current >= MAX_GALLERY_ITEMS){
-        msg.textContent = `Alcanzaste el máximo de ${MAX_GALLERY_ITEMS} fotos en la galería. Elimina alguna para agregar otra.`;
-        msg.className='msg err'; btn.disabled=false; return;
-      }
-      msg.textContent='Subiendo imagen…';
-      const { url:imageUrl, publicId } = await uploadToCloudinary(file, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
-      await db.ref('gallery').push({ imageUrl, publicId, title, description, order, createdAt: Date.now() });
-      msg.textContent='¡Agregado a la galería!'; msg.className='msg ok';
-      document.getElementById('galleryFile').value='';
-      document.getElementById('galleryTitle').value='';
-      document.getElementById('galleryDescription').value='';
-      document.getElementById('galleryOrder').value=0;
-      document.getElementById('galleryPreview').style.display='none';
-    }catch(err){
-      msg.textContent = err.message; msg.className='msg err';
-    }
-    btn.disabled = false;
-  };
-
-  db.ref('gallery').on('value', snap=>{
-    const val = snap.val() || {};
-    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
-    document.getElementById('galleryCount').textContent = `${items.length} / ${MAX_GALLERY_ITEMS} usadas`;
-    const list = document.getElementById('galleryList');
-    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en la galería.</div>'; return; }
-    list.innerHTML = items.map(it=>`
-      <div class="item-card">
-        <img src="${it.imageUrl}">
-        <div class="item-body">
-          <h4>${escapeHTML(it.title||'(sin título)')}</h4>
-          <p>${escapeHTML(it.description||'')}</p>
-          <div class="item-actions">
-            <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
-          </div>
-        </div>
-      </div>`).join('');
-    list.querySelectorAll('.btn-danger').forEach(b=>{
-      b.onclick = async ()=>{
-        if(!confirm('¿Eliminar este proyecto de la galería? Esto también borrará la imagen de Cloudinary.')) return;
-        b.disabled = true; b.textContent='Eliminando…';
-        try{
-          await deleteFromCloudinary(b.dataset.publicId);
-        }catch(err){
-          console.error(err);
-          alert('No se pudo borrar la imagen en Cloudinary (' + err.message + '). Se eliminará igual la referencia del sitio.');
-        }
-        await db.ref('gallery/'+b.dataset.id).remove();
-      };
-    });
-  });
-
-  /* ---------- RESEÑAS ---------- */
-  let adminRating = 5;
-  const adminStarPicker = document.getElementById('adminStarPicker');
-  function paintAdminStars(){
-    adminStarPicker.querySelectorAll('span').forEach(s=> s.classList.toggle('filled', +s.dataset.v<=adminRating));
+const reviewsGrid = document.getElementById('reviewsGrid');
+function renderReviews(items){
+  if(!items.length){
+    reviewsGrid.innerHTML = '<div class="reviews-empty">Aún no hay reseñas. ¡Sé el primero en dejar la tuya!</div>';
+    document.getElementById('avgRating').textContent = '—';
+    document.getElementById('avgStars').textContent = '';
+    document.getElementById('ratingCount').textContent = '0 reseñas';
+    return;
   }
-  adminStarPicker.querySelectorAll('span').forEach(s=>{
-    s.onclick = ()=>{ adminRating = +s.dataset.v; paintAdminStars(); };
-  });
-  paintAdminStars();
+  const avg = items.reduce((s,r)=>s+(+r.rating||0),0) / items.length;
+  document.getElementById('avgRating').textContent = avg.toFixed(1);
+  document.getElementById('avgStars').textContent = starsHTML(avg);
+  document.getElementById('ratingCount').textContent = `${items.length} reseña${items.length===1?'':'s'}`;
 
-  document.getElementById('reviewSubmit').onclick = async ()=>{
-    const name = document.getElementById('reviewName').value.trim();
-    const location = document.getElementById('reviewLocation').value.trim();
-    const comment = document.getElementById('reviewComment').value.trim();
-    const msg = document.getElementById('reviewMsg');
-    if(!name || !comment){ msg.textContent='Completa nombre y comentario.'; msg.className='msg err'; return; }
-    try{
-      await db.ref('reviews').push({ name, location, comment, rating:adminRating, date:Date.now(), fromAdmin:true });
-      msg.textContent='¡Reseña publicada!'; msg.className='msg ok';
-      document.getElementById('reviewName').value='';
-      document.getElementById('reviewLocation').value='';
-      document.getElementById('reviewComment').value='';
-      adminRating=5; paintAdminStars();
-    }catch(err){
-      msg.textContent='Error al publicar la reseña.'; msg.className='msg err';
-    }
-  };
-
-  db.ref('reviews').on('value', snap=>{
-    const val = snap.val() || {};
-    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.date||0)-(a.date||0));
-    const list = document.getElementById('reviewsList');
-    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay reseñas.</div>'; return; }
-    list.innerHTML = items.map(it=>`
-      <div class="item-card">
-        <div class="item-body">
-          <div style="color:#C6A15B;font-size:15px;margin-bottom:6px;">${'★'.repeat(it.rating||5)}${'☆'.repeat(5-(it.rating||5))}</div>
-          <h4>${escapeHTML(it.name||'Anónimo')} ${it.fromAdmin?'<span style="color:#C6A15B;font-size:10px;">· ADMIN</span>':''}</h4>
-          <p>${escapeHTML(it.comment||'')}</p>
-          <div class="item-actions">
-            <span class="order-badge">${escapeHTML(it.location||'')}</span>
-            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
-          </div>
-        </div>
-      </div>`).join('');
-    list.querySelectorAll('.btn-danger').forEach(b=>{
-      b.onclick = ()=>{
-        if(confirm('¿Eliminar esta reseña?')) db.ref('reviews/'+b.dataset.id).remove();
-      };
-    });
-  });
+  reviewsGrid.innerHTML = items.slice(0,9).map(r=>`
+    <div class="review-card">
+      <div class="stars">${starsHTML(+r.rating||5)}</div>
+      <p class="comment">"${escapeHTML(r.comment||'')}"</p>
+      <div class="review-author">
+        <div class="avatar">${(r.name||'A').charAt(0).toUpperCase()}</div>
+        <div><b>${escapeHTML(r.name||'Anónimo')}</b><span>${escapeHTML(r.location||'')}</span></div>
+      </div>
+    </div>`).join('');
 }
-</script>
+db.ref('reviews').on('value', snap=>{
+  const val = snap.val() || {};
+  const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.date||0)-(a.date||0));
+  renderReviews(items);
+});
 
-<!-- ══════════════════════════════════════════════════════════════
-     SISTEMA DE SUSCRIPCIÓN (mensualidad) — bloquea el panel hasta
-     que se verifique una transferencia bancaria mediante IA (Gemini,
-     a través de un Cloudflare Worker que oculta la API key).
-     ══════════════════════════════════════════════════════════════ -->
+/* selector de estrellas */
+let selectedRating = 5;
+const starPicker = document.getElementById('starPicker');
+function paintStars(){
+  starPicker.querySelectorAll('span').forEach(s=> s.classList.toggle('filled', +s.dataset.v<=selectedRating));
+}
+starPicker.querySelectorAll('span').forEach(s=>{
+  s.onclick = ()=>{ selectedRating = +s.dataset.v; paintStars(); };
+});
+paintStars();
 
-<!-- Overlay de suscripción -->
-<div id="gpSusOverlay">
-  <div class="gpSusCard" id="gpSusContenido">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-      <div class="gpSusTitulo" style="margin-bottom:0;">🔐 Suscripción requerida</div>
-      <button id="gpSusBtnCerrar" onclick="gpCerrarOverlay()" style="display:none;background:none;border:none;color:#666;font-size:1.3rem;cursor:pointer;">✕</button>
-    </div>
-    <p class="gpSusSubtitulo">Para usar este panel necesitas una suscripción activa.<br>Realiza la transferencia y sube el comprobante.</p>
+document.getElementById('reviewForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const msgEl = document.getElementById('reviewMsg');
 
-    <div class="gpSusInfoPago">
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">💰 Monto</span>
-        <span class="gpDatosValor">$25.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">👤 Nombre</span>
-        <span class="gpDatosValor">Diego Francisco Palma</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🪪 RUT</span>
-        <span class="gpDatosValor">22.141.143-9</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🏦 Banco</span>
-        <span class="gpDatosValor">BancoEstado</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">💳 Tipo</span>
-        <span class="gpDatosValor">CuentaRUT</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🔢 N° Cuenta</span>
-        <span class="gpDatosValor">22141143</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22141143',this)">Copiar</button>
-      </div>
-      <button class="gpBtnCopiarTodo" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
-      <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
-    </div>
+  /* --- Anti-spam: máximo 1 reseña cada 30 días por dispositivo ---
+     Limitación honesta: esto es solo del lado del cliente (localStorage),
+     así que se puede evadir borrando datos del navegador o usando modo
+     incógnito/otro dispositivo. No sustituye moderación real, pero frena
+     el abuso casual del formulario sin necesitar backend ni cuentas. */
+  const REVIEW_COOLDOWN_MS = 30*24*60*60*1000;
+  const lastReview = localStorage.getItem('ginkko_last_review');
+  if(lastReview && (Date.now() - parseInt(lastReview,10)) < REVIEW_COOLDOWN_MS){
+    const diasRestantes = Math.ceil((REVIEW_COOLDOWN_MS - (Date.now()-parseInt(lastReview,10))) / (24*60*60*1000));
+    msgEl.textContent = `Ya publicaste una reseña desde este dispositivo. Podrás publicar otra en ${diasRestantes} día(s).`;
+    msgEl.className='form-msg err';
+    return;
+  }
 
-    <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
-    <p class="gpSusEstado" id="gpSusEstado"></p>
-    <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
-      <div style="font-size:2rem;margin-bottom:8px;">📄</div>
-      <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
-    </div>
-    <input type="file" id="gpSusInput" accept="image/*" hidden>
-    <img id="gpSusPreview" alt="Vista previa">
-  </div>
-</div>
+  const name = document.getElementById('reviewName').value.trim();
+  const location = document.getElementById('reviewLocation').value.trim();
+  const comment = document.getElementById('reviewComment').value.trim();
+  if(!name || !comment){ msgEl.textContent='Completa tu nombre y comentario.'; msgEl.className='form-msg err'; return; }
+  db.ref('reviews').push({
+    name, location, comment, rating:selectedRating, date: Date.now(), fromAdmin:false
+  }).then(()=>{
+    localStorage.setItem('ginkko_last_review', Date.now().toString());
+    msgEl.textContent = '¡Gracias por tu reseña!'; msgEl.className='form-msg ok';
+    this.reset(); selectedRating=5; paintStars();
+  }).catch(err=>{
+    msgEl.textContent = 'No pudimos guardar tu reseña. Intenta de nuevo.'; msgEl.className='form-msg err';
+    console.error(err);
+  });
+});
 
-<!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
-<div id="gpBannerSus">✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
-
-<!-- Toast copiado -->
-<div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
-
-<!-- Loader IA -->
-<div id="gpSusLoader">
-  <div class="gpLoaderParticulas" id="gpLoaderParticulas"></div>
-  <div class="gpLoaderOrb"></div>
-  <div class="gpLoaderTitulo">Verificando comprobante</div>
-  <div class="gpLoaderSub">La IA está analizando tu transferencia</div>
-  <div class="gpLoaderPasos">
-    <div class="gpLoaderPaso" id="gpPaso1"><span class="gpLoaderPasoIcono">📄</span><div class="gpLoaderPasoSpinner"></div><span>Leyendo imagen</span></div>
-    <div class="gpLoaderPaso" id="gpPaso2"><span class="gpLoaderPasoIcono">🔍</span><div class="gpLoaderPasoSpinner"></div><span>Extrayendo datos bancarios</span></div>
-    <div class="gpLoaderPaso" id="gpPaso3"><span class="gpLoaderPasoIcono">💰</span><div class="gpLoaderPasoSpinner"></div><span>Verificando monto</span></div>
-    <div class="gpLoaderPaso" id="gpPaso4"><span class="gpLoaderPasoIcono">🏦</span><div class="gpLoaderPasoSpinner"></div><span>Confirmando destinatario</span></div>
-    <div class="gpLoaderPaso" id="gpPaso5"><span class="gpLoaderPasoIcono">🔐</span><div class="gpLoaderPasoSpinner"></div><span>Validando número de operación</span></div>
-  </div>
-  <div class="gpLoaderBarra"><div class="gpLoaderBarraFill" id="gpLoaderBarraFill"></div></div>
-  <div class="gpLoaderMsg" id="gpLoaderMsg">Iniciando análisis...</div>
-</div>
-
-<script>
-// ══════════════════════════════════════════════
-// CONFIG SUSCRIPCIÓN — CAMBIA ESTOS VALORES SI ES NECESARIO
-// ══════════════════════════════════════════════
-// ⚠️ ME LLEGARON DOS ARCHIVOS DE PRUEBA CON UNA WORKER URL DISTINTA CADA UNO:
-//   - gemini-proxy.mago-diepa.workers.dev
-//   - wandering-cell-a87e.mago-diepa.workers.dev
-// Dejé la primera por ser la de nombre más descriptivo/estable, pero
-// CONFIRMA cuál de tus dos Workers está realmente desplegado y activo,
-// y reemplázala aquí si corresponde la otra.
-const GP_GEMINI_PROXY_URL = 'https://gemini-proxy.mago-diepa.workers.dev';
-const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
-const GP_DESTINATARIO = 'diego francisco palma';
-const GP_BANCO_DEST   = 'bancoestado';
-const GP_RTDB_PATH    = 'configuracion/suscripcion';
-const GP_DIAS_GRACIA1 = 5;   // días con solo banner amarillo
-const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
-
-// ══════════════════════════════════════════════
-// VERIFICAR SUSCRIPCIÓN AL CARGAR
-// ══════════════════════════════════════════════
-(function gpChequear(){
-  const intervalo = setInterval(()=>{
-    if(typeof db==='undefined') return;
-    clearInterval(intervalo);
-    db.ref(GP_RTDB_PATH).on('value', snap=>{
-      const sus = snap.val() || {};
-      const ahora = Date.now();
-      const pagadoHasta = sus.paidUntil || 0;
-      const activo = sus.isPaid===true && pagadoHasta > ahora;
-
-      if(activo){
-        document.getElementById('gpSusOverlay').classList.remove('activo');
-        const banner = document.getElementById('gpBannerSus');
-        banner.style.display = 'flex';
-        banner.style.background = 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))';
-        banner.style.borderColor = 'rgba(51,209,122,0.3)';
-        banner.style.color = '#cdeedb';
-        document.getElementById('gpBannerSusVence').textContent =
-          new Date(pagadoHasta).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
-      } else {
-        const diasVencido = pagadoHasta > 0
-          ? Math.floor((ahora - pagadoHasta)/(1000*60*60*24))
-          : 999;
-
-        if(diasVencido <= GP_DIAS_GRACIA1){
-          const banner = document.getElementById('gpBannerSus');
-          banner.style.display = 'flex';
-          banner.style.background = 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))';
-          banner.style.borderColor = 'rgba(255,204,0,0.4)';
-          banner.style.color = '#FFD166';
-          document.getElementById('gpBannerSusVence').textContent =
-            `⚠️ Suscripción vencida — ${GP_DIAS_GRACIA1 - diasVencido} día(s) para renovar`;
-
-        } else if(diasVencido <= GP_DIAS_GRACIA2){
-          document.getElementById('gpSusBtnCerrar').style.display = 'block';
-          const ya = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
-          if(!ya){
-            setTimeout(()=>{
-              if(confirm(`⚠️ Tu suscripción venció hace ${diasVencido} días.\nTe quedan ${GP_DIAS_GRACIA2-diasVencido} día(s) antes del bloqueo.\n¿Ir a renovar ahora?`)){
-                document.getElementById('gpSusOverlay').classList.add('activo');
-              } else {
-                sessionStorage.setItem('gpSusRecordar_'+Math.floor(ahora/3600000),'1');
-              }
-            },1500);
-          }
-        } else {
-          document.getElementById('gpSusOverlay').classList.add('activo');
-        }
-      }
-    });
-  },300);
+/* Si el dispositivo ya está en cooldown al cargar la página, avisar de una vez */
+(function checkReviewCooldownOnLoad(){
+  const REVIEW_COOLDOWN_MS = 30*24*60*60*1000;
+  const lastReview = localStorage.getItem('ginkko_last_review');
+  if(lastReview && (Date.now() - parseInt(lastReview,10)) < REVIEW_COOLDOWN_MS){
+    const diasRestantes = Math.ceil((REVIEW_COOLDOWN_MS - (Date.now()-parseInt(lastReview,10))) / (24*60*60*1000));
+    const msgEl = document.getElementById('reviewMsg');
+    msgEl.textContent = `Ya publicaste una reseña desde este dispositivo. Podrás publicar otra en ${diasRestantes} día(s).`;
+    msgEl.className='form-msg';
+  }
 })();
-
-function gpCerrarOverlay(){
-  document.getElementById('gpSusOverlay').classList.remove('activo');
-  sessionStorage.setItem('gpSusRecordar_'+Math.floor(Date.now()/3600000),'1');
-}
-
-// ══════════════════════════════════════════════
-// PREVIEW IMAGEN
-// ══════════════════════════════════════════════
-let gpImagenBase64 = null;
-
-document.getElementById('gpSusInput').addEventListener('change', function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    gpImagenBase64 = e.target.result;
-    const preview = document.getElementById('gpSusPreview');
-    preview.src = gpImagenBase64;
-    preview.style.display = 'block';
-    document.getElementById('gpSusUploadArea').classList.add('con-imagen');
-    document.getElementById('gpSusUploadArea').innerHTML =
-      '<div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-size:0.8rem;color:#33d17a;font-weight:700;">Imagen lista · Toca para cambiarla</div>';
-    document.getElementById('gpSusBtn').disabled = false;
-    document.getElementById('gpSusEstado').textContent = '';
-  };
-  reader.readAsDataURL(file);
-});
-
-// ══════════════════════════════════════════════
-// GEMINI — ANALIZAR COMPROBANTE (vía Cloudflare Worker proxy)
-// ══════════════════════════════════════════════
-async function gpAnalizarConGemini(){
-  const body = {
-    contents:[{parts:[
-      {text:`Eres un sistema estricto de verificación de comprobantes bancarios chilenos.
-Analiza ÚNICAMENTE la imagen proporcionada y responde SOLO con JSON plano, sin backticks ni texto extra.
-Si algún dato no es 100% legible, devuelve esValido: false.
-Estructura exacta:
-{"esValido":boolean,"monto":number,"fecha":"YYYY-MM-DD","numeroOperacion":"string","banco":"string en minúsculas","destinatario":"string en minúsculas","confianza":"alta"|"media"|"baja"}`},
-      {inline_data:{mime_type: gpImagenBase64.split(';')[0].split(':')[1], data: gpImagenBase64.split(',')[1]}}
-    ]}],
-    generationConfig:{temperature:0, maxOutputTokens:300, responseMimeType:'application/json'}
-  };
-  const res = await fetch(
-    GP_GEMINI_PROXY_URL,
-    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}
-  );
-  if(!res.ok){ const e=await res.json(); throw new Error('Gemini: '+(e.error?.message||res.status)); }
-  const data = await res.json();
-  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  const limpio = texto.replace(/```json|```/g,'').trim();
-  const match = limpio.match(/\{[\s\S]*\}/);
-  if(!match) throw new Error('La IA no pudo leer el comprobante. Intenta con una imagen más clara.');
-  return JSON.parse(match[0]);
-}
-
-// ══════════════════════════════════════════════
-// VALIDAR Y GUARDAR EN FIREBASE
-// ══════════════════════════════════════════════
-async function gpValidarYGuardar(a){
-  const errores=[];
-  if(!a.esValido) errores.push('La imagen no parece un comprobante válido.');
-  if(a.confianza==='baja') errores.push('Imagen poco clara. Intenta con una captura más nítida.');
-  if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
-  if(!(a.banco||'').toLowerCase().includes(GP_BANCO_DEST)) errores.push('El banco del destinatario no corresponde. Debe ser BancoEstado.');
-  if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
-  if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
-  if(errores.length) throw new Error(errores.join('\n'));
-
-  const snap = await db.ref(GP_RTDB_PATH+'/usedComprobantes').once('value');
-  const usados = snap.val()||{};
-  if(Object.values(usados).includes(a.numeroOperacion.trim())) throw new Error('Este comprobante ya fue utilizado.');
-
-  const ahora = Date.now();
-  const paidUntil = ahora+(30*24*60*60*1000);
-  await db.ref(GP_RTDB_PATH+'/usedComprobantes').push(a.numeroOperacion.trim());
-  await db.ref().update({
-    [GP_RTDB_PATH+'/isPaid']: true,
-    [GP_RTDB_PATH+'/paidUntil']: paidUntil,
-    [GP_RTDB_PATH+'/ultimoPago']: {fecha:a.fecha,monto:a.monto,numeroOperacion:a.numeroOperacion.trim(),ts:ahora}
-  });
-  return paidUntil;
-}
-
-// ══════════════════════════════════════════════
-// FLUJO PRINCIPAL
-// ══════════════════════════════════════════════
-async function gpVerificarComprobante(){
-  if(!gpImagenBase64) return;
-  const btn = document.getElementById('gpSusBtn');
-  btn.disabled = true;
-  try {
-    gpLoaderMostrar();
-    let analisis;
-    for(let intento=1; intento<=3; intento++){
-      try { analisis = await gpAnalizarConGemini(); break; }
-      catch(e){
-        if(intento===3) throw e;
-        await new Promise(r=>setTimeout(r, intento*4000));
-      }
-    }
-    gpLoaderOcultar();
-    const paidUntil = await gpValidarYGuardar(analisis);
-    gpMostrarExito(paidUntil);
-  } catch(err){
-    gpLoaderOcultar();
-    const msg = err.message||'';
-    const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
-    document.getElementById('gpSusEstado').textContent = esSaturacion
-      ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
-      : msg||'Error al verificar.';
-    document.getElementById('gpSusEstado').className = 'gpSusEstado error';
-    btn.disabled = false;
-  }
-}
-
-function gpMostrarExito(paidUntil){
-  const vence = new Date(paidUntil).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('gpSusContenido').innerHTML=`
-    <span class="gpSusExitoIcono">✅</span>
-    <div class="gpSusExitoTitulo">¡Suscripción activada!</div>
-    <p class="gpSusExitoSub">Activa hasta el <b style="color:#FFD700;">${vence}</b></p>
-    <p class="gpSusExitoSub" style="margin-top:8px;font-size:0.73rem;">El panel se abrirá en 3 segundos...</p>`;
-  setTimeout(()=>document.getElementById('gpSusOverlay').classList.remove('activo'),3000);
-}
-
-// ══════════════════════════════════════════════
-// COPIAR AL PORTAPAPELES
-// ══════════════════════════════════════════════
-function gpCopiar(texto, btn){
-  navigator.clipboard.writeText(texto).then(()=>{
-    const t=document.getElementById('gpToastCopy');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2000);
-    if(btn){const o=btn.textContent;btn.textContent='✅';setTimeout(()=>btn.textContent=o,2000);}
-  });
-}
-function gpCopiarTodo(){
-  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
-  const btn=document.querySelector('.gpBtnCopiarTodo');
-  if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
-}
-function gpAbrirBanco(){
-  const links=[
-    {n:'BancoEstado',u:'bancoestado://'},
-    {n:'Santander',u:'santander://'},
-    {n:'BCI',u:'bci://'},
-    {n:'Scotiabank',u:'scotiabank://'},
-    {n:'Mercado Pago',u:'mercadopago://'}
-  ];
-  let m=document.getElementById('gpBancoModal');
-  if(!m){m=document.createElement('div');m.id='gpBancoModal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
-    m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
-  m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
-    <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
-    ${links.map(b=>`<button onclick="window.location.href='${b.u}';document.getElementById('gpBancoModal').remove();"
-      style="width:100%;padding:12px;margin-bottom:7px;background:#12121f;border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;text-align:left;">🏦 ${b.n}</button>`).join('')}
-    <button onclick="document.getElementById('gpBancoModal').remove()"
-      style="width:100%;padding:10px;margin-top:4px;background:none;border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:10px;font-size:0.8rem;cursor:pointer;">Cancelar</button>
-  </div>`;
-}
-
-// ══════════════════════════════════════════════
-// LOADER ANIMADO
-// ══════════════════════════════════════════════
-const GP_LOADER_MSGS=['Procesando imagen con visión artificial...','Identificando campos del comprobante...','Comparando datos bancarios...','Verificando autenticidad...','Comprobando número de operación único...','Aplicando validaciones de seguridad...','Casi listo...'];
-let gpLoaderInterval=null, gpLoaderMsgIdx=0;
-
-function gpLoaderMostrar(){
-  document.getElementById('gpSusLoader').classList.add('activo');
-  gpLoaderBarraFill(0);
-  ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
-  gpLoaderMsgIdx=0;
-  document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
-  const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
-  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
-    p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
-    p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
-  setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
-  setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
-  setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
-  setTimeout(()=>{gpLoaderListo('gpPaso3');gpLoaderActivar('gpPaso4');gpLoaderBarraFill(60);},2400);
-  setTimeout(()=>{gpLoaderListo('gpPaso4');gpLoaderActivar('gpPaso5');gpLoaderBarraFill(80);},3200);
-  gpLoaderInterval=setInterval(()=>{
-    gpLoaderMsgIdx=(gpLoaderMsgIdx+1)%GP_LOADER_MSGS.length;
-    document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[gpLoaderMsgIdx];
-  },1100);
-}
-function gpLoaderOcultar(){
-  gpLoaderListo('gpPaso5');gpLoaderBarraFill(100);
-  clearInterval(gpLoaderInterval);
-  setTimeout(()=>document.getElementById('gpSusLoader').classList.remove('activo'),600);
-}
-function gpLoaderActivar(id){document.getElementById(id).classList.add('activo');}
-function gpLoaderListo(id){
-  const el=document.getElementById(id);
-  el.classList.remove('activo');el.classList.add('listo');
-  el.querySelector('.gpLoaderPasoIcono').textContent='✅';
-}
-function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').style.width=pct+'%';}
 </script>
+
 </body>
 </html>
