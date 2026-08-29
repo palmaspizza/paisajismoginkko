@@ -19,6 +19,19 @@
 <meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CL">
+<meta name="theme-color" content="#0F2A1E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Ginkko Paisajismo",
+  "description": "Diseño, construcción y mantención de áreas verdes en Santiago de Chile.",
+  "telephone": "+56972853944",
+  "email": "ginkkopaisajismo@gmail.com",
+  "areaServed": "Santiago, Chile",
+  "priceRange": "$$"
+}
+</script>
 <style>
 :root{
   --dark:#0F2A1E;
@@ -273,6 +286,54 @@ footer a:hover{color:var(--gold-light);}
   display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:900;color:#fff;
 }
 .wa-float:hover{background:var(--primary-light);}
+
+/* ================= SIMULADOR DE CHAT WHATSAPP ================= */
+.wa-modal{position:fixed;inset:0;background:rgba(11,32,24,.55);z-index:2100;display:none;align-items:center;justify-content:center;padding:18px;}
+.wa-modal.open{display:flex;}
+.wa-modal-inner{
+  width:100%;max-width:420px;height:min(680px,88vh);background:#E9E2D8;border-radius:14px;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(0,0,0,.4);
+}
+.wa-modal-header{
+  background:#075E54;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.wa-back{color:#fff;font-size:20px;background:none;padding:0 2px;}
+.wa-avatar{
+  width:38px;height:38px;border-radius:50%;background:#0F2A1E;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.4);
+}
+.wa-header-info{flex:1;line-height:1.25;}
+.wa-header-info b{display:block;font-size:15px;font-weight:600;}
+.wa-header-info span{font-size:12px;color:#CFE8DE;}
+.wa-header-icons{display:flex;gap:16px;font-size:16px;opacity:.9;}
+.wa-modal-body{
+  flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:8px;
+  background-color:#E9E2D8;
+  background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
+  background-size:16px 16px;
+}
+.wa-day-chip{align-self:center;background:#FFFFFF;color:#7A8580;font-size:11.5px;padding:5px 12px;border-radius:8px;margin-bottom:6px;box-shadow:0 1px 1px rgba(0,0,0,.08);}
+.wa-system-chip{align-self:center;background:#FCF3C7;color:#7A6A20;font-size:12px;text-align:center;padding:10px 14px;border-radius:8px;max-width:88%;margin-bottom:6px;line-height:1.4;}
+.wa-bubble{max-width:80%;padding:8px 10px 6px;border-radius:8px;font-size:14px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.08);position:relative;}
+.wa-bubble.in{align-self:flex-start;background:#fff;color:#1B211D;border-top-left-radius:2px;}
+.wa-bubble.out{align-self:flex-end;background:#DCF8C6;color:#1B211D;border-top-right-radius:2px;}
+.wa-bubble p{color:inherit;margin:0;}
+.wa-bubble .wa-time{display:block;text-align:right;font-size:10.5px;color:#7A8580;margin-top:4px;}
+.wa-modal-input{
+  flex-shrink:0;background:#F0F0F0;padding:10px 12px;display:flex;align-items:flex-end;gap:10px;
+}
+.wa-modal-input textarea{
+  flex:1;border:none;border-radius:20px;padding:10px 16px;font-size:14px;max-height:90px;
+  background:#fff;font-family:inherit;resize:none;line-height:1.35;
+}
+.wa-modal-input textarea:focus{outline:none;}
+.wa-send{
+  width:40px;height:40px;border-radius:50%;background:#075E54;color:#fff;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;
+}
+.wa-send:hover{background:#0b7d6e;}
+.wa-send:disabled{opacity:.5;}
+.wa-modal-hint{background:#075E54;color:#CFE8DE;text-align:center;font-size:11px;padding:6px 10px;margin:0;flex-shrink:0;}
 
 @media(max-width:900px){
   nav,.nav-right .btn-wa-desktop{display:none;}
@@ -595,9 +656,34 @@ footer a:hover{color:var(--gold-light);}
   </div>
 </footer>
 
-<a href="#" id="waFloatBtn" class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+<button id="waFloatBtn" class="wa-float" aria-label="Abrir chat de WhatsApp">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.38c1.44.79 3.06 1.2 4.71 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.92 6.45 17.5 2 12.04 2zm5.83 14.02c-.24.68-1.4 1.31-1.93 1.38-.5.07-1.09.1-1.75-.11-.4-.13-.92-.3-1.58-.59-2.78-1.2-4.6-4-4.74-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.98-2.32.26-.28.56-.35.75-.35h.53c.17 0 .4-.03.62.47.24.55.8 1.92.87 2.06.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
-</a>
+</button>
+
+<!-- ============ SIMULADOR DE CHAT WHATSAPP ============ -->
+<div class="wa-modal" id="waModal">
+  <div class="wa-modal-inner">
+    <div class="wa-modal-header">
+      <button class="wa-back" id="waModalClose" aria-label="Cerrar chat">&larr;</button>
+      <div class="wa-avatar">🌿</div>
+      <div class="wa-header-info"><b>Ginkko Paisajismo</b><span>Normalmente responde en el día</span></div>
+      <div class="wa-header-icons"><span>📞</span><span>⋮</span></div>
+    </div>
+    <div class="wa-modal-body" id="waModalBody">
+      <div class="wa-day-chip">Hoy</div>
+      <div class="wa-system-chip">Este chat se simula en el sitio web para que redactes tu mensaje. Al presionar enviar, se abrirá WhatsApp para completarlo con nuestra empresa.</div>
+      <div class="wa-bubble in">
+        <p>¡Hola! 👋 Bienvenido a <b>Ginkko Paisajismo</b>. Cuéntanos en qué podemos ayudarte con tu jardín o áreas verdes y te responderemos a la brevedad.</p>
+        <span class="wa-time" id="waWelcomeTime"></span>
+      </div>
+    </div>
+    <div class="wa-modal-input">
+      <textarea id="waModalInput" placeholder="Escribe un mensaje" rows="1"></textarea>
+      <button class="wa-send" id="waModalSend" aria-label="Enviar mensaje">➤</button>
+    </div>
+    <p class="wa-modal-hint">Serás redirigido a WhatsApp para enviar tu mensaje a nuestra empresa.</p>
+  </div>
+</div>
 
 <script>
 /* ================================================================
@@ -606,13 +692,8 @@ footer a:hover{color:var(--gold-light);}
 
 // --- FIREBASE REALTIME DATABASE ---
 // Ve a Firebase Console > Configuración del proyecto > Tus apps > SDK config
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// IMPORTANTE: este archivo carga el SDK "compat" (ver <script> arriba en <head>),
+// por eso se inicializa con firebase.initializeApp(...) y NO con import/módulos ES.
 const firebaseConfig = {
   apiKey: "AIzaSyA2-ryuA2hzg8sMig1PqaRAAAL6hv9tLOQ",
   authDomain: "garate-78386.firebaseapp.com",
@@ -623,9 +704,8 @@ const firebaseConfig = {
   appId: "1:197255768197:web:f24663c800dfafcd9661ec",
   measurementId: "G-7K1YRS5396"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getAnalytics(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // --- DATOS DE CONTACTO DE LA EMPRESA ---
 const CONFIG = {
@@ -656,6 +736,11 @@ function escapeHTML(str){
   d.textContent = str||"";
   return d.innerHTML;
 }
+// Inserta transformaciones de Cloudinary en la URL para ahorrar ancho de banda del plan gratuito.
+function cldUrl(url, transform){
+  if(!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', `/upload/${transform}/`);
+}
 document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ================================================================
@@ -668,25 +753,73 @@ document.getElementById('burgerBtn').onclick = ()=> mobileMenu.classList.add('op
 document.getElementById('mobileClose').onclick = ()=> mobileMenu.classList.remove('open');
 mobileMenu.querySelectorAll('a').forEach(a=> a.onclick = ()=> mobileMenu.classList.remove('open'));
 
-/* WhatsApp / mailto links */
-document.getElementById('waHeaderBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
-document.getElementById('waHeroBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
-document.getElementById('waFloatBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
-document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> window.open(waLink("Hola, me gustaría cotizar un servicio de paisajismo."),'_blank');
+/* mailto */
 document.getElementById('mailBtn').href = `mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta desde el sitio web')}&body=${encodeURIComponent('Hola Ginkko Paisajismo, quisiera hacer la siguiente consulta:')}`;
+
+/* ================================================================
+   SIMULADOR DE CHAT WHATSAPP — abre un modal con la apariencia de
+   WhatsApp. El visitante escribe su mensaje ahí, y al enviarlo se
+   abre WhatsApp real (wa.me) con ese texto ya redactado.
+   ================================================================ */
+const waModal = document.getElementById('waModal');
+const waModalInput = document.getElementById('waModalInput');
+const waModalBody = document.getElementById('waModalBody');
+
+function nowHM(){
+  return new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+}
+document.getElementById('waWelcomeTime').textContent = nowHM();
+
+function openWaModal(prefill){
+  waModal.classList.add('open');
+  waModalInput.value = prefill || '';
+  autoResizeWaInput();
+  setTimeout(()=> waModalInput.focus(), 150);
+}
+function closeWaModal(){ waModal.classList.remove('open'); }
+document.getElementById('waModalClose').onclick = closeWaModal;
+waModal.addEventListener('click', e=>{ if(e.target===waModal) closeWaModal(); });
+
+function autoResizeWaInput(){
+  waModalInput.style.height='auto';
+  waModalInput.style.height = Math.min(waModalInput.scrollHeight,90)+'px';
+}
+waModalInput.addEventListener('input', autoResizeWaInput);
+waModalInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendWaModalMessage(); }
+});
+
+function sendWaModalMessage(){
+  const text = waModalInput.value.trim();
+  if(!text) return;
+  const bubble = document.createElement('div');
+  bubble.className = 'wa-bubble out';
+  bubble.innerHTML = `<p>${escapeHTML(text)}</p><span class="wa-time">${nowHM()} ✓✓</span>`;
+  waModalBody.appendChild(bubble);
+  waModalBody.scrollTop = waModalBody.scrollHeight;
+  waModalInput.value=''; autoResizeWaInput();
+  window.open(waLink(text), '_blank');
+}
+document.getElementById('waModalSend').onclick = sendWaModalMessage;
+
+/* Todos los puntos de contacto por WhatsApp del sitio abren el simulador */
+document.getElementById('waHeaderBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
+document.getElementById('waHeroBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
+document.getElementById('waFloatBtn').addEventListener('click', ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'));
+document.getElementById('infoPhoneWa').parentElement.parentElement.style.cursor='pointer';
+document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.');
 
 const faqGrid = document.getElementById('faqGrid');
 CONFIG.faqQuestions.forEach(q=>{
-  const b = document.createElement('a');
-  b.className='faq-btn'; b.target='_blank'; b.rel='noopener';
-  b.href = waLink(q);
+  const b = document.createElement('button');
+  b.type='button'; b.className='faq-btn';
   b.innerHTML = `💬 ${q}`;
+  b.onclick = ()=> openWaModal(q);
   faqGrid.appendChild(b);
 });
 document.getElementById('customWaBtn').onclick = ()=>{
   const val = document.getElementById('customWaMsg').value.trim();
-  if(!val) return;
-  window.open(waLink(val),'_blank');
+  openWaModal(val);
 };
 
 /* ================================================================
@@ -699,13 +832,13 @@ const carDots = document.getElementById('carouselDots');
 
 function renderCarousel(){
   if(!carouselItems.length){
-    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados. Agrégalos desde el panel de administración.</div>';
+    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados.</div>';
     carDots.innerHTML='';
     return;
   }
-  carTrack.innerHTML = carouselItems.map(it=>`
-    <div class="carousel-slide">
-      <img src="${it.imageUrl}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+  carTrack.innerHTML = carouselItems.map((it,i)=>`
+    <div class="carousel-slide" data-i="${i}" title="Click para ver en grande">
+      <img src="${cldUrl(it.imageUrl,'f_auto,q_auto')}" alt="${escapeHTML(it.title||'')}" loading="lazy">
       <div class="carousel-caption">
         <h3>${escapeHTML(it.title||'')}</h3>
         <p>${escapeHTML(it.subtitle||'')}</p>
@@ -713,6 +846,10 @@ function renderCarousel(){
     </div>`).join('');
   carDots.innerHTML = carouselItems.map((_,i)=>`<button data-i="${i}" class="${i===carIndex?'active':''}"></button>`).join('');
   carDots.querySelectorAll('button').forEach(btn=> btn.onclick=()=>{ carIndex=+btn.dataset.i; updateCarousel(); });
+  carTrack.querySelectorAll('.carousel-slide').forEach(el=>{
+    el.style.cursor='zoom-in';
+    el.onclick = ()=> openLightbox(carouselItems[+el.dataset.i]);
+  });
   updateCarousel();
 }
 function updateCarousel(){
@@ -742,14 +879,14 @@ const loadMoreWrap = document.getElementById('loadMoreWrap');
 
 function renderGalleryBatch(){
   if(!galleryItems.length){
-    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. Súbelos desde el panel de administración.</div>';
+    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. </div>';
     loadMoreWrap.style.display='none';
     return;
   }
   const slice = galleryItems.slice(0, galleryShown);
   galleryGrid.innerHTML = slice.map((it,i)=>`
     <div class="gallery-item" data-i="${i}">
-      <img src="${it.imageUrl}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+      <img src="${cldUrl(it.imageUrl,'f_auto,q_auto,w_800,c_limit')}" alt="${escapeHTML(it.title||'')}" loading="lazy">
       <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
     </div>`).join('');
   galleryGrid.querySelectorAll('.gallery-item').forEach(el=>{
@@ -771,7 +908,7 @@ db.ref('gallery').on('value', snap=>{
 /* lightbox */
 const lightbox = document.getElementById('lightbox');
 function openLightbox(item){
-  document.getElementById('lightboxImg').src = item.imageUrl;
+  document.getElementById('lightboxImg').src = cldUrl(item.imageUrl,'f_auto,q_auto');
   document.getElementById('lightboxTitle').textContent = item.title||'';
   document.getElementById('lightboxDesc').textContent = item.description||'';
   lightbox.classList.add('open');
