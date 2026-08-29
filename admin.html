@@ -975,8 +975,8 @@ function initApp(){
     <div class="gpSusInfoPago">
       <div class="gpDatosFila">
         <span class="gpDatosLabel">💰 Monto</span>
-        <span class="gpDatosValor">$40.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('40000',this)">Copiar</button>
+        <span class="gpDatosValor">$25.000</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
       </div>
       <div class="gpDatosFila">
         <span class="gpDatosLabel">👤 Nombre</span>
@@ -1049,7 +1049,7 @@ function initApp(){
 // (contents + generationConfig + responseSchema), y luego desenvuelve la
 // respuesta nativa de Gemini (candidates[0].content.parts[0].text).
 const GP_VERIFY_ENDPOINT = 'https://wandering-cell-a87e.mago-diepa.workers.dev';
-const GP_MONTO_MIN    = 40000;      // ← monto mensual requerido
+const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
 const GP_DESTINATARIO = 'diego francisco palma';
 const GP_RUT_DEST     = '221411439'; // RUT del destinatario, SIN puntos ni guión
 const GP_BANCO_DEST   = '';  // vacío = acepta transferencias desde cualquier banco
@@ -1367,7 +1367,7 @@ function gpCopiar(texto, btn){
   });
 }
 function gpCopiarTodo(){
-  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $40.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
+  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
   const btn=document.querySelector('.gpBtnCopiarTodo');
   if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
 }
