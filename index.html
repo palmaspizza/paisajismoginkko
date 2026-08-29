@@ -201,6 +201,24 @@ nav a:hover::after{width:100%;}
 .gallery-empty{grid-column:1/-1;text-align:center;padding:50px;color:var(--ink-soft);}
 .load-more{display:flex;justify-content:center;margin-top:34px;}
 
+/* --- slider antes / después --- */
+.ba-slider{position:relative;width:100%;height:100%;overflow:hidden;background:#e4ded0;user-select:none;}
+.ba-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.ba-before-wrap{position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);}
+.ba-before-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ba-seam{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-50%);z-index:2;pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,.4);}
+.ba-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;
+  background:#fff;color:var(--dark);display:flex;align-items:center;justify-content:center;font-size:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:none;z-index:3;}
+.ba-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:4;-webkit-appearance:none;appearance:none;}
+.ba-tag{position:absolute;top:10px;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#fff;background:rgba(15,42,30,.65);
+  padding:4px 9px;border-radius:999px;z-index:2;pointer-events:none;}
+.ba-tag.before{left:10px;} .ba-tag.after{right:10px;}
+.gallery-item.ba-item .overlay{pointer-events:none;}
+.ba-expand{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(15,42,30,.7);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:5;cursor:zoom-in;}
+.lightbox-ba{position:relative;width:100%;aspect-ratio:4/3;max-height:70vh;border-radius:10px;overflow:hidden;}
+
 /* lightbox */
 .lightbox{position:fixed;inset:0;background:rgba(11,32,24,.94);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
 .lightbox.open{display:flex;}
@@ -832,7 +850,7 @@ const carDots = document.getElementById('carouselDots');
 
 function renderCarousel(){
   if(!carouselItems.length){
-    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados.</div>';
+    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados. Agrégalos desde el panel de administración.</div>';
     carDots.innerHTML='';
     return;
   }
@@ -877,20 +895,64 @@ const GALLERY_BATCH = 9;
 const galleryGrid = document.getElementById('galleryGrid');
 const loadMoreWrap = document.getElementById('loadMoreWrap');
 
+function baSliderHTML(idPrefix, beforeUrl, afterUrl){
+  return `
+    <div class="ba-slider" id="${idPrefix}">
+      <img class="ba-img" src="${cldUrl(afterUrl,'f_auto,q_auto,w_1200,c_limit')}" alt="Después">
+      <span class="ba-tag before">ANTES</span>
+      <span class="ba-tag after">DESPUÉS</span>
+      <div class="ba-before-wrap">
+        <img src="${cldUrl(beforeUrl,'f_auto,q_auto,w_1200,c_limit')}" alt="Antes">
+      </div>
+      <div class="ba-seam"></div>
+      <div class="ba-handle">⇔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y después">
+    </div>`;
+}
+function wireBaSlider(container){
+  container.querySelectorAll('.ba-slider').forEach(slider=>{
+    const range = slider.querySelector('.ba-range');
+    const wrap = slider.querySelector('.ba-before-wrap');
+    const seam = slider.querySelector('.ba-seam');
+    const handle = slider.querySelector('.ba-handle');
+    function update(v){
+      wrap.style.clipPath = `inset(0 ${100-v}% 0 0)`;
+      seam.style.left = v+'%';
+      handle.style.left = v+'%';
+    }
+    range.addEventListener('input', ()=> update(range.value));
+    range.addEventListener('click', e=> e.stopPropagation());
+  });
+}
+
 function renderGalleryBatch(){
   if(!galleryItems.length){
-    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. </div>';
+    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. Súbelos desde el panel de administración.</div>';
     loadMoreWrap.style.display='none';
     return;
   }
   const slice = galleryItems.slice(0, galleryShown);
-  galleryGrid.innerHTML = slice.map((it,i)=>`
+  galleryGrid.innerHTML = slice.map((it,i)=>{
+    if(it.type==='beforeAfter'){
+      return `
+      <div class="gallery-item ba-item" data-i="${i}">
+        ${baSliderHTML('baGrid'+i, it.beforeUrl, it.afterUrl)}
+        <button class="ba-expand" data-i="${i}" aria-label="Ver en grande">⤢</button>
+        <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
+      </div>`;
+    }
+    return `
     <div class="gallery-item" data-i="${i}">
       <img src="${cldUrl(it.imageUrl,'f_auto,q_auto,w_800,c_limit')}" alt="${escapeHTML(it.title||'')}" loading="lazy">
       <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
-    </div>`).join('');
-  galleryGrid.querySelectorAll('.gallery-item').forEach(el=>{
+    </div>`;
+  }).join('');
+  wireBaSlider(galleryGrid);
+  galleryGrid.querySelectorAll('.gallery-item:not(.ba-item)').forEach(el=>{
     el.onclick = ()=> openLightbox(slice[+el.dataset.i]);
+  });
+  galleryGrid.querySelectorAll('.ba-expand').forEach(btn=>{
+    btn.onclick = ()=> openLightbox(slice[+btn.dataset.i]);
   });
   loadMoreWrap.style.display = galleryShown < galleryItems.length ? 'flex' : 'none';
 }
@@ -908,7 +970,25 @@ db.ref('gallery').on('value', snap=>{
 /* lightbox */
 const lightbox = document.getElementById('lightbox');
 function openLightbox(item){
-  document.getElementById('lightboxImg').src = cldUrl(item.imageUrl,'f_auto,q_auto');
+  const imgEl = document.getElementById('lightboxImg');
+  const holder = imgEl.parentElement;
+  let baWrap = document.getElementById('lightboxBaWrap');
+  if(item.type==='beforeAfter'){
+    imgEl.style.display='none';
+    if(!baWrap){
+      baWrap = document.createElement('div');
+      baWrap.id='lightboxBaWrap';
+      baWrap.className='lightbox-ba';
+      holder.insertBefore(baWrap, imgEl);
+    }
+    baWrap.style.display='block';
+    baWrap.innerHTML = baSliderHTML('baLightbox', item.beforeUrl, item.afterUrl);
+    wireBaSlider(baWrap);
+  } else {
+    if(baWrap) baWrap.style.display='none';
+    imgEl.style.display='block';
+    imgEl.src = cldUrl(item.imageUrl,'f_auto,q_auto');
+  }
   document.getElementById('lightboxTitle').textContent = item.title||'';
   document.getElementById('lightboxDesc').textContent = item.description||'';
   lightbox.classList.add('open');
@@ -962,14 +1042,30 @@ paintStars();
 
 document.getElementById('reviewForm').addEventListener('submit', function(e){
   e.preventDefault();
+  const msgEl = document.getElementById('reviewMsg');
+
+  /* --- Anti-spam: máximo 1 reseña cada 30 días por dispositivo ---
+     Limitación honesta: esto es solo del lado del cliente (localStorage),
+     así que se puede evadir borrando datos del navegador o usando modo
+     incógnito/otro dispositivo. No sustituye moderación real, pero frena
+     el abuso casual del formulario sin necesitar backend ni cuentas. */
+  const REVIEW_COOLDOWN_MS = 30*24*60*60*1000;
+  const lastReview = localStorage.getItem('ginkko_last_review');
+  if(lastReview && (Date.now() - parseInt(lastReview,10)) < REVIEW_COOLDOWN_MS){
+    const diasRestantes = Math.ceil((REVIEW_COOLDOWN_MS - (Date.now()-parseInt(lastReview,10))) / (24*60*60*1000));
+    msgEl.textContent = `Ya publicaste una reseña desde este dispositivo. Podrás publicar otra en ${diasRestantes} día(s).`;
+    msgEl.className='form-msg err';
+    return;
+  }
+
   const name = document.getElementById('reviewName').value.trim();
   const location = document.getElementById('reviewLocation').value.trim();
   const comment = document.getElementById('reviewComment').value.trim();
-  const msgEl = document.getElementById('reviewMsg');
   if(!name || !comment){ msgEl.textContent='Completa tu nombre y comentario.'; msgEl.className='form-msg err'; return; }
   db.ref('reviews').push({
     name, location, comment, rating:selectedRating, date: Date.now(), fromAdmin:false
   }).then(()=>{
+    localStorage.setItem('ginkko_last_review', Date.now().toString());
     msgEl.textContent = '¡Gracias por tu reseña!'; msgEl.className='form-msg ok';
     this.reset(); selectedRating=5; paintStars();
   }).catch(err=>{
@@ -977,6 +1073,19 @@ document.getElementById('reviewForm').addEventListener('submit', function(e){
     console.error(err);
   });
 });
+
+/* Si el dispositivo ya está en cooldown al cargar la página, avisar de una vez */
+(function checkReviewCooldownOnLoad(){
+  const REVIEW_COOLDOWN_MS = 30*24*60*60*1000;
+  const lastReview = localStorage.getItem('ginkko_last_review');
+  if(lastReview && (Date.now() - parseInt(lastReview,10)) < REVIEW_COOLDOWN_MS){
+    const diasRestantes = Math.ceil((REVIEW_COOLDOWN_MS - (Date.now()-parseInt(lastReview,10))) / (24*60*60*1000));
+    const msgEl = document.getElementById('reviewMsg');
+    msgEl.textContent = `Ya publicaste una reseña desde este dispositivo. Podrás publicar otra en ${diasRestantes} día(s).`;
+    msgEl.className='form-msg';
+  }
+})();
 </script>
+
 </body>
 </html>
