@@ -89,6 +89,21 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 #gpSusOverlay.activo{display:block;}
 .gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:24px auto;box-sizing:border-box;}
 .gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
+.gpSusHero{position:relative;margin:-28px -20px 18px;padding:26px 20px 20px;border-radius:20px 20px 0 0;
+  background:linear-gradient(155deg,#241a05,#1a1a2e 70%);border-bottom:1px solid rgba(255,215,0,0.18);text-align:center;overflow:hidden;}
+.gpSusHero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(255,215,0,0.16),transparent 60%);pointer-events:none;}
+#gpSusBtnCerrar{position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.08);border:none;color:#ccc;font-size:1rem;
+  width:26px;height:26px;border-radius:50%;cursor:pointer;z-index:2;}
+.gpSusHeroIcono{font-size:2.4rem;margin-bottom:4px;position:relative;z-index:1;}
+.gpSusHeroTitulo{font-size:1.25rem;font-weight:800;color:#FFD700;position:relative;z-index:1;}
+.gpSusHeroSub{font-size:0.8rem;color:#B9C7BC;margin-top:4px;position:relative;z-index:1;line-height:1.4;}
+.gpSusHero.ok{background:linear-gradient(155deg,#0d2818,#0f2a1e 70%);border-bottom-color:rgba(51,209,122,0.25);}
+.gpSusHero.ok::before{background:radial-gradient(circle at 30% 0%,rgba(51,209,122,0.18),transparent 60%);}
+.gpSusHero.ok .gpSusHeroTitulo{color:#33d17a;}
+.gpSusHero.warn{background:linear-gradient(155deg,#2e1d05,#1a1a2e 70%);}
+.gpSusHero.warn .gpSusHeroTitulo{color:#FFB65C;}
+.gpSusHero.danger{background:linear-gradient(155deg,#340f0c,#1a1a2e 70%);border-bottom-color:rgba(224,67,53,0.3);}
+.gpSusHero.danger .gpSusHeroTitulo{color:#FF8A80;}
 .gpSusSubtitulo{font-size:0.8rem;color:#888;text-align:center;margin-bottom:20px;line-height:1.5;}
 .gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);gap:8px;}
 .gpDatosFila:last-child{border-bottom:none;}
@@ -107,7 +122,19 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
 .gpSusEstado.error{color:#ff6b6b;}
 .gpSusEstado.ok{color:#33d17a;}
-#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#cdeedb;margin:0 26px 14px;align-items:center;gap:8px;}
+#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#000 !important;margin:0 26px 14px;align-items:center;gap:8px;}
+
+/* Chip de estado siempre visible en el topbar */
+.gp-chip{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;
+  white-space:nowrap;border:1px solid transparent;transition:.3s ease;}
+.gp-chip-loading{background:rgba(255,255,255,0.08);color:#B9C7BC;}
+.gp-chip-ok{background:rgba(51,209,122,0.14);color:#7CE8A4;border-color:rgba(51,209,122,0.4);}
+.gp-chip-soon{background:rgba(255,193,7,0.14);color:#FFD666;border-color:rgba(255,193,7,0.4);}
+.gp-chip-warn{background:rgba(255,152,0,0.16);color:#FFB65C;border-color:rgba(255,152,0,0.45);animation:gpChipPulse 1.6s ease-in-out infinite;}
+.gp-chip-danger{background:rgba(224,67,53,0.18);color:#FF8A80;border-color:rgba(224,67,53,0.5);animation:gpChipPulse 1s ease-in-out infinite;}
+@keyframes gpChipPulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.gp-chip-days{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;
+  border-radius:999px;background:rgba(255,255,255,0.18);font-size:11px;margin-left:2px;}
 .gpSusExitoIcono{font-size:3.5rem;text-align:center;display:block;animation:gpBounce .5s both;}
 @keyframes gpBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
 .gpSusExitoTitulo{font-size:1.3rem;font-weight:800;color:#33d17a;text-align:center;margin:10px 0 6px;}
@@ -158,8 +185,9 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 <div id="appScreen">
   <div class="topbar">
     <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
-    <div style="display:flex;align-items:center;gap:18px;">
-      <button class="logout" id="exportBackupBtn">⬇️ Descargar respaldo (JSON)</button>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando suscripción…</div>
+      <button class="logout" id="exportBackupBtn">⬇️ Respaldo (JSON)</button>
       <button class="logout" id="logoutBtn">Cerrar sesión</button>
     </div>
   </div>
@@ -783,6 +811,481 @@ function initApp(){
 }
 </script>
 
+<!-- ══════════════════════════════════════════════════════════════
+     SISTEMA DE SUSCRIPCIÓN (mensualidad) — bloquea el panel hasta
+     que se verifique una transferencia bancaria mediante IA (Gemini,
+     a través de un Cloudflare Worker que oculta la API key).
+     ══════════════════════════════════════════════════════════════ -->
 
+<!-- Overlay de suscripción -->
+<div id="gpSusOverlay">
+  <div class="gpSusCard" id="gpSusContenido">
+    <div class="gpSusHero" id="gpSusHero">
+      <button id="gpSusBtnCerrar" onclick="gpCerrarOverlay()" style="display:none;">✕</button>
+      <div class="gpSusHeroIcono" id="gpSusHeroIcono">🔐</div>
+      <div class="gpSusHeroTitulo" id="gpSusHeroTitulo">Suscripción requerida</div>
+      <div class="gpSusHeroSub" id="gpSusHeroSub">Para usar este panel necesitas una suscripción activa</div>
+    </div>
+    <p class="gpSusSubtitulo">Realiza la transferencia con estos datos y sube el comprobante.</p>
+
+    <div class="gpSusInfoPago">
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">💰 Monto</span>
+        <span class="gpDatosValor">$25.000</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">👤 Nombre</span>
+        <span class="gpDatosValor">Diego Francisco Palma</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🪪 RUT</span>
+        <span class="gpDatosValor">22.141.143-9</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🏦 Banco</span>
+        <span class="gpDatosValor">BancoEstado</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">💳 Tipo</span>
+        <span class="gpDatosValor">CuentaRUT</span>
+      </div>
+      <div class="gpDatosFila">
+        <span class="gpDatosLabel">🔢 N° Cuenta</span>
+        <span class="gpDatosValor">22141143</span>
+        <button class="gpBtnCopiar" onclick="gpCopiar('22141143',this)">Copiar</button>
+      </div>
+      <button class="gpBtnCopiarTodo" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
+      <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
+    </div>
+
+    <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
+    <p class="gpSusEstado" id="gpSusEstado"></p>
+    <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
+      <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+      <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
+    </div>
+    <input type="file" id="gpSusInput" accept="image/*" hidden>
+    <img id="gpSusPreview" alt="Vista previa">
+  </div>
+</div>
+
+<!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
+<div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
+
+<!-- Toast copiado -->
+<div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
+
+<!-- Loader IA -->
+<div id="gpSusLoader">
+  <div class="gpLoaderParticulas" id="gpLoaderParticulas"></div>
+  <div class="gpLoaderOrb"></div>
+  <div class="gpLoaderTitulo">Verificando comprobante</div>
+  <div class="gpLoaderSub">La IA está analizando tu transferencia</div>
+  <div class="gpLoaderPasos">
+    <div class="gpLoaderPaso" id="gpPaso1"><span class="gpLoaderPasoIcono">📄</span><div class="gpLoaderPasoSpinner"></div><span>Leyendo imagen</span></div>
+    <div class="gpLoaderPaso" id="gpPaso2"><span class="gpLoaderPasoIcono">🔍</span><div class="gpLoaderPasoSpinner"></div><span>Verificando comprobante</span></div>
+    <div class="gpLoaderPaso" id="gpPaso3"><span class="gpLoaderPasoIcono">💰</span><div class="gpLoaderPasoSpinner"></div><span>Verificando monto</span></div>
+    <div class="gpLoaderPaso" id="gpPaso4"><span class="gpLoaderPasoIcono">🏦</span><div class="gpLoaderPasoSpinner"></div><span>Confirmando destinatario</span></div>
+    <div class="gpLoaderPaso" id="gpPaso5"><span class="gpLoaderPasoIcono">🔐</span><div class="gpLoaderPasoSpinner"></div><span>Validando número de operación</span></div>
+  </div>
+  <div class="gpLoaderBarra"><div class="gpLoaderBarraFill" id="gpLoaderBarraFill"></div></div>
+  <div class="gpLoaderMsg" id="gpLoaderMsg">Iniciando análisis...</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG SUSCRIPCIÓN — CAMBIA ESTOS VALORES SI ES NECESARIO
+// ══════════════════════════════════════════════
+// ⚠️ IMPORTANTE:
+// Tu Worker real es un "pasamano" (passthrough): reenvía tal cual el body
+// que le mandes a la API de Gemini y te devuelve la respuesta de Gemini sin
+// tocarla. Por eso el FRONTEND (aquí abajo) arma el body completo de Gemini
+// (contents + generationConfig + responseSchema), y luego desenvuelve la
+// respuesta nativa de Gemini (candidates[0].content.parts[0].text).
+const GP_VERIFY_ENDPOINT = 'https://wandering-cell-a87e.mago-diepa.workers.dev';
+const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
+const GP_DESTINATARIO = 'diego francisco palma';
+const GP_RUT_DEST     = '221411439'; // RUT del destinatario, SIN puntos ni guión
+const GP_BANCO_DEST   = '';  // vacío = acepta transferencias desde cualquier banco
+const GP_RTDB_PATH    = 'configuracion/suscripcion';
+const GP_DIAS_GRACIA1 = 5;   // días con solo banner amarillo
+const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
+
+// ══════════════════════════════════════════════
+// VERIFICAR SUSCRIPCIÓN AL CARGAR — actualiza SIEMPRE 3 lugares:
+// el chip del topbar, el banner bajo las pestañas, y la franja
+// del overlay (si está abierto). Todos muestran días restantes.
+// ══════════════════════════════════════════════
+function gpFormatoFecha(ts){
+  return new Date(ts).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
+}
+
+function gpActualizarUI(estado){
+  const chip = document.getElementById('gpSusChip');
+  const banner = document.getElementById('gpBannerSus');
+  const hero = document.getElementById('gpSusHero');
+  const heroIcono = document.getElementById('gpSusHeroIcono');
+  const heroTitulo = document.getElementById('gpSusHeroTitulo');
+  const heroSub = document.getElementById('gpSusHeroSub');
+
+  chip.className = 'gp-chip gp-chip-' + estado.nivel;
+  chip.innerHTML = estado.chip;
+
+  banner.style.display = 'flex';
+  banner.className = '';
+  banner.style.background = estado.bannerBg;
+  banner.style.borderColor = estado.bannerBorder;
+  banner.style.color = estado.bannerColor;
+  banner.innerHTML = estado.banner;
+
+  hero.className = 'gpSusHero ' + estado.heroClase;
+  heroIcono.textContent = estado.heroIcono;
+  heroTitulo.textContent = estado.heroTitulo;
+  heroSub.innerHTML = estado.heroSub;
+}
+
+(function gpChequear(){
+  const intervalo = setInterval(()=>{
+    if(typeof db==='undefined') return;
+    clearInterval(intervalo);
+    db.ref(GP_RTDB_PATH).on('value', snap=>{
+      const sus = snap.val() || {};
+      const ahora = Date.now();
+      const pagadoHasta = sus.paidUntil || 0;
+      const activo = sus.isPaid===true && pagadoHasta > ahora;
+
+      if(activo){
+        document.getElementById('gpSusOverlay').classList.remove('activo');
+        const diasRestantes = Math.max(1, Math.ceil((pagadoHasta - ahora)/(1000*60*60*24)));
+        const porVencer = diasRestantes <= GP_DIAS_GRACIA1; // avisa antes incluso de vencer
+
+        gpActualizarUI({
+          nivel: porVencer ? 'soon' : 'ok',
+          chip: porVencer
+            ? `⏳ Vence en <span class="gp-chip-days">${diasRestantes}d</span>`
+            : `🌿 Activa · <span class="gp-chip-days">${diasRestantes}d</span> restantes`,
+          bannerBg: porVencer ? 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))' : 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))',
+          bannerBorder: porVencer ? 'rgba(255,204,0,0.4)' : 'rgba(51,209,122,0.3)',
+          bannerColor: porVencer ? '#FFD166' : '#cdeedb',
+          banner: porVencer
+            ? `⏳ Tu suscripción vence en <b>${diasRestantes} día(s)</b> — el ${gpFormatoFecha(pagadoHasta)}. Renueva cuando quieras desde este mismo panel.`
+            : `✅ Suscripción activa hasta <b>${gpFormatoFecha(pagadoHasta)}</b> · quedan ${diasRestantes} día(s).`,
+          heroClase: porVencer ? 'warn' : 'ok',
+          heroIcono: porVencer ? '⏳' : '✅',
+          heroTitulo: porVencer ? `Vence en ${diasRestantes} día(s)` : 'Suscripción activa',
+          heroSub: `Válida hasta el <b>${gpFormatoFecha(pagadoHasta)}</b>`
+        });
+
+      } else {
+        const diasVencido = pagadoHasta > 0
+          ? Math.floor((ahora - pagadoHasta)/(1000*60*60*24))
+          : 999;
+
+        if(diasVencido <= GP_DIAS_GRACIA1){
+          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
+          gpActualizarUI({
+            nivel: 'warn',
+            chip: `⚠️ Vencida hace <span class="gp-chip-days">${diasVencido}d</span>`,
+            bannerBg: 'linear-gradient(135deg,rgba(255,152,0,0.14),rgba(255,152,0,0.04))',
+            bannerBorder: 'rgba(255,152,0,0.45)',
+            bannerColor: '#FFB65C',
+            banner: `⚠️ Suscripción vencida hace <b>${diasVencido} día(s)</b>. Te quedan <b>${diasParaBloqueo} día(s)</b> antes de que el panel se bloquee.`,
+            heroClase: 'warn',
+            heroIcono: '⚠️',
+            heroTitulo: `Vencida hace ${diasVencido} día(s)`,
+            heroSub: `Renueva antes de <b>${diasParaBloqueo} día(s)</b> para evitar el bloqueo del panel`
+          });
+
+        } else if(diasVencido <= GP_DIAS_GRACIA2){
+          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
+          document.getElementById('gpSusBtnCerrar').style.display = 'block';
+          gpActualizarUI({
+            nivel: 'danger',
+            chip: `🚨 Bloqueo en <span class="gp-chip-days">${diasParaBloqueo}d</span>`,
+            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
+            bannerBorder: 'rgba(224,67,53,0.5)',
+            bannerColor: '#FF8A80',
+            banner: `🚨 Suscripción vencida hace <b>${diasVencido} día(s)</b>. El panel se bloqueará en <b>${diasParaBloqueo} día(s)</b> si no renuevas.`,
+            heroClase: 'danger',
+            heroIcono: '🚨',
+            heroTitulo: `Bloqueo en ${diasParaBloqueo} día(s)`,
+            heroSub: `Vencida hace <b>${diasVencido} día(s)</b> — renueva ahora para evitar interrupciones`
+          });
+          const ya = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
+          if(!ya){
+            setTimeout(()=>{
+              if(confirm(`⚠️ Tu suscripción venció hace ${diasVencido} días.\nTe quedan ${diasParaBloqueo} día(s) antes del bloqueo.\n¿Ir a renovar ahora?`)){
+                document.getElementById('gpSusOverlay').classList.add('activo');
+              } else {
+                sessionStorage.setItem('gpSusRecordar_'+Math.floor(ahora/3600000),'1');
+              }
+            },1500);
+          }
+        } else {
+          gpActualizarUI({
+            nivel: 'danger',
+            chip: `🔒 Suscripción Inactiva`,
+            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
+            bannerBorder: 'rgba(224,67,53,0.5)',
+            bannerColor: '#FF8A80',
+            banner: `🔒 Suscripción Inactiva por falta de pago. Verifica un comprobante para reactivarlo.`,
+            heroClase: 'danger',
+            heroIcono: '🔒',
+            heroTitulo: 'Suscripción Inactiva',
+            heroSub: `Verifica tu comprobante de transferencia para reactivarlo`
+          });
+          document.getElementById('gpSusOverlay').classList.add('activo');
+        }
+      }
+    });
+  },300);
+})();
+
+function gpCerrarOverlay(){
+  document.getElementById('gpSusOverlay').classList.remove('activo');
+  sessionStorage.setItem('gpSusRecordar_'+Math.floor(Date.now()/3600000),'1');
+}
+
+// ══════════════════════════════════════════════
+// PREVIEW IMAGEN
+// ══════════════════════════════════════════════
+let gpImagenBase64 = null;
+
+document.getElementById('gpSusInput').addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    gpImagenBase64 = e.target.result;
+    const preview = document.getElementById('gpSusPreview');
+    preview.src = gpImagenBase64;
+    preview.style.display = 'block';
+    document.getElementById('gpSusUploadArea').classList.add('con-imagen');
+    document.getElementById('gpSusUploadArea').innerHTML =
+      '<div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-size:0.8rem;color:#33d17a;font-weight:700;">Imagen lista · Toca para cambiarla</div>';
+    document.getElementById('gpSusBtn').disabled = false;
+    document.getElementById('gpSusEstado').textContent = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ══════════════════════════════════════════════
+// VERIFICAR COMPROBANTE (vía Worker "pasamano" hacia Gemini)
+// ══════════════════════════════════════════════
+async function gpAnalizarConGemini(){
+  const mimeType = gpImagenBase64.split(';')[0].split(':')[1]; // ej: image/jpeg
+  const base64Puro = gpImagenBase64.split(',')[1];
+
+  const geminiBody = {
+    contents: [{
+      parts: [
+        { text: `Analiza este comprobante bancario chileno y extrae los datos exactos. Si algún dato no es 100% legible, asigna esValido: false. El campo "banco" debe ser el banco DESTINATARIO (a quien se transfirió el dinero), no el banco de origen. El campo "destinatario" es el nombre de la persona que recibió la transferencia.` },
+        { inline_data: { mime_type: mimeType, data: base64Puro } }
+      ]
+    }],
+    safetySettings: [
+      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+    ],
+    generationConfig: {
+      temperature: 0,
+      maxOutputTokens: 2048,
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: 'OBJECT',
+        properties: {
+          esValido: { type: 'BOOLEAN' },
+          monto: { type: 'NUMBER' },
+          fecha: { type: 'STRING' },
+          numeroOperacion: { type: 'STRING' },
+          banco: { type: 'STRING' },
+          destinatario: { type: 'STRING' },
+          rut: { type: 'STRING' },
+          confianza: { type: 'STRING', enum: ['alta','media','baja'] }
+        },
+        required: ['esValido','monto','fecha','numeroOperacion','banco','destinatario','rut','confianza']
+      }
+    }
+  };
+
+  const res = await fetch(GP_VERIFY_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(geminiBody)
+  });
+
+  const data = await res.json();
+
+  if(!res.ok){
+    throw new Error('Gemini: ' + (data.error?.message || res.status));
+  }
+
+  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!texto){
+    const finishReason = data.candidates?.[0]?.finishReason;
+    throw new Error(`La IA no devolvió texto legible. Razón: ${finishReason || 'desconocida'}. Intenta con una imagen más clara.`);
+  }
+
+  // Por seguridad, por si algún día se saca responseSchema y vuelve texto con backticks:
+  const limpio = texto.replace(/```json|```/g,'').trim();
+  const match = limpio.match(/\{[\s\S]*\}/);
+  if(!match) throw new Error('No se pudo interpretar la respuesta de la IA.');
+  return JSON.parse(match[0]);
+}
+
+// ══════════════════════════════════════════════
+// VALIDAR Y GUARDAR EN FIREBASE
+// ══════════════════════════════════════════════
+async function gpValidarYGuardar(a){
+  const errores=[];
+  if(!a.esValido) errores.push('La imagen no parece un comprobante válido.');
+  if(a.confianza==='baja') errores.push('Imagen poco clara. Intenta con una captura más nítida.');
+  if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
+  // Banco origen no se valida: se aceptan transferencias desde cualquier banco chileno.
+  if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
+  if(a.rut){
+    const rutLimpio = a.rut.toString().toLowerCase().replace(/[.\-\s]/g,'');
+    if(rutLimpio !== GP_RUT_DEST) errores.push('El RUT del destinatario no coincide.');
+  }
+  if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
+  if(errores.length) throw new Error(errores.join('\n'));
+
+  const snap = await db.ref(GP_RTDB_PATH+'/usedComprobantes').once('value');
+  const usados = snap.val()||{};
+  if(Object.values(usados).includes(a.numeroOperacion.trim())) throw new Error('Este comprobante ya fue utilizado.');
+
+  const ahora = Date.now();
+  const paidUntil = ahora+(30*24*60*60*1000);
+  await db.ref(GP_RTDB_PATH+'/usedComprobantes').push(a.numeroOperacion.trim());
+  await db.ref().update({
+    [GP_RTDB_PATH+'/isPaid']: true,
+    [GP_RTDB_PATH+'/paidUntil']: paidUntil,
+    [GP_RTDB_PATH+'/ultimoPago']: {fecha:a.fecha,monto:a.monto,numeroOperacion:a.numeroOperacion.trim(),ts:ahora}
+  });
+  return paidUntil;
+}
+
+// ══════════════════════════════════════════════
+// FLUJO PRINCIPAL
+// ══════════════════════════════════════════════
+async function gpVerificarComprobante(){
+  if(!gpImagenBase64) return;
+  const btn = document.getElementById('gpSusBtn');
+  btn.disabled = true;
+  try {
+    gpLoaderMostrar();
+    let analisis;
+    for(let intento=1; intento<=3; intento++){
+      try { analisis = await gpAnalizarConGemini(); break; }
+      catch(e){
+        if(intento===3) throw e;
+        await new Promise(r=>setTimeout(r, intento*4000));
+      }
+    }
+    gpLoaderOcultar();
+    const paidUntil = await gpValidarYGuardar(analisis);
+    gpMostrarExito(paidUntil);
+  } catch(err){
+    gpLoaderOcultar();
+    const msg = err.message||'';
+    const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
+    document.getElementById('gpSusEstado').textContent = esSaturacion
+      ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
+      : msg||'Error al verificar.';
+    document.getElementById('gpSusEstado').className = 'gpSusEstado error';
+    btn.disabled = false;
+  }
+}
+
+function gpMostrarExito(paidUntil){
+  const vence = new Date(paidUntil).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('gpSusContenido').innerHTML=`
+    <span class="gpSusExitoIcono">✅</span>
+    <div class="gpSusExitoTitulo">¡Suscripción activada!</div>
+    <p class="gpSusExitoSub">Activa hasta el <b style="color:#FFD700;">${vence}</b></p>
+    <p class="gpSusExitoSub" style="margin-top:8px;font-size:0.73rem;">El panel se abrirá en 3 segundos...</p>`;
+  setTimeout(()=>document.getElementById('gpSusOverlay').classList.remove('activo'),3000);
+}
+
+// ══════════════════════════════════════════════
+// COPIAR AL PORTAPAPELES
+// ══════════════════════════════════════════════
+function gpCopiar(texto, btn){
+  navigator.clipboard.writeText(texto).then(()=>{
+    const t=document.getElementById('gpToastCopy');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2000);
+    if(btn){const o=btn.textContent;btn.textContent='✅';setTimeout(()=>btn.textContent=o,2000);}
+  });
+}
+function gpCopiarTodo(){
+  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
+  const btn=document.querySelector('.gpBtnCopiarTodo');
+  if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
+}
+function gpAbrirBanco(){
+  const links=[
+    {n:'BancoEstado',u:'bancoestado://'},
+    {n:'Santander',u:'santander://'},
+    {n:'BCI',u:'bci://'},
+    {n:'Scotiabank',u:'scotiabank://'},
+    {n:'Mercado Pago',u:'mercadopago://'}
+  ];
+  let m=document.getElementById('gpBancoModal');
+  if(!m){m=document.createElement('div');m.id='gpBancoModal';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+    m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
+  m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
+    <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
+    ${links.map(b=>`<button onclick="window.location.href='${b.u}';document.getElementById('gpBancoModal').remove();"
+      style="width:100%;padding:12px;margin-bottom:7px;background:#12121f;border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;text-align:left;">🏦 ${b.n}</button>`).join('')}
+    <button onclick="document.getElementById('gpBancoModal').remove()"
+      style="width:100%;padding:10px;margin-top:4px;background:none;border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:10px;font-size:0.8rem;cursor:pointer;">Cancelar</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// LOADER ANIMADO
+// ══════════════════════════════════════════════
+const GP_LOADER_MSGS=['Procesando imagen con visión artificial...','Identificando campos del comprobante...','Comparando datos bancarios...','Verificando autenticidad...','Comprobando número de operación único...','Aplicando validaciones de seguridad...','Casi listo...'];
+let gpLoaderInterval=null, gpLoaderMsgIdx=0;
+
+function gpLoaderMostrar(){
+  document.getElementById('gpSusLoader').classList.add('activo');
+  gpLoaderBarraFill(0);
+  ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
+  gpLoaderMsgIdx=0;
+  document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
+  const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
+  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
+    p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
+    p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
+  setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
+  setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
+  setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
+  setTimeout(()=>{gpLoaderListo('gpPaso3');gpLoaderActivar('gpPaso4');gpLoaderBarraFill(60);},2400);
+  setTimeout(()=>{gpLoaderListo('gpPaso4');gpLoaderActivar('gpPaso5');gpLoaderBarraFill(80);},3200);
+  gpLoaderInterval=setInterval(()=>{
+    gpLoaderMsgIdx=(gpLoaderMsgIdx+1)%GP_LOADER_MSGS.length;
+    document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[gpLoaderMsgIdx];
+  },1100);
+}
+function gpLoaderOcultar(){
+  gpLoaderListo('gpPaso5');gpLoaderBarraFill(100);
+  clearInterval(gpLoaderInterval);
+  setTimeout(()=>document.getElementById('gpSusLoader').classList.remove('activo'),600);
+}
+function gpLoaderActivar(id){document.getElementById(id).classList.add('activo');}
+function gpLoaderListo(id){
+  const el=document.getElementById(id);
+  el.classList.remove('activo');el.classList.add('listo');
+  el.querySelector('.gpLoaderPasoIcono').textContent='✅';
+}
+function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').style.width=pct+'%';}
+</script>
 </body>
 </html>
