@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ginkko Paisajismo | Diseño y mantención de áreas verdes</title>
+<meta name="description" content="Diseñamos, construimos y mantenemos áreas verdes en Santiago. Más de 10 años transformando espacios en naturaleza.">
+
+<!-- ============================================================ -->
+<!-- FIREBASE (Realtime Database) - SDK compat, plan gratuito Spark -->
+<!-- ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link rel="icon" href="logoicon.jpeg" type="image/png">
+<meta property="og:title" content="Ginkko Paisajismo | Transformamos espacios en naturaleza viva">
+<meta property="og:description" content="Diseñamos, construimos y mantenemos áreas verdes para condominios, empresas y hogares en Santiago, con más de una década de experiencia.">
+<meta property="og:image" content="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<style>
+:root{
+  --dark:#0F2A1E;
+  --dark-2:#0B2018;
+  --primary:#1F5C42;
+  --primary-light:#3E7A5C;
+  --gold:#C6A15B;
+  --gold-light:#E3C888;
+  --cream:#F6F3EC;
+  --cream-2:#EFE9DC;
+  --ink:#1B211D;
+  --ink-soft:#4B564E;
+  --line:rgba(27,33,29,.12);
+  --white:#FFFFFF;
+  --radius:16px;
+  --shadow:0 20px 50px -20px rgba(15,42,30,.35);
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, Segoe UI, sans-serif;
+}
+@font-face{font-family:'Fraunces';src:local('Georgia');}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--cream);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.08;margin:0;color:var(--dark);}
+p{margin:0;color:var(--ink-soft);line-height:1.65;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.container{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,48px);}
+.eyebrow{
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+  font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--gold);display:inline-block;}
+.section{padding:clamp(64px,9vw,120px) 0;position:relative;}
+.section-head{max-width:640px;margin-bottom:48px;}
+.section-head h2{font-size:clamp(28px,4vw,42px);}
+.section-head p{margin-top:14px;font-size:17px;}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:999px;
+  font-weight:600;font-size:15px;transition:.25s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--gold);color:var(--dark);}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-outline{border:1.5px solid rgba(255,255,255,.55);color:#fff;}
+.btn-outline:hover{background:rgba(255,255,255,.12);}
+.btn-outline-dark{border:1.5px solid var(--line);color:var(--ink);}
+.btn-outline-dark:hover{border-color:var(--dark);}
+.btn-wa{background:#1F5C42;color:#fff;}
+.btn-wa:hover{background:var(--primary-light);}
+
+/* --- leaf vein divider (signature element) --- */
+.vein-divider{width:100%;height:46px;display:flex;justify-content:center;align-items:center;overflow:hidden;pointer-events:none;}
+.vein-divider svg{opacity:.35;}
+
+/* --- header --- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:18px 0;transition:.35s ease;
+}
+header.scrolled{background:rgba(15,42,30,.92);backdrop-filter:blur(10px);padding:12px 0;box-shadow:0 6px 24px rgba(0,0,0,.15);}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;}
+.logo svg{width:30px;height:30px;}
+.logo span{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:.04em;}
+.logo small{display:block;font-size:9px;letter-spacing:.2em;color:var(--gold-light);font-family:var(--font-body);font-weight:600;}
+nav ul{list-style:none;display:flex;gap:32px;margin:0;padding:0;}
+nav a{color:#EFE9DC;font-size:14.5px;font-weight:500;position:relative;padding:4px 0;}
+nav a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:1.5px;background:var(--gold);transition:.25s;}
+nav a:hover::after{width:100%;}
+.nav-right{display:flex;align-items:center;gap:18px;}
+.burger{display:none;flex-direction:column;gap:5px;background:none;}
+.burger span{width:24px;height:2px;background:#fff;border-radius:2px;}
+.mobile-menu{
+  position:fixed;inset:0;background:var(--dark);z-index:1100;display:flex;flex-direction:column;
+  padding:28px;transform:translateX(100%);transition:.35s ease;
+}
+.mobile-menu.open{transform:translateX(0);}
+.mobile-menu ul{list-style:none;padding:0;margin:60px 0 0;display:flex;flex-direction:column;gap:26px;}
+.mobile-menu a{color:#fff;font-size:22px;font-family:var(--font-display);}
+.mobile-close{align-self:flex-end;color:#fff;font-size:28px;}
+
+/* --- hero --- */
+.hero{
+  position:relative;min-height:100vh;display:flex;align-items:center;color:#fff;
+  background:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 60%);
+  overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;opacity:.55;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--dark) 0%,rgba(15,42,30,.35) 45%,rgba(15,42,30,.75) 100%);}
+.hero-inner{position:relative;z-index:2;padding-top:110px;padding-bottom:60px;}
+.hero h1{color:#fff;font-size:clamp(38px,6.4vw,68px);max-width:780px;}
+.hero h1 em{color:var(--gold-light);font-style:normal;}
+.hero p.sub{color:#DCE6DE;font-size:18px;max-width:560px;margin-top:20px;}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-top:34px;}
+.hero-stats{display:flex;gap:0;margin-top:60px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);padding-top:28px;}
+.stat{flex:1;min-width:150px;padding-right:24px;}
+.ring{position:relative;width:54px;height:54px;margin-bottom:10px;}
+.ring svg{transform:rotate(-90deg);}
+.ring circle{fill:none;stroke-width:3;}
+.ring .track{stroke:rgba(255,255,255,.15);}
+.ring .fill{stroke:var(--gold);stroke-linecap:round;}
+.stat b{display:block;font-family:var(--font-display);font-size:26px;color:#fff;}
+.stat span{font-size:12.5px;color:#B9C7BC;letter-spacing:.03em;}
+
+/* --- carousel (destacados) --- */
+.carousel-section{background:var(--dark);color:#fff;}
+.carousel-section .section-head h2{color:#fff;}
+.carousel-section .section-head p{color:#B9C7BC;}
+.carousel{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.carousel-track{display:flex;transition:transform .6s cubic-bezier(.65,0,.35,1);}
+.carousel-slide{min-width:100%;position:relative;aspect-ratio:16/8;background:#0c1c14;}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;}
+.carousel-caption{position:absolute;left:0;right:0;bottom:0;padding:36px clamp(20px,5vw,50px);
+  background:linear-gradient(0deg,rgba(0,0,0,.72),transparent);}
+.carousel-caption h3{color:#fff;font-size:clamp(20px,3vw,30px);}
+.carousel-caption p{color:#DCE6DE;margin-top:6px;max-width:520px;}
+.carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);transition:.2s;z-index:5;}
+.carousel-nav:hover{background:var(--gold);color:var(--dark);}
+.carousel-prev{left:16px;} .carousel-next{right:16px;}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:18px;}
+.carousel-dots button{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:.25s;}
+.carousel-dots button.active{background:var(--gold);width:22px;border-radius:4px;}
+.carousel-empty{padding:60px;text-align:center;color:#B9C7BC;}
+
+/* --- nosotros --- */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.about-img{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5;}
+.about-img img{width:100%;height:100%;object-fit:cover;}
+.about-text p{font-size:16.5px;margin-bottom:16px;}
+.about-text p strong{color:var(--dark);}
+
+/* --- servicios --- */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.service-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 26px;transition:.3s ease;
+}
+.service-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:transparent;}
+.service-icon{width:46px;height:46px;border-radius:12px;background:var(--cream-2);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--primary);}
+.service-card h4{font-size:18px;margin-bottom:8px;}
+.service-card p{font-size:14.5px;}
+
+/* --- galeria --- */
+.gallery-section{background:var(--cream-2);}
+.gallery-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.chip{padding:9px 18px;border-radius:999px;border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--ink-soft);background:#fff;}
+.chip.active{background:var(--dark);color:#fff;border-color:var(--dark);}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gallery-item{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;background:#e4ded0;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:.5s ease;}
+.gallery-item:hover img{transform:scale(1.08);}
+.gallery-item .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(15,42,30,.75),transparent 55%);
+  opacity:0;transition:.3s;display:flex;align-items:flex-end;padding:16px;}
+.gallery-item:hover .overlay{opacity:1;}
+.gallery-item .overlay h5{color:#fff;font-size:14.5px;font-family:var(--font-body);font-weight:600;}
+.gallery-empty{grid-column:1/-1;text-align:center;padding:50px;color:var(--ink-soft);}
+.load-more{display:flex;justify-content:center;margin-top:34px;}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(11,32,24,.94);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
+.lightbox.open{display:flex;}
+.lightbox-inner{max-width:900px;width:100%;}
+.lightbox-inner img{width:100%;max-height:70vh;object-fit:contain;border-radius:10px;}
+.lightbox-info{color:#fff;margin-top:16px;text-align:center;}
+.lightbox-info h4{color:#fff;font-size:20px;}
+.lightbox-info p{color:#C9D3CB;margin-top:6px;}
+.lightbox-close{position:absolute;top:24px;right:30px;color:#fff;font-size:32px;line-height:1;}
+
+/* --- reseñas --- */
+.reviews-section{}
+.reviews-top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-bottom:40px;}
+.rating-summary{display:flex;align-items:center;gap:18px;}
+.rating-num{font-family:var(--font-display);font-size:52px;color:var(--dark);}
+.stars{color:var(--gold);font-size:18px;letter-spacing:2px;}
+.rating-summary .stars{font-size:20px;}
+.rating-count{font-size:13px;color:var(--ink-soft);}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:44px;}
+.review-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+.review-card .stars{margin-bottom:12px;}
+.review-card p.comment{color:var(--ink);font-size:15px;margin-bottom:16px;}
+.review-author{display:flex;align-items:center;gap:10px;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;font-family:var(--font-display);}
+.review-author b{font-size:14px;color:var(--dark);}
+.review-author span{font-size:12px;color:var(--ink-soft);}
+.reviews-empty{grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-soft);}
+
+.review-form{background:var(--dark);border-radius:var(--radius);padding:clamp(28px,5vw,44px);color:#fff;}
+.review-form h3{color:#fff;font-size:24px;margin-bottom:6px;}
+.review-form>p{color:#B9C7BC;margin-bottom:26px;}
+.star-picker{display:flex;gap:6px;font-size:32px;margin-bottom:22px;cursor:pointer;}
+.star-picker span{color:rgba(255,255,255,.25);transition:.15s;}
+.star-picker span.filled{color:var(--gold);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.full{grid-template-columns:1fr;}
+input,textarea{
+  width:100%;padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:14.5px;
+}
+input::placeholder,textarea::placeholder{color:#8FA093;}
+textarea{resize:vertical;min-height:100px;}
+.form-msg{margin-top:14px;font-size:14px;}
+.form-msg.ok{color:#8FD9A8;} .form-msg.err{color:#F2A0A0;}
+
+/* --- contacto --- */
+.contact-section{background:var(--cream-2);}
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;}
+.contact-card{background:#fff;border-radius:var(--radius);border:1px solid var(--line);padding:clamp(26px,4vw,40px);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.faq-btn{
+  display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);
+  font-size:13.5px;font-weight:600;text-align:left;background:var(--cream);transition:.2s;
+}
+.faq-btn:hover{background:#1F5C42;color:#fff;border-color:#1F5C42;}
+.custom-wa{margin-top:20px;display:flex;gap:10px;}
+.custom-wa textarea{min-height:56px;}
+.contact-info-card{background:var(--dark);border-radius:var(--radius);padding:clamp(26px,4vw,40px);color:#fff;}
+.contact-info-card h3{color:#fff;}
+.info-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.14);}
+.info-row:last-child{border-bottom:none;}
+.info-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.info-row b{display:block;font-size:14px;color:#fff;}
+.info-row span{font-size:13.5px;color:#B9C7BC;}
+
+/* --- footer --- */
+footer{background:var(--dark-2);color:#B9C7BC;padding:60px 0 26px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px;}
+.footer-logo{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:14px;}
+.footer-logo span{font-family:var(--font-display);font-size:19px;font-weight:700;}
+footer h5{color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+footer a{font-size:14px;}
+footer a:hover{color:var(--gold-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;}
+.socials{display:flex;gap:12px;}
+.socials a{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;}
+.socials a:hover{background:var(--gold);color:var(--dark);}
+
+/* --- floating whatsapp --- */
+.wa-float{
+  position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:#1F5C42;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:900;color:#fff;
+}
+.wa-float:hover{background:var(--primary-light);}
+
+@media(max-width:900px){
+  nav,.nav-right .btn-wa-desktop{display:none;}
+  .burger{display:flex;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);}
+  .reviews-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:560px){
+  .services-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);}
+  .reviews-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .hero-stats{gap:20px;}
+  .custom-wa{flex-direction:column;}
+}
+.service-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: var(--light-2); /* Tono arena claro similar al de tu imagen */
+  border-radius: 12px; /* Bordes redondeados del contenedor */
+  margin-bottom: 16px;
+}
+
+.service-icon i {
+  font-size: 32px;
+  color: var(--gold); /* Verde oscuro característico de la marca Ginkko */
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="container nav-wrap">
+    <a href="#inicio" class="logo">
+    <img src="logo.png" style="width: 40%;" alt="Ginkko Paisajismo">  
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#trabajos">Trabajos</a></li>
+        <li><a href="#resenas">Reseñas</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <a href="#" id="waHeaderBtn" class="btn btn-wa btn-wa-desktop" style="margin-left: 20px;" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&times;</button>
+  <ul>
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#trabajos">Trabajos</a></li>
+    <li><a href="#resenas">Reseñas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop" alt="Jardín diseñado por Ginkko Paisajismo"></div>
+  <div class="container hero-inner">
+    <h1>Transformamos espacios en <em>naturaleza</em> viva</h1>
+    <p class="sub">Diseñamos, construimos y mantenemos áreas verdes para condominios, empresas y hogares en Santiago, con más de una década de experiencia.</p>
+    <div class="hero-actions">
+      <a href="#" id="waHeroBtn" class="btn btn-primary" style="margin-right: 10px;" target="_blank" rel="noopener">Conversemos por WhatsApp</a>
+      <a href="#trabajos" class="btn btn-outline">Ver nuestros trabajos</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="15"></circle></svg></div>
+        <b>+10</b><span>Años de experiencia</span>
+      </div>
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="35"></circle></svg></div>
+        <b>+30</b><span>Comunidades y clientes</span>
+      </div>
+      <div class="stat">
+        <div class="ring"><svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23"></circle><circle class="fill" cx="27" cy="27" r="23" stroke-dasharray="145" stroke-dashoffset="5"></circle></svg></div>
+        <b>100%</b><span>Compromiso y calidad</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#C6A15B" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ NOSOTROS ============ -->
+<section class="section" id="nosotros">
+  <div class="container about-grid">
+    <div class="about-img"><img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1000&auto=format&fit=crop" alt="Equipo Ginkko Paisajismo trabajando"></div>
+    <div class="about-text">
+      <div class="eyebrow">Nosotros</div>
+      <h2 style="margin-bottom:20px;">Más de 10 años creciendo junto a nuestros clientes</h2>
+      <p>En <strong>Ginkko Paisajismo</strong> nos dedicamos al diseño, construcción y mantención de áreas verdes en condominios, edificios, empresas y hogares.</p>
+      <p>Nuestro equipo de profesionales trabaja con pasión y compromiso para entregar <strong>soluciones personalizadas y de alta calidad</strong>, cuidando cada detalle desde el proyecto hasta la mantención.</p>
+      <a href="#contacto" class="btn btn-outline-dark" style="margin-top:10px;">Conoce más sobre nosotros</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section class="section" id="servicios" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Servicios</div>
+      <h2>¿Qué podemos hacer por ti?</h2>
+      <p>Soluciones verdes integrales, adaptadas a la necesidad real de cada espacio.</p>
+    </div>
+<div class="services-grid">
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-leaf"></i></div>
+    <h4>Mantención de áreas verdes</h4>
+    <p>Cuidado integral de jardines, césped, arbustos y árboles durante todo el año.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-tint"></i></div>
+    <h4>Sistemas de riego automático</h4>
+    <p>Instalación y mantención de sistemas de riego eficientes que ahorran agua.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-tree"></i></div>
+    <h4>Diseño y paisajismo</h4>
+    <p>Diseñamos espacios únicos, adaptados a tus necesidades y estilo.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-seedling"></i></div>
+    <h4>Instalación de césped</h4>
+    <p>Césped en rollo o siembra directa, para un resultado parejo y duradero.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-cut"></i></div>
+    <h4>Poda y tala de árboles</h4>
+    <p>Poda profesional y tala segura de árboles, con equipo especializado.</p>
+  </div>
+  
+  <div class="service-card">
+    <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+    <h4>Asesoría personalizada</h4>
+    <p>Te asesoramos para que tu jardín luzca siempre a su mejor nivel.</p>
+  </div>
+</div>
+  </div>
+</section>
+
+<!-- ============ CARRUSEL DESTACADOS ============ -->
+<section class="section carousel-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Proyectos destacados</div>
+      <h2>Espacios que hemos transformado</h2>
+      <p>Una selección curada de nuestros proyectos más recientes.</p>
+    </div>
+    <div class="carousel" id="carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-empty">Cargando proyectos destacados…</div>
+      </div>
+      <button class="carousel-nav carousel-prev" id="carPrev">&#8592;</button>
+      <button class="carousel-nav carousel-next" id="carNext">&#8594;</button>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#1F5C42" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ GALERIA / TRABAJOS ============ -->
+<section class="section gallery-section" id="trabajos">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Nuestros trabajos</div>
+      <h2>Proyectos que reflejan nuestro compromiso</h2>
+      <p>Explora nuestro portafolio completo de proyectos realizados.</p>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-empty">Cargando galería…</div>
+    </div>
+    <div class="load-more" id="loadMoreWrap" style="display:none;">
+      <button class="btn btn-outline-dark" id="loadMoreBtn">Ver más proyectos</button>
+    </div>
+  </div>
+</section>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <div class="lightbox-inner">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-info"><h4 id="lightboxTitle"></h4><p id="lightboxDesc"></p></div>
+  </div>
+</div>
+
+<!-- ============ RESEÑAS ============ -->
+<section class="section" id="resenas" style="background:var(--white);">
+  <div class="container">
+    <div class="reviews-top">
+      <div>
+        <div class="eyebrow">Reseñas</div>
+        <h2>Lo que dicen nuestros clientes</h2>
+      </div>
+      <div class="rating-summary">
+        <div class="rating-num" id="avgRating">5.0</div>
+        <div>
+          <div class="stars" id="avgStars">★★★★★</div>
+          <div class="rating-count" id="ratingCount">0 reseñas</div>
+        </div>
+      </div>
+    </div>
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="reviews-empty">Aún no hay reseñas. ¡Sé el primero en dejar la tuya!</div>
+    </div>
+
+    <div class="review-form">
+      <h3>Cuéntanos tu experiencia</h3>
+      <p>Tu opinión ayuda a que más personas confíen en nuestro trabajo.</p>
+      <form id="reviewForm">
+        <div class="star-picker" id="starPicker">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+        <div class="form-row">
+          <input type="text" id="reviewName" placeholder="Tu nombre" required>
+          <input type="text" id="reviewLocation" placeholder="Comuna / ciudad (opcional)">
+        </div>
+        <div class="form-row full">
+          <textarea id="reviewComment" placeholder="Escribe tu comentario…" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Publicar reseña</button>
+        <div class="form-msg" id="reviewMsg"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="vein-divider"><svg width="220" height="30" viewBox="0 0 220 30"><path d="M110 30 C60 20 20 15 0 0 M110 30 C160 20 200 15 220 0 M110 30 V4" stroke="#C6A15B" stroke-width="1.4" fill="none"/></svg></div>
+
+<!-- ============ CONTACTO ============ -->
+<section class="section contact-section" id="contacto">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Hablemos de tu proyecto</div>
+      <h2>Estamos aquí para hacer crecer tu entorno</h2>
+      <p>Solicita tu visita técnica sin costo y recibe asesoría personalizada.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3 style="margin-bottom:6px;">Preguntas frecuentes</h3>
+        <p>Elige una opción y te contactaremos al instante por WhatsApp.</p>
+        <div class="faq-grid" id="faqGrid"></div>
+        <div class="custom-wa">
+          <textarea  id="customWaMsg" placeholder="O escribe tu propio mensaje…" style="border-bottom: 1px solid #0B2018;  border-radius: 0px;"></textarea>
+          <button class="btn btn-wa" id="customWaBtn" style="align-self:flex-end;">Enviar</button>
+        </div>
+      </div>
+    <div class="contact-info-card">
+  <h3 style="margin-bottom:18px;">Contáctanos</h3>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
+    <div><b>WhatsApp</b><span id="infoPhoneWa">+56 9 7285 3944</span></div>
+  </div>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fas fa-phone"></i></div>
+    <div><b>Llámanos</b><span id="infoPhoneCall">+56 9 7285 3944</span></div>
+  </div>
+  
+  <div class="info-row">
+    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+    <div><b>Escríbenos</b><span id="infoEmail">ginkkopaisajismo@gmail.com</span></div>
+  </div>
+  
+  <a href="#" id="mailBtn" class="btn btn-primary" style="margin-top:22px;width:100%;justify-content:center;">Enviar correo</a>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <svg width="26" height="26" viewBox="0 0 100 100" fill="none"><path d="M50 20 C35 35 15 40 8 55 C20 62 38 58 50 48 C62 58 80 62 92 55 C85 40 65 35 50 20 Z" stroke="#E3C888" stroke-width="3"/><line x1="50" y1="48" x2="50" y2="88" stroke="#E3C888" stroke-width="3"/></svg>
+          <span>GINKKO PAISAJISMO</span>
+        </div>
+        <p style="font-size:13.5px;">Diseñamos, creamos y mantenemos áreas verdes que transforman espacios y mejoran vidas.</p>
+        <div class="socials" style="margin-top:18px;">
+          <a href="#" aria-label="Instagram"><img src="instagram-icon.svg" alt="Instagram"></a>
+          <a href="#" aria-label="Facebook"><img src="facebook-icon.svg" alt="Facebook"></a>
+        </div>
+      </div>
+      <div><h5>Navegación</h5><ul><li><a href="#inicio">Inicio</a></li><li><a href="#nosotros">Nosotros</a></li><li><a href="#servicios">Servicios</a></li><li><a href="#trabajos">Trabajos</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+      <div><h5>Servicios</h5><ul><li>Mantención de áreas verdes</li><li>Sistemas de riego</li><li>Diseño y paisajismo</li><li>Instalación de césped</li><li>Poda y tala de árboles</li></ul></div>
+      <div><h5>Contacto</h5><ul><li>+56 9 7285 3944</li><li>ginkkopaisajismo@gmail.com</li><li>Santiago, Chile</li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Ginkko Paisajismo. Todos los derechos reservados.</span>
+      <span>Sitio diseñado por PalmaCodes</span>
+    </div>
+  </div>
+</footer>
+
+<a href="#" id="waFloatBtn" class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.38c1.44.79 3.06 1.2 4.71 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.92 6.45 17.5 2 12.04 2zm5.83 14.02c-.24.68-1.4 1.31-1.93 1.38-.5.07-1.09.1-1.75-.11-.4-.13-.92-.3-1.58-.59-2.78-1.2-4.6-4-4.74-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.98-2.32.26-.28.56-.35.75-.35h.53c.17 0 .4-.03.62.47.24.55.8 1.92.87 2.06.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
+</a>
+
+<script>
+/* ================================================================
+   1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
+   ================================================================ */
+
+// --- FIREBASE REALTIME DATABASE ---
+// Ve a Firebase Console > Configuración del proyecto > Tus apps > SDK config
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA2-ryuA2hzg8sMig1PqaRAAAL6hv9tLOQ",
+  authDomain: "garate-78386.firebaseapp.com",
+  databaseURL: "https://garate-78386-default-rtdb.firebaseio.com",
+  projectId: "garate-78386",
+  storageBucket: "garate-78386.firebasestorage.app",
+  messagingSenderId: "197255768197",
+  appId: "1:197255768197:web:f24663c800dfafcd9661ec",
+  measurementId: "G-7K1YRS5396"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getAnalytics(app);
+
+// --- DATOS DE CONTACTO DE LA EMPRESA ---
+const CONFIG = {
+  whatsappNumber: "56972853944", // formato internacional sin + ni espacios
+  email: "ginkkopaisajismo@gmail.com",
+  faqQuestions: [
+    "Quiero cotizar mantención de áreas verdes",
+    "Necesito diseño de un jardín nuevo",
+    "¿Hacen instalación de riego automático?",
+    "Necesito poda o tala de árboles",
+    "Quiero agendar una visita técnica",
+    "Tengo otra consulta"
+  ]
+};
+
+/* ================================================================
+   2) UTILIDADES
+   ================================================================ */
+function waLink(msg){
+  return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+}
+function starsHTML(rating){
+  const full = Math.round(rating);
+  return "★".repeat(full) + "☆".repeat(5-full);
+}
+function escapeHTML(str){
+  const d = document.createElement('div');
+  d.textContent = str||"";
+  return d.innerHTML;
+}
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ================================================================
+   3) HEADER / MENÚ MÓVIL
+   ================================================================ */
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', ()=> header.classList.toggle('scrolled', window.scrollY>40));
+const mobileMenu = document.getElementById('mobileMenu');
+document.getElementById('burgerBtn').onclick = ()=> mobileMenu.classList.add('open');
+document.getElementById('mobileClose').onclick = ()=> mobileMenu.classList.remove('open');
+mobileMenu.querySelectorAll('a').forEach(a=> a.onclick = ()=> mobileMenu.classList.remove('open'));
+
+/* WhatsApp / mailto links */
+document.getElementById('waHeaderBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
+document.getElementById('waHeroBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
+document.getElementById('waFloatBtn').href = waLink("Hola, me gustaría cotizar un servicio de paisajismo.");
+document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> window.open(waLink("Hola, me gustaría cotizar un servicio de paisajismo."),'_blank');
+document.getElementById('mailBtn').href = `mailto:${CONFIG.email}?subject=${encodeURIComponent('Consulta desde el sitio web')}&body=${encodeURIComponent('Hola Ginkko Paisajismo, quisiera hacer la siguiente consulta:')}`;
+
+const faqGrid = document.getElementById('faqGrid');
+CONFIG.faqQuestions.forEach(q=>{
+  const b = document.createElement('a');
+  b.className='faq-btn'; b.target='_blank'; b.rel='noopener';
+  b.href = waLink(q);
+  b.innerHTML = `💬 ${q}`;
+  faqGrid.appendChild(b);
+});
+document.getElementById('customWaBtn').onclick = ()=>{
+  const val = document.getElementById('customWaMsg').value.trim();
+  if(!val) return;
+  window.open(waLink(val),'_blank');
+};
+
+/* ================================================================
+   4) CARRUSEL — lee de Firebase: /carousel/{id} = {imageUrl,title,subtitle,order}
+   ================================================================ */
+let carouselItems = [];
+let carIndex = 0;
+const carTrack = document.getElementById('carouselTrack');
+const carDots = document.getElementById('carouselDots');
+
+function renderCarousel(){
+  if(!carouselItems.length){
+    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados. Agrégalos desde el panel de administración.</div>';
+    carDots.innerHTML='';
+    return;
+  }
+  carTrack.innerHTML = carouselItems.map(it=>`
+    <div class="carousel-slide">
+      <img src="${it.imageUrl}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+      <div class="carousel-caption">
+        <h3>${escapeHTML(it.title||'')}</h3>
+        <p>${escapeHTML(it.subtitle||'')}</p>
+      </div>
+    </div>`).join('');
+  carDots.innerHTML = carouselItems.map((_,i)=>`<button data-i="${i}" class="${i===carIndex?'active':''}"></button>`).join('');
+  carDots.querySelectorAll('button').forEach(btn=> btn.onclick=()=>{ carIndex=+btn.dataset.i; updateCarousel(); });
+  updateCarousel();
+}
+function updateCarousel(){
+  carTrack.style.transform = `translateX(-${carIndex*100}%)`;
+  carDots.querySelectorAll('button').forEach((b,i)=> b.classList.toggle('active', i===carIndex));
+}
+document.getElementById('carPrev').onclick = ()=>{ if(!carouselItems.length)return; carIndex=(carIndex-1+carouselItems.length)%carouselItems.length; updateCarousel(); };
+document.getElementById('carNext').onclick = ()=>{ if(!carouselItems.length)return; carIndex=(carIndex+1)%carouselItems.length; updateCarousel(); };
+setInterval(()=>{ if(carouselItems.length>1){ carIndex=(carIndex+1)%carouselItems.length; updateCarousel(); } }, 6000);
+
+db.ref('carousel').on('value', snap=>{
+  const val = snap.val() || {};
+  carouselItems = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
+  carIndex = 0;
+  renderCarousel();
+});
+
+/* ================================================================
+   5) GALERÍA — lee de Firebase: /gallery/{id} = {imageUrl,title,description,order}
+   Paginado en el cliente para soportar ~1500 fotos sin saturar el DOM.
+   ================================================================ */
+let galleryItems = [];
+let galleryShown = 0;
+const GALLERY_BATCH = 9;
+const galleryGrid = document.getElementById('galleryGrid');
+const loadMoreWrap = document.getElementById('loadMoreWrap');
+
+function renderGalleryBatch(){
+  if(!galleryItems.length){
+    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. Súbelos desde el panel de administración.</div>';
+    loadMoreWrap.style.display='none';
+    return;
+  }
+  const slice = galleryItems.slice(0, galleryShown);
+  galleryGrid.innerHTML = slice.map((it,i)=>`
+    <div class="gallery-item" data-i="${i}">
+      <img src="${it.imageUrl}" alt="${escapeHTML(it.title||'')}" loading="lazy">
+      <div class="overlay"><h5>${escapeHTML(it.title||'')}</h5></div>
+    </div>`).join('');
+  galleryGrid.querySelectorAll('.gallery-item').forEach(el=>{
+    el.onclick = ()=> openLightbox(slice[+el.dataset.i]);
+  });
+  loadMoreWrap.style.display = galleryShown < galleryItems.length ? 'flex' : 'none';
+}
+document.getElementById('loadMoreBtn').onclick = ()=>{
+  galleryShown = Math.min(galleryShown + GALLERY_BATCH, galleryItems.length);
+  renderGalleryBatch();
+};
+db.ref('gallery').on('value', snap=>{
+  const val = snap.val() || {};
+  galleryItems = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
+  galleryShown = Math.min(GALLERY_BATCH, galleryItems.length);
+  renderGalleryBatch();
+});
+
+/* lightbox */
+const lightbox = document.getElementById('lightbox');
+function openLightbox(item){
+  document.getElementById('lightboxImg').src = item.imageUrl;
+  document.getElementById('lightboxTitle').textContent = item.title||'';
+  document.getElementById('lightboxDesc').textContent = item.description||'';
+  lightbox.classList.add('open');
+}
+document.getElementById('lightboxClose').onclick = ()=> lightbox.classList.remove('open');
+lightbox.addEventListener('click', e=>{ if(e.target===lightbox) lightbox.classList.remove('open'); });
+
+/* ================================================================
+   6) RESEÑAS — lee/escribe en Firebase: /reviews/{id} = {name,location,rating,comment,date}
+   ================================================================ */
+const reviewsGrid = document.getElementById('reviewsGrid');
+function renderReviews(items){
+  if(!items.length){
+    reviewsGrid.innerHTML = '<div class="reviews-empty">Aún no hay reseñas. ¡Sé el primero en dejar la tuya!</div>';
+    document.getElementById('avgRating').textContent = '—';
+    document.getElementById('avgStars').textContent = '';
+    document.getElementById('ratingCount').textContent = '0 reseñas';
+    return;
+  }
+  const avg = items.reduce((s,r)=>s+(+r.rating||0),0) / items.length;
+  document.getElementById('avgRating').textContent = avg.toFixed(1);
+  document.getElementById('avgStars').textContent = starsHTML(avg);
+  document.getElementById('ratingCount').textContent = `${items.length} reseña${items.length===1?'':'s'}`;
+
+  reviewsGrid.innerHTML = items.slice(0,9).map(r=>`
+    <div class="review-card">
+      <div class="stars">${starsHTML(+r.rating||5)}</div>
+      <p class="comment">"${escapeHTML(r.comment||'')}"</p>
+      <div class="review-author">
+        <div class="avatar">${(r.name||'A').charAt(0).toUpperCase()}</div>
+        <div><b>${escapeHTML(r.name||'Anónimo')}</b><span>${escapeHTML(r.location||'')}</span></div>
+      </div>
+    </div>`).join('');
+}
+db.ref('reviews').on('value', snap=>{
+  const val = snap.val() || {};
+  const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.date||0)-(a.date||0));
+  renderReviews(items);
+});
+
+/* selector de estrellas */
+let selectedRating = 5;
+const starPicker = document.getElementById('starPicker');
+function paintStars(){
+  starPicker.querySelectorAll('span').forEach(s=> s.classList.toggle('filled', +s.dataset.v<=selectedRating));
+}
+starPicker.querySelectorAll('span').forEach(s=>{
+  s.onclick = ()=>{ selectedRating = +s.dataset.v; paintStars(); };
+});
+paintStars();
+
+document.getElementById('reviewForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('reviewName').value.trim();
+  const location = document.getElementById('reviewLocation').value.trim();
+  const comment = document.getElementById('reviewComment').value.trim();
+  const msgEl = document.getElementById('reviewMsg');
+  if(!name || !comment){ msgEl.textContent='Completa tu nombre y comentario.'; msgEl.className='form-msg err'; return; }
+  db.ref('reviews').push({
+    name, location, comment, rating:selectedRating, date: Date.now(), fromAdmin:false
+  }).then(()=>{
+    msgEl.textContent = '¡Gracias por tu reseña!'; msgEl.className='form-msg ok';
+    this.reset(); selectedRating=5; paintStars();
+  }).catch(err=>{
+    msgEl.textContent = 'No pudimos guardar tu reseña. Intenta de nuevo.'; msgEl.className='form-msg err';
+    console.error(err);
+  });
+});
+</script>
+</body>
+</html>

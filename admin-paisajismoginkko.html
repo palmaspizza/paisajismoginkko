@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Ginkko Paisajismo</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<style>
+:root{
+  --dark:#0F2A1E; --dark-2:#0B2018; --primary:#1F5C42; --primary-light:#3E7A5C;
+  --gold:#C6A15B; --gold-light:#E3C888; --cream:#F6F3EC; --cream-2:#EFE9DC;
+  --ink:#1B211D; --ink-soft:#4B564E; --line:rgba(27,33,29,.12); --radius:14px;
+  --danger:#C0503E;
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',-apple-system,Segoe UI,sans-serif;background:var(--cream);color:var(--ink);}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;color:var(--dark);margin:0;}
+button{cursor:pointer;font-family:inherit;border:none;}
+input,textarea,select{font-family:inherit;width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--line);font-size:14px;background:#fff;}
+textarea{resize:vertical;min-height:80px;}
+label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:6px;}
+.field{margin-bottom:14px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;transition:.2s;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-light);}
+.btn-gold{background:var(--gold);color:var(--dark);}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);padding:8px 14px;font-size:12.5px;}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ---- login ---- */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
+.login-box{background:#fff;padding:44px;border-radius:var(--radius);width:100%;max-width:380px;text-align:center;}
+.login-box h1{font-size:24px;margin-bottom:6px;}
+.login-box p{color:var(--ink-soft);font-size:14px;margin-bottom:24px;}
+.login-box input{margin-bottom:14px;}
+#loginError{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:10px;}
+
+/* ---- layout ---- */
+#appScreen{display:none;min-height:100vh;}
+.topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;}
+.topbar h1{color:#fff;font-size:19px;}
+.topbar span{color:var(--gold-light);font-size:12px;}
+.logout{color:#fff;font-size:13px;text-decoration:underline;background:none;}
+.tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto;}
+.tab{padding:16px 20px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap;}
+.tab.active{color:var(--dark);border-color:var(--gold);}
+.panel{display:none;padding:28px;max-width:1100px;margin:0 auto;}
+.panel.active{display:block;}
+.grid2{display:grid;grid-template-columns:380px 1fr;gap:26px;align-items:start;}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+.card h3{font-size:17px;margin-bottom:16px;}
+.items-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.item-card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.item-card img{width:100%;height:130px;object-fit:cover;display:block;background:#eee;}
+.item-body{padding:12px;}
+.item-body h4{font-size:14px;margin:0 0 4px;color:var(--dark);}
+.item-body p{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.4;max-height:36px;overflow:hidden;}
+.item-actions{display:flex;justify-content:space-between;align-items:center;}
+.order-badge{font-size:11px;color:var(--ink-soft);}
+.upload-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;font-size:13px;color:var(--ink-soft);margin-bottom:14px;cursor:pointer;transition:.2s;}
+.upload-drop:hover{border-color:var(--gold);}
+.upload-drop input{display:none;}
+.preview-thumb{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;display:none;}
+.progress{height:6px;background:var(--cream-2);border-radius:4px;overflow:hidden;margin-bottom:14px;display:none;}
+.progress-bar{height:100%;background:var(--gold);width:0%;transition:.2s;}
+.msg{font-size:13px;margin-top:10px;min-height:18px;}
+.msg.ok{color:#1F5C42;} .msg.err{color:var(--danger);}
+.star-picker-admin{display:flex;gap:4px;font-size:26px;margin-bottom:14px;cursor:pointer;}
+.star-picker-admin span{color:var(--line);}
+.star-picker-admin span.filled{color:var(--gold);}
+.empty-note{color:var(--ink-soft);font-size:13.5px;grid-column:1/-1;}
+.info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;margin-bottom:22px;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Panel Ginkko</h1>
+    <p>Ingresa la clave de administración para continuar.</p>
+    <input type="password" id="loginPass" placeholder="Clave de acceso">
+    <div id="loginError"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Ingresar</button>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="appScreen">
+  <div class="topbar">
+    <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
+    <button class="logout" id="logoutBtn">Cerrar sesión</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-tab="carousel">Carrusel destacado</div>
+    <div class="tab" data-tab="gallery">Galería de trabajos</div>
+    <div class="tab" data-tab="reviews">Reseñas</div>
+  </div>
+
+  <!-- ---- CARRUSEL ---- -->
+  <div class="panel active" id="panel-carousel">
+    <div class="info-banner">El <b>carrusel</b> es la vitrina principal del inicio: úsalo para 4–8 proyectos muy destacados, con un título y subtítulo llamativos. La <b>galería</b> (otra pestaña) es el portafolio completo donde puedes subir todos los proyectos que quieras.</div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Agregar al carrusel</h3>
+        <div class="upload-drop" id="carouselDrop">
+          📷 Haz clic o arrastra una imagen aquí
+          <input type="file" id="carouselFile" accept="image/*">
+        </div>
+        <img class="preview-thumb" id="carouselPreview">
+        <div class="progress" id="carouselProgress"><div class="progress-bar" id="carouselProgressBar"></div></div>
+        <div class="field"><label>Título</label><input id="carouselTitle" placeholder="Ej: Jardín residencial Las Condes"></div>
+        <div class="field"><label>Subtítulo / descripción corta</label><input id="carouselSubtitle" placeholder="Ej: Diseño e instalación completa en 3 semanas"></div>
+        <div class="field"><label>Orden (menor número aparece primero)</label><input id="carouselOrder" type="number" value="0"></div>
+        <button class="btn btn-gold" id="carouselSubmit" style="width:100%;justify-content:center;">Subir al carrusel</button>
+        <div class="msg" id="carouselMsg"></div>
+      </div>
+      <div>
+        <div class="items-list" id="carouselList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- GALERIA ---- -->
+  <div class="panel" id="panel-gallery">
+    <div class="grid2">
+      <div class="card">
+        <h3>Agregar a la galería</h3>
+        <div class="upload-drop" id="galleryDrop">
+          📷 Haz clic o arrastra una imagen aquí
+          <input type="file" id="galleryFile" accept="image/*">
+        </div>
+        <img class="preview-thumb" id="galleryPreview">
+        <div class="progress" id="galleryProgress"><div class="progress-bar" id="galleryProgressBar"></div></div>
+        <div class="field"><label>Título</label><input id="galleryTitle" placeholder="Ej: Mantención jardín corporativo"></div>
+        <div class="field"><label>Descripción</label><textarea id="galleryDescription" placeholder="Detalles del proyecto…"></textarea></div>
+        <div class="field"><label>Orden / prioridad</label><input id="galleryOrder" type="number" value="0"></div>
+        <button class="btn btn-gold" id="gallerySubmit" style="width:100%;justify-content:center;">Subir a la galería</button>
+        <div class="msg" id="galleryMsg"></div>
+      </div>
+      <div>
+        <div class="items-list" id="galleryList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- RESEÑAS ---- -->
+  <div class="panel" id="panel-reviews">
+    <div class="info-banner">Aquí puedes agregar reseñas "haciéndote pasar por cliente" para dar confianza inicial al sitio, y también eliminar cualquier reseña (incluidas las que dejen clientes reales) si es necesario.</div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Agregar reseña</h3>
+        <div class="star-picker-admin" id="adminStarPicker">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+        <div class="field"><label>Nombre del cliente</label><input id="reviewName" placeholder="Ej: Marcela R."></div>
+        <div class="field"><label>Comuna / ciudad (opcional)</label><input id="reviewLocation" placeholder="Ej: Las Condes"></div>
+        <div class="field"><label>Comentario</label><textarea id="reviewComment" placeholder="Escribe el comentario…"></textarea></div>
+        <button class="btn btn-gold" id="reviewSubmit" style="width:100%;justify-content:center;">Publicar reseña</button>
+        <div class="msg" id="reviewMsg"></div>
+      </div>
+      <div>
+        <div class="items-list" id="reviewsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
+   ================================================================ */
+
+// --- CLAVE DE ACCESO AL PANEL ---
+// Seguridad simple del lado del cliente (adecuada para plan gratuito sin backend).
+// Para mayor seguridad real, complementa con reglas de Firebase que exijan
+// un token/valor secreto antes de permitir escritura (ver notas al final del archivo).
+const ADMIN_PASSWORD = "ginkko2026"; // <-- CAMBIA ESTA CLAVE
+
+// --- FIREBASE REALTIME DATABASE (debe ser el MISMO proyecto que index.html) ---
+const firebaseConfig = {
+  apiKey: "AIzaSyA2-ryuA2hzg8sMig1PqaRAAAL6hv9tLOQ",
+  authDomain: "garate-78386.firebaseapp.com",
+  databaseURL: "https://garate-78386-default-rtdb.firebaseio.com",
+  projectId: "garate-78386",
+  storageBucket: "garate-78386.firebasestorage.app",
+  messagingSenderId: "197255768197",
+  appId: "1:197255768197:web:f24663c800dfafcd9661ec",
+  measurementId: "G-7K1YRS5396"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// --- CLOUDINARY (plan gratuito, subida "unsigned") ---
+// 1. Crea cuenta gratuita en cloudinary.com
+// 2. Ve a Settings > Upload > Upload presets > Add upload preset
+//    - Signing Mode: "Unsigned"
+//    - (opcional) limita carpeta y tamaño máximo
+// 3. Copia el Cloud Name y el nombre del preset abajo:
+const CLOUDINARY_CLOUD_NAME = "dkszomv2f";
+const CLOUDINARY_UPLOAD_PRESET = "paisajismoginkko";
+
+/* ================================================================
+   2) LOGIN
+   ================================================================ */
+const loginScreen = document.getElementById('loginScreen');
+const appScreen = document.getElementById('appScreen');
+
+function tryLogin(){
+  const val = document.getElementById('loginPass').value;
+  if(val === ADMIN_PASSWORD){
+    sessionStorage.setItem('ginkko_admin_ok','1');
+    loginScreen.style.display='none';
+    appScreen.style.display='block';
+    initApp();
+  } else {
+    document.getElementById('loginError').textContent = 'Clave incorrecta.';
+  }
+}
+document.getElementById('loginBtn').onclick = tryLogin;
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+document.getElementById('logoutBtn').onclick = ()=>{
+  sessionStorage.removeItem('ginkko_admin_ok');
+  location.reload();
+};
+if(sessionStorage.getItem('ginkko_admin_ok')==='1'){
+  loginScreen.style.display='none';
+  appScreen.style.display='block';
+  initApp();
+}
+
+/* ================================================================
+   3) TABS
+   ================================================================ */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+  };
+});
+
+/* ================================================================
+   4) UTILIDADES
+   ================================================================ */
+function escapeHTML(str){ const d=document.createElement('div'); d.textContent=str||""; return d.innerHTML; }
+
+function setupDropzone(dropId, fileId, previewId){
+  const drop = document.getElementById(dropId);
+  const input = document.getElementById(fileId);
+  const preview = document.getElementById(previewId);
+  drop.onclick = ()=> input.click();
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.style.borderColor='var(--gold)'; });
+  drop.addEventListener('dragleave', ()=> drop.style.borderColor='var(--line)');
+  drop.addEventListener('drop', e=>{
+    e.preventDefault(); drop.style.borderColor='var(--line)';
+    if(e.dataTransfer.files.length){ input.files = e.dataTransfer.files; showPreview(); }
+  });
+  input.onchange = showPreview;
+  function showPreview(){
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{ preview.src = reader.result; preview.style.display='block'; };
+    reader.readAsDataURL(file);
+  }
+}
+
+function uploadToCloudinary(file, progressBarEl, progressWrapEl){
+  return new Promise((resolve, reject)=>{
+    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url);
+    progressWrapEl.style.display='block';
+    xhr.upload.onprogress = e=>{
+      if(e.lengthComputable){
+        progressBarEl.style.width = Math.round((e.loaded/e.total)*100) + '%';
+      }
+    };
+    xhr.onload = ()=>{
+      progressWrapEl.style.display='none';
+      if(xhr.status>=200 && xhr.status<300){
+        const res = JSON.parse(xhr.responseText);
+        resolve(res.secure_url);
+      } else {
+        reject(new Error('Error al subir la imagen a Cloudinary. Revisa el cloud name y el upload preset.'));
+      }
+    };
+    xhr.onerror = ()=>{ progressWrapEl.style.display='none'; reject(new Error('Error de red al subir la imagen.')); };
+    xhr.send(formData);
+  });
+}
+
+/* ================================================================
+   5) INICIALIZACIÓN DE LA APP (tras login)
+   ================================================================ */
+function initApp(){
+  setupDropzone('carouselDrop','carouselFile','carouselPreview');
+  setupDropzone('galleryDrop','galleryFile','galleryPreview');
+
+  /* ---------- CARRUSEL ---------- */
+  document.getElementById('carouselSubmit').onclick = async ()=>{
+    const file = document.getElementById('carouselFile').files[0];
+    const title = document.getElementById('carouselTitle').value.trim();
+    const subtitle = document.getElementById('carouselSubtitle').value.trim();
+    const order = +document.getElementById('carouselOrder').value || 0;
+    const msg = document.getElementById('carouselMsg');
+    const btn = document.getElementById('carouselSubmit');
+    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
+    btn.disabled = true; msg.textContent='Subiendo imagen…'; msg.className='msg';
+    try{
+      const imageUrl = await uploadToCloudinary(file, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
+      await db.ref('carousel').push({ imageUrl, title, subtitle, order, createdAt: Date.now() });
+      msg.textContent='¡Agregado al carrusel!'; msg.className='msg ok';
+      document.getElementById('carouselFile').value='';
+      document.getElementById('carouselTitle').value='';
+      document.getElementById('carouselSubtitle').value='';
+      document.getElementById('carouselOrder').value=0;
+      document.getElementById('carouselPreview').style.display='none';
+    }catch(err){
+      msg.textContent = err.message; msg.className='msg err';
+    }
+    btn.disabled = false;
+  };
+
+  db.ref('carousel').on('value', snap=>{
+    const val = snap.val() || {};
+    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
+    const list = document.getElementById('carouselList');
+    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en el carrusel.</div>'; return; }
+    list.innerHTML = items.map(it=>`
+      <div class="item-card">
+        <img src="${it.imageUrl}">
+        <div class="item-body">
+          <h4>${escapeHTML(it.title||'(sin título)')}</h4>
+          <p>${escapeHTML(it.subtitle||'')}</p>
+          <div class="item-actions">
+            <span class="order-badge">Orden: ${it.order||0}</span>
+            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('.btn-danger').forEach(b=>{
+      b.onclick = ()=>{
+        if(confirm('¿Eliminar este elemento del carrusel? (la imagen en Cloudinary no se borra automáticamente)')){
+          db.ref('carousel/'+b.dataset.id).remove();
+        }
+      };
+    });
+  });
+
+  /* ---------- GALERÍA ---------- */
+  document.getElementById('gallerySubmit').onclick = async ()=>{
+    const file = document.getElementById('galleryFile').files[0];
+    const title = document.getElementById('galleryTitle').value.trim();
+    const description = document.getElementById('galleryDescription').value.trim();
+    const order = +document.getElementById('galleryOrder').value || 0;
+    const msg = document.getElementById('galleryMsg');
+    const btn = document.getElementById('gallerySubmit');
+    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
+    btn.disabled = true; msg.textContent='Subiendo imagen…'; msg.className='msg';
+    try{
+      const imageUrl = await uploadToCloudinary(file, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
+      await db.ref('gallery').push({ imageUrl, title, description, order, createdAt: Date.now() });
+      msg.textContent='¡Agregado a la galería!'; msg.className='msg ok';
+      document.getElementById('galleryFile').value='';
+      document.getElementById('galleryTitle').value='';
+      document.getElementById('galleryDescription').value='';
+      document.getElementById('galleryOrder').value=0;
+      document.getElementById('galleryPreview').style.display='none';
+    }catch(err){
+      msg.textContent = err.message; msg.className='msg err';
+    }
+    btn.disabled = false;
+  };
+
+  db.ref('gallery').on('value', snap=>{
+    const val = snap.val() || {};
+    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
+    const list = document.getElementById('galleryList');
+    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en la galería.</div>'; return; }
+    list.innerHTML = items.map(it=>`
+      <div class="item-card">
+        <img src="${it.imageUrl}">
+        <div class="item-body">
+          <h4>${escapeHTML(it.title||'(sin título)')}</h4>
+          <p>${escapeHTML(it.description||'')}</p>
+          <div class="item-actions">
+            <span class="order-badge">Orden: ${it.order||0}</span>
+            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('.btn-danger').forEach(b=>{
+      b.onclick = ()=>{
+        if(confirm('¿Eliminar este proyecto de la galería? (la imagen en Cloudinary no se borra automáticamente)')){
+          db.ref('gallery/'+b.dataset.id).remove();
+        }
+      };
+    });
+  });
+
+  /* ---------- RESEÑAS ---------- */
+  let adminRating = 5;
+  const adminStarPicker = document.getElementById('adminStarPicker');
+  function paintAdminStars(){
+    adminStarPicker.querySelectorAll('span').forEach(s=> s.classList.toggle('filled', +s.dataset.v<=adminRating));
+  }
+  adminStarPicker.querySelectorAll('span').forEach(s=>{
+    s.onclick = ()=>{ adminRating = +s.dataset.v; paintAdminStars(); };
+  });
+  paintAdminStars();
+
+  document.getElementById('reviewSubmit').onclick = async ()=>{
+    const name = document.getElementById('reviewName').value.trim();
+    const location = document.getElementById('reviewLocation').value.trim();
+    const comment = document.getElementById('reviewComment').value.trim();
+    const msg = document.getElementById('reviewMsg');
+    if(!name || !comment){ msg.textContent='Completa nombre y comentario.'; msg.className='msg err'; return; }
+    try{
+      await db.ref('reviews').push({ name, location, comment, rating:adminRating, date:Date.now(), fromAdmin:true });
+      msg.textContent='¡Reseña publicada!'; msg.className='msg ok';
+      document.getElementById('reviewName').value='';
+      document.getElementById('reviewLocation').value='';
+      document.getElementById('reviewComment').value='';
+      adminRating=5; paintAdminStars();
+    }catch(err){
+      msg.textContent='Error al publicar la reseña.'; msg.className='msg err';
+    }
+  };
+
+  db.ref('reviews').on('value', snap=>{
+    const val = snap.val() || {};
+    const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.date||0)-(a.date||0));
+    const list = document.getElementById('reviewsList');
+    if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay reseñas.</div>'; return; }
+    list.innerHTML = items.map(it=>`
+      <div class="item-card">
+        <div class="item-body">
+          <div style="color:#C6A15B;font-size:15px;margin-bottom:6px;">${'★'.repeat(it.rating||5)}${'☆'.repeat(5-(it.rating||5))}</div>
+          <h4>${escapeHTML(it.name||'Anónimo')} ${it.fromAdmin?'<span style="color:#C6A15B;font-size:10px;">· ADMIN</span>':''}</h4>
+          <p>${escapeHTML(it.comment||'')}</p>
+          <div class="item-actions">
+            <span class="order-badge">${escapeHTML(it.location||'')}</span>
+            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('.btn-danger').forEach(b=>{
+      b.onclick = ()=>{
+        if(confirm('¿Eliminar esta reseña?')) db.ref('reviews/'+b.dataset.id).remove();
+      };
+    });
+  });
+}
+</script>
+</body>
+</html>
