@@ -31,6 +31,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .btn:disabled{opacity:.5;cursor:not-allowed;}
 .btn-outline-dark-admin{background:#fff;border:1.5px solid var(--line);color:var(--ink-soft);font-size:13px;padding:10px 14px;}
 .gp-type-btn.active{background:var(--dark);border-color:var(--dark);color:#fff;}
+.gp-type-btn-carousel.active{background:var(--dark);border-color:var(--dark);color:#fff;}
 
 /* ---- login ---- */
 #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
@@ -226,6 +227,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 
   /* Botones de tipo publicación */
   .gp-type-btn{font-size:12px;padding:10px 10px;}
+  .gp-type-btn-carousel{font-size:12px;padding:10px 10px;}
 
   /* Botones de acción de tarjeta */
   .item-actions{flex-direction:column;align-items:flex-start;gap:6px;}
@@ -345,16 +347,46 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 
   <!-- ---- CARRUSEL ---- -->
   <div class="panel active" id="panel-carousel">
-    <div class="info-banner">El <b>carrusel</b> es la vitrina principal del inicio: úsalo para 4–8 proyectos muy destacados, con un título y subtítulo llamativos. La <b>galería</b> (otra pestaña) es el portafolio completo donde puedes subir todos los proyectos que quieras.</div>
+    <div class="info-banner">El <b>carrusel</b> es la vitrina principal del inicio ("Espacios que hemos transformado"): úsalo para tus mejores <b>comparaciones Antes/Después</b> o fotos muy destacadas. La <b>galería</b> (otra pestaña) es el portafolio general de fotos, sin comparaciones.</div>
     <div class="grid2">
       <div class="card">
         <h3>Agregar al carrusel <span class="order-badge" id="carouselCount" style="float:right;"></span></h3>
-        <div class="upload-drop" id="carouselDrop">
-          📷 Haz clic o arrastra una imagen aquí
-          <input type="file" id="carouselFile" accept="image/*">
+
+        <div class="field">
+          <label>Tipo de publicación</label>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-outline-dark-admin gp-type-btn-carousel active" data-type="single" style="flex:1;justify-content:center;">📷 Foto normal</button>
+            <button type="button" class="btn btn-outline-dark-admin gp-type-btn-carousel" data-type="beforeAfter" style="flex:1;justify-content:center;">🔀 Antes / Después</button>
+          </div>
         </div>
-        <img class="preview-thumb" id="carouselPreview">
-        <div class="progress" id="carouselProgress"><div class="progress-bar" id="carouselProgressBar"></div></div>
+
+        <div id="carouselSingleFields">
+          <div class="upload-drop" id="carouselDrop">
+            📷 Haz clic o arrastra una imagen aquí
+            <input type="file" id="carouselFile" accept="image/*">
+          </div>
+          <img class="preview-thumb" id="carouselPreview">
+          <div class="progress" id="carouselProgress"><div class="progress-bar" id="carouselProgressBar"></div></div>
+        </div>
+
+        <div id="carouselBaFields" style="display:none;">
+          <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Foto "ANTES"</label>
+          <div class="upload-drop" id="carouselBeforeDrop" style="margin-top:6px;">
+            📷 Haz clic o arrastra la foto del ANTES
+            <input type="file" id="carouselBeforeFile" accept="image/*">
+          </div>
+          <img class="preview-thumb" id="carouselBeforePreview">
+          <div class="progress" id="carouselBeforeProgress"><div class="progress-bar" id="carouselBeforeProgressBar"></div></div>
+
+          <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Foto "DESPUÉS"</label>
+          <div class="upload-drop" id="carouselAfterDrop" style="margin-top:6px;">
+            📷 Haz clic o arrastra la foto del DESPUÉS
+            <input type="file" id="carouselAfterFile" accept="image/*">
+          </div>
+          <img class="preview-thumb" id="carouselAfterPreview">
+          <div class="progress" id="carouselAfterProgress"><div class="progress-bar" id="carouselAfterProgressBar"></div></div>
+        </div>
+
         <div class="field"><label>Título</label><input id="carouselTitle" placeholder="Ej: Jardín residencial Las Condes"></div>
         <div class="field"><label>Subtítulo / descripción corta</label><input id="carouselSubtitle" placeholder="Ej: Diseño e instalación completa en 3 semanas"></div>
         <div class="field"><label>Orden (menor número aparece primero)</label><input id="carouselOrder" type="number" value="0"></div>
@@ -369,17 +401,10 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 
   <!-- ---- GALERIA ---- -->
   <div class="panel" id="panel-gallery">
+    <div class="info-banner">La <b>galería</b> es tu portafolio general de fotos de trabajos. Las comparaciones <b>Antes/Después</b> ahora se suben desde la pestaña <b>Carrusel destacado</b>.</div>
     <div class="grid2">
       <div class="card">
         <h3>Agregar a la galería <span class="order-badge" id="galleryCount" style="float:right;"></span></h3>
-
-        <div class="field">
-          <label>Tipo de publicación</label>
-          <div style="display:flex;gap:8px;">
-            <button type="button" class="btn btn-outline-dark-admin gp-type-btn active" data-type="single" style="flex:1;justify-content:center;">📷 Foto normal</button>
-            <button type="button" class="btn btn-outline-dark-admin gp-type-btn" data-type="beforeAfter" style="flex:1;justify-content:center;">🔀 Antes / Después</button>
-          </div>
-        </div>
 
         <div id="gallerySingleFields">
           <div class="upload-drop" id="galleryDrop">
@@ -388,24 +413,6 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
           </div>
           <img class="preview-thumb" id="galleryPreview">
           <div class="progress" id="galleryProgress"><div class="progress-bar" id="galleryProgressBar"></div></div>
-        </div>
-
-        <div id="galleryBaFields" style="display:none;">
-          <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Foto "ANTES"</label>
-          <div class="upload-drop" id="galleryBeforeDrop" style="margin-top:6px;">
-            📷 Haz clic o arrastra la foto del ANTES
-            <input type="file" id="galleryBeforeFile" accept="image/*">
-          </div>
-          <img class="preview-thumb" id="galleryBeforePreview">
-          <div class="progress" id="galleryBeforeProgress"><div class="progress-bar" id="galleryBeforeProgressBar"></div></div>
-
-          <label style="font-size:12px;font-weight:600;color:var(--ink-soft);">Foto "DESPUÉS"</label>
-          <div class="upload-drop" id="galleryAfterDrop" style="margin-top:6px;">
-            📷 Haz clic o arrastra la foto del DESPUÉS
-            <input type="file" id="galleryAfterFile" accept="image/*">
-          </div>
-          <img class="preview-thumb" id="galleryAfterPreview">
-          <div class="progress" id="galleryAfterProgress"><div class="progress-bar" id="galleryAfterProgressBar"></div></div>
         </div>
 
         <div class="field"><label>Título</label><input id="galleryTitle" placeholder="Ej: Mantención jardín corporativo"></div>
@@ -688,54 +695,94 @@ document.getElementById('exportBackupBtn').onclick = async ()=>{
    ================================================================ */
 function initApp(){
   setupDropzone('carouselDrop','carouselFile','carouselPreview');
+  setupDropzone('carouselBeforeDrop','carouselBeforeFile','carouselBeforePreview');
+  setupDropzone('carouselAfterDrop','carouselAfterFile','carouselAfterPreview');
   setupDropzone('galleryDrop','galleryFile','galleryPreview');
-  setupDropzone('galleryBeforeDrop','galleryBeforeFile','galleryBeforePreview');
-  setupDropzone('galleryAfterDrop','galleryAfterFile','galleryAfterPreview');
 
-  /* ---------- Toggle: foto normal vs antes/después ---------- */
-  let galleryMode = 'single';
-  document.querySelectorAll('.gp-type-btn').forEach(btn=>{
+  /* ---------- Toggle del carrusel: foto normal vs antes/después ---------- */
+  let carouselMode = 'single';
+  document.querySelectorAll('.gp-type-btn-carousel').forEach(btn=>{
     btn.onclick = ()=>{
-      galleryMode = btn.dataset.type;
-      document.querySelectorAll('.gp-type-btn').forEach(b=> b.classList.toggle('active', b===btn));
-      document.getElementById('gallerySingleFields').style.display = galleryMode==='single' ? 'block' : 'none';
-      document.getElementById('galleryBaFields').style.display = galleryMode==='beforeAfter' ? 'block' : 'none';
+      carouselMode = btn.dataset.type;
+      document.querySelectorAll('.gp-type-btn-carousel').forEach(b=> b.classList.toggle('active', b===btn));
+      document.getElementById('carouselSingleFields').style.display = carouselMode==='single' ? 'block' : 'none';
+      document.getElementById('carouselBaFields').style.display = carouselMode==='beforeAfter' ? 'block' : 'none';
     };
   });
 
   /* ---------- CARRUSEL ---------- */
   document.getElementById('carouselSubmit').onclick = async ()=>{
-    const file = document.getElementById('carouselFile').files[0];
     const title = document.getElementById('carouselTitle').value.trim();
     const subtitle = document.getElementById('carouselSubtitle').value.trim();
     const order = +document.getElementById('carouselOrder').value || 0;
     const msg = document.getElementById('carouselMsg');
     const btn = document.getElementById('carouselSubmit');
-    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
-    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
-    try{
-      const current = await countItems('carousel');
-      if(current >= MAX_CAROUSEL_ITEMS){
-        msg.textContent = `Alcanzaste el máximo de ${MAX_CAROUSEL_ITEMS} elementos en el carrusel. Elimina alguno para agregar otro.`;
-        msg.className='msg err'; btn.disabled=false; return;
+
+    if(carouselMode==='single'){
+      const file = document.getElementById('carouselFile').files[0];
+      if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
+      if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
+      btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
+      try{
+        const current = await countItems('carousel');
+        if(current >= MAX_CAROUSEL_ITEMS){
+          msg.textContent = `Alcanzaste el máximo de ${MAX_CAROUSEL_ITEMS} elementos en el carrusel. Elimina alguno para agregar otro.`;
+          msg.className='msg err'; btn.disabled=false; return;
+        }
+        msg.textContent='Optimizando imagen…';
+        const compressed = await compressImage(file);
+        if(compressed.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen sigue pesando más de ${MAX_FILE_SIZE_MB}MB incluso tras comprimirla. Prueba con otra foto.`; msg.className='msg err'; btn.disabled=false; return; }
+        msg.textContent='Subiendo imagen…';
+        const { url:imageUrl, publicId } = await uploadToCloudinary(compressed, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
+        await db.ref('carousel').push({ type:'single', imageUrl, publicId, title, subtitle, order, createdAt: Date.now() });
+        msg.textContent='¡Agregado al carrusel!'; msg.className='msg ok';
+        document.getElementById('carouselFile').value='';
+        document.getElementById('carouselTitle').value='';
+        document.getElementById('carouselSubtitle').value='';
+        document.getElementById('carouselOrder').value=0;
+        document.getElementById('carouselPreview').style.display='none';
+      }catch(err){
+        msg.textContent = err.message; msg.className='msg err';
       }
-      msg.textContent='Optimizando imagen…';
-      const compressed = await compressImage(file);
-      if(compressed.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen sigue pesando más de ${MAX_FILE_SIZE_MB}MB incluso tras comprimirla. Prueba con otra foto.`; msg.className='msg err'; btn.disabled=false; return; }
-      msg.textContent='Subiendo imagen…';
-      const { url:imageUrl, publicId } = await uploadToCloudinary(compressed, document.getElementById('carouselProgressBar'), document.getElementById('carouselProgress'));
-      await db.ref('carousel').push({ imageUrl, publicId, title, subtitle, order, createdAt: Date.now() });
-      msg.textContent='¡Agregado al carrusel!'; msg.className='msg ok';
-      document.getElementById('carouselFile').value='';
-      document.getElementById('carouselTitle').value='';
-      document.getElementById('carouselSubtitle').value='';
-      document.getElementById('carouselOrder').value=0;
-      document.getElementById('carouselPreview').style.display='none';
-    }catch(err){
-      msg.textContent = err.message; msg.className='msg err';
+      btn.disabled = false;
+
+    } else {
+      const beforeFile = document.getElementById('carouselBeforeFile').files[0];
+      const afterFile = document.getElementById('carouselAfterFile').files[0];
+      if(!beforeFile || !afterFile){ msg.textContent='Selecciona la foto de ANTES y la de DESPUÉS.'; msg.className='msg err'; return; }
+      if(beforeFile.size > MAX_FILE_SIZE_MB*1024*1024 || afterFile.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`Cada imagen debe pesar menos de ${MAX_FILE_SIZE_MB}MB.`; msg.className='msg err'; return; }
+      btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
+      try{
+        const current = await countItems('carousel');
+        if(current >= MAX_CAROUSEL_ITEMS){
+          msg.textContent = `Alcanzaste el máximo de ${MAX_CAROUSEL_ITEMS} elementos en el carrusel. Elimina alguno para agregar otro.`;
+          msg.className='msg err'; btn.disabled=false; return;
+        }
+        msg.textContent='Optimizando imágenes…';
+        const [beforeCompressed, afterCompressed] = await Promise.all([compressImage(beforeFile), compressImage(afterFile)]);
+        msg.textContent='Subiendo foto de ANTES…';
+        const beforeRes = await uploadToCloudinary(beforeCompressed, document.getElementById('carouselBeforeProgressBar'), document.getElementById('carouselBeforeProgress'));
+        msg.textContent='Subiendo foto de DESPUÉS…';
+        const afterRes = await uploadToCloudinary(afterCompressed, document.getElementById('carouselAfterProgressBar'), document.getElementById('carouselAfterProgress'));
+        await db.ref('carousel').push({
+          type:'beforeAfter',
+          beforeUrl: beforeRes.url, beforePublicId: beforeRes.publicId,
+          afterUrl: afterRes.url, afterPublicId: afterRes.publicId,
+          title, subtitle, order, createdAt: Date.now()
+        });
+        msg.textContent='¡Comparación antes/después agregada al carrusel!'; msg.className='msg ok';
+        document.getElementById('carouselBeforeFile').value='';
+        document.getElementById('carouselAfterFile').value='';
+        document.getElementById('carouselTitle').value='';
+        document.getElementById('carouselSubtitle').value='';
+        document.getElementById('carouselOrder').value=0;
+        document.getElementById('carouselBeforePreview').style.display='none';
+        document.getElementById('carouselAfterPreview').style.display='none';
+      }catch(err){
+        msg.textContent = err.message; msg.className='msg err';
+      }
+      btn.disabled = false;
     }
-    btn.disabled = false;
   };
 
   db.ref('carousel').on('value', snap=>{
@@ -744,7 +791,25 @@ function initApp(){
     document.getElementById('carouselCount').textContent = `${items.length} / ${MAX_CAROUSEL_ITEMS} usadas`;
     const list = document.getElementById('carouselList');
     if(!items.length){ list.innerHTML = '<div class="empty-note">Aún no hay elementos en el carrusel.</div>'; return; }
-    list.innerHTML = items.map(it=>`
+    list.innerHTML = items.map(it=>{
+      if(it.type==='beforeAfter'){
+        return `
+        <div class="item-card">
+          <div style="display:flex;">
+            <img src="${it.beforeUrl}" style="width:50%;height:130px;object-fit:cover;">
+            <img src="${it.afterUrl}" style="width:50%;height:130px;object-fit:cover;">
+          </div>
+          <div class="item-body">
+            <h4>${escapeHTML(it.title||'(sin título)')} <span class="order-badge">· ANTES/DESPUÉS</span></h4>
+            <p>${escapeHTML(it.subtitle||'')}</p>
+            <div class="item-actions">
+              <span class="order-badge">Orden: ${it.order||0}</span>
+              <button class="btn-danger" data-id="${it.id}" data-ba="1" data-before-id="${it.beforePublicId||''}" data-after-id="${it.afterPublicId||''}">Eliminar</button>
+            </div>
+          </div>
+        </div>`;
+      }
+      return `
       <div class="item-card">
         <img src="${it.imageUrl}">
         <div class="item-body">
@@ -755,13 +820,18 @@ function initApp(){
             <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
           </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     list.querySelectorAll('.btn-danger').forEach(b=>{
       b.onclick = async ()=>{
-        if(!confirm('¿Eliminar este elemento del carrusel? Esto también borrará la imagen de Cloudinary.')) return;
+        if(!confirm('¿Eliminar este elemento del carrusel? Esto también borrará la(s) imagen(es) de Cloudinary.')) return;
         b.disabled = true; b.textContent='Eliminando…';
         try{
-          await deleteFromCloudinary(b.dataset.publicId);
+          if(b.dataset.ba==='1'){
+            await Promise.all([deleteFromCloudinary(b.dataset.beforeId), deleteFromCloudinary(b.dataset.afterId)]);
+          } else {
+            await deleteFromCloudinary(b.dataset.publicId);
+          }
         }catch(err){
           console.error(err);
           alert('No se pudo borrar la imagen en Cloudinary (' + err.message + '). Se eliminará igual la referencia del sitio.');
@@ -771,7 +841,7 @@ function initApp(){
     });
   });
 
-  /* ---------- GALERÍA ---------- */
+  /* ---------- GALERÍA (solo fotos normales) ---------- */
   document.getElementById('gallerySubmit').onclick = async ()=>{
     const title = document.getElementById('galleryTitle').value.trim();
     const description = document.getElementById('galleryDescription').value.trim();
@@ -779,71 +849,32 @@ function initApp(){
     const msg = document.getElementById('galleryMsg');
     const btn = document.getElementById('gallerySubmit');
 
-    if(galleryMode==='single'){
-      const file = document.getElementById('galleryFile').files[0];
-      if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
-      if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
-      btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
-      try{
-        const current = await countItems('gallery');
-        if(current >= MAX_GALLERY_ITEMS){
-          msg.textContent = `Alcanzaste el máximo de ${MAX_GALLERY_ITEMS} fotos en la galería. Elimina alguna para agregar otra.`;
-          msg.className='msg err'; btn.disabled=false; return;
-        }
-        msg.textContent='Optimizando imagen…';
-        const compressed = await compressImage(file);
-        if(compressed.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen sigue pesando más de ${MAX_FILE_SIZE_MB}MB incluso tras comprimirla. Prueba con otra foto.`; msg.className='msg err'; btn.disabled=false; return; }
-        msg.textContent='Subiendo imagen…';
-        const { url:imageUrl, publicId } = await uploadToCloudinary(compressed, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
-        await db.ref('gallery').push({ type:'single', imageUrl, publicId, title, description, order, createdAt: Date.now() });
-        msg.textContent='¡Agregado a la galería!'; msg.className='msg ok';
-        document.getElementById('galleryFile').value='';
-        document.getElementById('galleryTitle').value='';
-        document.getElementById('galleryDescription').value='';
-        document.getElementById('galleryOrder').value=0;
-        document.getElementById('galleryPreview').style.display='none';
-      }catch(err){
-        msg.textContent = err.message; msg.className='msg err';
+    const file = document.getElementById('galleryFile').files[0];
+    if(!file){ msg.textContent='Selecciona una imagen.'; msg.className='msg err'; return; }
+    if(file.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen pesa más de ${MAX_FILE_SIZE_MB}MB. Comprime o reduce la foto antes de subirla.`; msg.className='msg err'; return; }
+    btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
+    try{
+      const current = await countItems('gallery');
+      if(current >= MAX_GALLERY_ITEMS){
+        msg.textContent = `Alcanzaste el máximo de ${MAX_GALLERY_ITEMS} fotos en la galería. Elimina alguna para agregar otra.`;
+        msg.className='msg err'; btn.disabled=false; return;
       }
-      btn.disabled = false;
-
-    } else {
-      const beforeFile = document.getElementById('galleryBeforeFile').files[0];
-      const afterFile = document.getElementById('galleryAfterFile').files[0];
-      if(!beforeFile || !afterFile){ msg.textContent='Selecciona la foto de ANTES y la de DESPUÉS.'; msg.className='msg err'; return; }
-      if(beforeFile.size > MAX_FILE_SIZE_MB*1024*1024 || afterFile.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`Cada imagen debe pesar menos de ${MAX_FILE_SIZE_MB}MB.`; msg.className='msg err'; return; }
-      btn.disabled = true; msg.textContent='Verificando límite…'; msg.className='msg';
-      try{
-        const current = await countItems('gallery');
-        if(current >= MAX_GALLERY_ITEMS){
-          msg.textContent = `Alcanzaste el máximo de ${MAX_GALLERY_ITEMS} fotos en la galería. Elimina alguna para agregar otra.`;
-          msg.className='msg err'; btn.disabled=false; return;
-        }
-        msg.textContent='Optimizando imágenes…';
-        const [beforeCompressed, afterCompressed] = await Promise.all([compressImage(beforeFile), compressImage(afterFile)]);
-        msg.textContent='Subiendo foto de ANTES…';
-        const beforeRes = await uploadToCloudinary(beforeCompressed, document.getElementById('galleryBeforeProgressBar'), document.getElementById('galleryBeforeProgress'));
-        msg.textContent='Subiendo foto de DESPUÉS…';
-        const afterRes = await uploadToCloudinary(afterCompressed, document.getElementById('galleryAfterProgressBar'), document.getElementById('galleryAfterProgress'));
-        await db.ref('gallery').push({
-          type:'beforeAfter',
-          beforeUrl: beforeRes.url, beforePublicId: beforeRes.publicId,
-          afterUrl: afterRes.url, afterPublicId: afterRes.publicId,
-          title, description, order, createdAt: Date.now()
-        });
-        msg.textContent='¡Comparación antes/después agregada!'; msg.className='msg ok';
-        document.getElementById('galleryBeforeFile').value='';
-        document.getElementById('galleryAfterFile').value='';
-        document.getElementById('galleryTitle').value='';
-        document.getElementById('galleryDescription').value='';
-        document.getElementById('galleryOrder').value=0;
-        document.getElementById('galleryBeforePreview').style.display='none';
-        document.getElementById('galleryAfterPreview').style.display='none';
-      }catch(err){
-        msg.textContent = err.message; msg.className='msg err';
-      }
-      btn.disabled = false;
+      msg.textContent='Optimizando imagen…';
+      const compressed = await compressImage(file);
+      if(compressed.size > MAX_FILE_SIZE_MB*1024*1024){ msg.textContent=`La imagen sigue pesando más de ${MAX_FILE_SIZE_MB}MB incluso tras comprimirla. Prueba con otra foto.`; msg.className='msg err'; btn.disabled=false; return; }
+      msg.textContent='Subiendo imagen…';
+      const { url:imageUrl, publicId } = await uploadToCloudinary(compressed, document.getElementById('galleryProgressBar'), document.getElementById('galleryProgress'));
+      await db.ref('gallery').push({ type:'single', imageUrl, publicId, title, description, order, createdAt: Date.now() });
+      msg.textContent='¡Agregado a la galería!'; msg.className='msg ok';
+      document.getElementById('galleryFile').value='';
+      document.getElementById('galleryTitle').value='';
+      document.getElementById('galleryDescription').value='';
+      document.getElementById('galleryOrder').value=0;
+      document.getElementById('galleryPreview').style.display='none';
+    }catch(err){
+      msg.textContent = err.message; msg.className='msg err';
     }
+    btn.disabled = false;
   };
 
   db.ref('gallery').on('value', snap=>{
