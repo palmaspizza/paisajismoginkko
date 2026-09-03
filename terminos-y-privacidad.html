@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos y Condiciones · Política de Privacidad | Ginkko Paisajismo</title>
+<meta name="description" content="Términos y condiciones y política de privacidad de Ginkko Paisajismo, diseño, construcción y mantención de áreas verdes en Chile.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#0F2A1E;
+  --dark-2:#0B2018;
+  --primary:#1F5C42;
+  --primary-light:#3E7A5C;
+  --gold:#C6A15B;
+  --gold-light:#E3C888;
+  --cream:#F6F3EC;
+  --cream-2:#EFE9DC;
+  --ink:#1B211D;
+  --ink-soft:#4B564E;
+  --line:rgba(27,33,29,.12);
+  --white:#FFFFFF;
+  --radius:16px;
+  --shadow:0 20px 50px -20px rgba(15,42,30,.35);
+  --font-display:'Unbounded', -apple-system, Segoe UI, sans-serif;
+  --font-body:'Inter', -apple-system, Segoe UI, sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;font-family:var(--font-body);color:var(--ink);background:var(--cream);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.18;margin:0;color:var(--dark);}
+p{margin:0;color:var(--ink-soft);line-height:1.7;}
+a{color:var(--primary);text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul,ol{color:var(--ink-soft);line-height:1.7;padding-left:22px;margin:0;}
+li{margin-bottom:8px;}
+.container{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,48px);}
+
+/* ---- top bar ---- */
+.legal-topbar{background:var(--dark);padding:16px 0;}
+.legal-topbar .container{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--gold);color:var(--dark);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:15px;flex-shrink:0;}
+.brand-text{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:.01em;}
+.brand-text small{display:block;font-size:9.5px;letter-spacing:.16em;color:var(--gold-light);font-weight:500;margin-top:2px;}
+.back-link{color:#DCE6DE;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:8px;}
+.back-link:hover{color:#fff;}
+
+/* ---- hero ---- */
+.legal-hero{padding:clamp(52px,7vw,84px) 0 clamp(36px,5vw,48px);}
+.eyebrow{
+  font-size:13px;letter-spacing:.14em;color:var(--primary);font-weight:700;
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--gold);display:inline-block;}
+.legal-hero h1{font-size:clamp(30px,4.4vw,46px);max-width:760px;}
+.legal-hero .lead{margin-top:16px;font-size:16.5px;max-width:640px;}
+.meta-line{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink-soft);}
+.meta-pill{background:var(--white);border:1px solid var(--line);padding:7px 14px;border-radius:999px;}
+.jump-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;}
+.chip{
+  padding:11px 20px;border-radius:999px;border:1.5px solid var(--dark);font-size:13.5px;font-weight:600;
+  color:var(--dark);background:transparent;transition:.2s;
+}
+.chip:hover{background:var(--dark);color:#fff;text-decoration:none;}
+
+/* ---- layout ---- */
+.legal-shell{padding-bottom:clamp(60px,8vw,100px);display:grid;grid-template-columns:250px 1fr;gap:48px;align-items:start;}
+.legal-toc{position:sticky;top:24px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+.legal-toc h5{font-size:11.5px;letter-spacing:.1em;color:var(--ink-soft);font-weight:700;margin-bottom:12px;}
+.legal-toc-group{margin-bottom:16px;}
+.legal-toc-group:last-child{margin-bottom:0;}
+.legal-toc-title{font-family:var(--font-display);font-size:13.5px;color:var(--dark);font-weight:600;margin-bottom:8px;}
+.legal-toc a{display:block;font-size:13px;color:var(--ink-soft);padding:5px 0;border-left:2px solid transparent;padding-left:10px;}
+.legal-toc a:hover{color:var(--primary);border-left-color:var(--gold);text-decoration:none;}
+
+.legal-doc{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(28px,4vw,52px);box-shadow:var(--shadow);}
+.doc-heading{display:flex;align-items:center;gap:14px;margin-bottom:8px;padding-bottom:24px;border-bottom:1px solid var(--line);}
+.doc-heading:not(:first-child){margin-top:56px;}
+.doc-heading .num{
+  font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--dark);background:var(--cream-2);
+  width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.doc-heading h2{font-size:clamp(22px,3vw,28px);}
+.article{margin-top:28px;}
+.article h3{font-size:16px;color:var(--dark);margin-bottom:10px;display:flex;gap:10px;align-items:baseline;}
+.article h3 .art-num{color:var(--gold);font-family:var(--font-display);font-size:13px;font-weight:700;}
+.article p + p{margin-top:10px;}
+.article p{font-size:15px;}
+.article ul,.article ol{margin-top:10px;font-size:15px;}
+.callout{
+  background:var(--cream-2);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;
+  padding:16px 18px;margin-top:14px;font-size:14px;color:var(--ink-soft);
+}
+.callout b{color:var(--dark);}
+.contact-block{
+  margin-top:18px;background:var(--dark);border-radius:12px;padding:22px 24px;color:#fff;
+  display:flex;flex-wrap:wrap;gap:18px 32px;
+}
+.contact-block div{display:flex;flex-direction:column;gap:2px;}
+.contact-block b{color:#fff;font-size:13px;}
+.contact-block span{color:#B9C7BC;font-size:13.5px;}
+.contact-block a{color:var(--gold-light);}
+
+@media(max-width:900px){
+  .legal-shell{grid-template-columns:1fr;}
+  .legal-toc{position:relative;top:0;}
+}
+
+/* ---- footer ---- */
+footer{background:var(--dark-2);color:#B9C7BC;padding:44px 0 24px;margin-top:0;}
+.footer-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;font-size:13px;}
+.footer-logo{display:flex;align-items:center;gap:9px;color:#fff;font-family:var(--font-display);font-weight:600;font-size:14.5px;}
+footer a{color:#B9C7BC;}
+footer a:hover{color:var(--gold-light);}
+</style>
+</head>
+<body>
+
+<div class="legal-topbar">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">G</span>
+      <span class="brand-text">Ginkko Paisajismo<small>DISEÑO Y MANTENCIÓN DE ÁREAS VERDES</small></span>
+    </a>
+    <a href="index.html" class="back-link">← Volver al sitio</a>
+  </div>
+</div>
+
+<section class="legal-hero">
+  <div class="container">
+    <div class="eyebrow">Documentos legales</div>
+    <h1>Términos y Condiciones y Política de Privacidad</h1>
+    <p class="lead">Estas condiciones regulan el uso del sitio web de Ginkko Paisajismo y explican cómo tratamos los datos personales de quienes nos visitan, cotizan un servicio o dejan una reseña.</p>
+    <div class="meta-line">
+      <span class="meta-pill">Última actualización: 02 de septiembre de 2026</span>
+      <span class="meta-pill">Aplica a ginkkopaisajismo.cl</span>
+    </div>
+    <div class="jump-chips">
+      <a href="#terminos" class="chip">Ir a Términos y Condiciones</a>
+      <a href="#privacidad" class="chip">Ir a Política de Privacidad</a>
+    </div>
+  </div>
+</section>
+
+<div class="container legal-shell">
+
+  <aside class="legal-toc">
+    <div class="legal-toc-group">
+      <div class="legal-toc-title">Términos y Condiciones</div>
+      <h5></h5>
+      <a href="#t1">1. Identificación del prestador</a>
+      <a href="#t2">2. Aceptación de los términos</a>
+      <a href="#t3">3. Servicios ofrecidos</a>
+      <a href="#t4">4. Cotizaciones y presupuestos</a>
+      <a href="#t5">5. Contratación y forma de pago</a>
+      <a href="#t6">6. Ejecución y garantías</a>
+      <a href="#t7">7. Uso del sitio web</a>
+      <a href="#t8">8. Reseñas y contenido de usuarios</a>
+      <a href="#t9">9. Propiedad intelectual</a>
+      <a href="#t10">10. Servicios de terceros</a>
+      <a href="#t11">11. Limitación de responsabilidad</a>
+      <a href="#t12">12. Modificaciones</a>
+      <a href="#t13">13. Ley aplicable y jurisdicción</a>
+    </div>
+    <div class="legal-toc-group">
+      <div class="legal-toc-title">Política de Privacidad</div>
+      <a href="#p1">1. Responsable del tratamiento</a>
+      <a href="#p2">2. Datos que recopilamos</a>
+      <a href="#p3">3. Finalidad del tratamiento</a>
+      <a href="#p4">4. Base legal</a>
+      <a href="#p5">5. Almacenamiento y conservación</a>
+      <a href="#p6">6. Comunicación a terceros</a>
+      <a href="#p7">7. Seguridad de la información</a>
+      <a href="#p8">8. Tus derechos (ARCO)</a>
+      <a href="#p9">9. Almacenamiento local del navegador</a>
+      <a href="#p10">10. Menores de edad</a>
+      <a href="#p11">11. Cambios a esta política</a>
+    </div>
+  </aside>
+
+  <main class="legal-doc">
+
+    <!-- ============ TÉRMINOS Y CONDICIONES ============ -->
+    <div id="terminos"></div>
+    <div class="doc-heading">
+      <span class="num">I</span>
+      <h2>Términos y Condiciones</h2>
+    </div>
+
+    <div class="article" id="t1">
+      <h3><span class="art-num">01</span> Identificación del prestador de servicios</h3>
+      <p>Este sitio web es operado bajo el nombre de fantasía <b>Ginkko Paisajismo</b>, cuyo titular y responsable es <b>Nicolás Alberto Cordero Campos</b>, RUT 20.785.695-9, persona natural con giro de paisajismo, con domicilio en Santiago, Chile.</p>
+      <p>Al referirnos a "Ginkko Paisajismo", "nosotros" o "la empresa" en este documento, nos referimos a dicho titular.</p>
+    </div>
+
+    <div class="article" id="t2">
+      <h3><span class="art-num">02</span> Aceptación de los términos</h3>
+      <p>Al navegar, cotizar un servicio, dejar una reseña o contactarnos a través de este sitio web, aceptas los presentes Términos y Condiciones y la Política de Privacidad descrita más abajo. Si no estás de acuerdo con alguno de sus puntos, te pedimos no utilizar el sitio ni sus formularios de contacto.</p>
+    </div>
+
+    <div class="article" id="t3">
+      <h3><span class="art-num">03</span> Servicios ofrecidos</h3>
+      <p>Ginkko Paisajismo ofrece servicios de diseño y paisajismo, mantención de áreas verdes, instalación de sistemas de riego, instalación de césped, y poda y tala de árboles, dirigidos a condominios, empresas y hogares en Santiago y otras zonas de Chile.</p>
+      <p>Las fotografías, descripciones y contenido publicado en el sitio tienen fines informativos y buscan reflejar fielmente los trabajos realizados, pero pueden existir variaciones respecto de cada proyecto particular.</p>
+    </div>
+
+    <div class="article" id="t4">
+      <h3><span class="art-num">04</span> Cotizaciones y presupuestos</h3>
+      <p>El sitio permite solicitar una cotización a través de WhatsApp o correo electrónico. Toda cotización entregada por este medio es referencial y no constituye una oferta vinculante hasta que ambas partes confirmen por escrito el alcance, precio y condiciones definitivas del servicio.</p>
+      <div class="callout"><b>Importante:</b> el valor final de un servicio puede variar según las condiciones reales del terreno, superficie, acceso al lugar, estado de la vegetación existente y otros factores que solo pueden confirmarse mediante una visita técnica o información detallada entregada por el cliente.</div>
+    </div>
+
+    <div class="article" id="t5">
+      <h3><span class="art-num">05</span> Contratación y forma de pago</h3>
+      <p>El sitio web no procesa pagos ni ventas en línea. La contratación de un servicio, así como la forma, medio y plazos de pago, se acuerda directamente entre Ginkko Paisajismo y el cliente, fuera de la plataforma, una vez confirmados los detalles del trabajo.</p>
+    </div>
+
+    <div class="article" id="t6">
+      <h3><span class="art-num">06</span> Ejecución de los trabajos y garantías</h3>
+      <p>Los resultados de los servicios de paisajismo y jardinería dependen en parte de factores biológicos, climáticos y de mantención posterior que están fuera del control de Ginkko Paisajismo (por ejemplo, riego, clima, plagas o cuidado posterior del cliente).</p>
+      <p>Las garantías específicas sobre plantas, césped, sistemas de riego u otros elementos instalados se acuerdan por escrito, caso a caso, al momento de contratar cada proyecto, y no se entienden incluidas de forma automática por el solo hecho de visitar este sitio.</p>
+    </div>
+
+    <div class="article" id="t7">
+      <h3><span class="art-num">07</span> Uso del sitio web</h3>
+      <p>Te comprometes a utilizar el sitio, el formulario de reseñas y los canales de contacto (WhatsApp, correo) de forma lícita, veraz y respetuosa. Está prohibido usar estos medios para enviar spam, contenido difamatorio, fraudulento o que vulnere derechos de terceros.</p>
+    </div>
+
+    <div class="article" id="t8">
+      <h3><span class="art-num">08</span> Reseñas y contenido generado por usuarios</h3>
+      <p>Las reseñas publicadas en el sitio corresponden a la opinión personal de cada cliente y no representan necesariamente la posición de Ginkko Paisajismo. No garantizamos la exactitud de las opiniones de terceros, aunque procuramos que reflejen experiencias reales.</p>
+      <p>Nos reservamos el derecho de moderar, editar o eliminar reseñas que sean falsas, ofensivas, discriminatorias, spam, o que vulneren derechos de terceros, sin que ello genere obligación de compensación alguna.</p>
+      <p>El sitio aplica un límite razonable a la frecuencia con la que un mismo dispositivo puede publicar reseñas, como medida básica contra el abuso del formulario.</p>
+    </div>
+
+    <div class="article" id="t9">
+      <h3><span class="art-num">09</span> Propiedad intelectual</h3>
+      <p>El nombre "Ginkko Paisajismo", su logotipo, las fotografías de proyectos, textos y el diseño del sitio son propiedad de Ginkko Paisajismo o se utilizan con la debida autorización. Su reproducción, distribución o uso comercial sin autorización previa está prohibida.</p>
+    </div>
+
+    <div class="article" id="t10">
+      <h3><span class="art-num">10</span> Enlaces y servicios de terceros</h3>
+      <p>El sitio utiliza o enlaza a servicios de terceros como WhatsApp/Meta, Instagram, Google y Firebase (infraestructura donde se almacenan reseñas y galería de fotos). Ginkko Paisajismo no controla ni se responsabiliza por el contenido, disponibilidad o políticas de privacidad de dichos servicios externos, los que se rigen por sus propios términos.</p>
+    </div>
+
+    <div class="article" id="t11">
+      <h3><span class="art-num">11</span> Limitación de responsabilidad</h3>
+      <p>Ginkko Paisajismo no será responsable por daños indirectos, interrupciones del sitio, o inconvenientes derivados de fallas de terceros (por ejemplo, WhatsApp, Google/Firebase o el proveedor de internet del usuario), ni por decisiones tomadas exclusivamente en base a información referencial publicada en el sitio antes de una confirmación formal del servicio.</p>
+    </div>
+
+    <div class="article" id="t12">
+      <h3><span class="art-num">12</span> Modificaciones de estos términos</h3>
+      <p>Podemos actualizar estos Términos y Condiciones en cualquier momento para reflejar cambios en nuestros servicios o en la normativa vigente. La versión vigente será siempre la publicada en esta página, indicando la fecha de última actualización.</p>
+    </div>
+
+    <div class="article" id="t13">
+      <h3><span class="art-num">13</span> Ley aplicable y jurisdicción</h3>
+      <p>Estos términos se rigen por las leyes de la República de Chile. Cualquier controversia derivada de su interpretación o aplicación se someterá a los tribunales ordinarios de justicia de Santiago de Chile.</p>
+    </div>
+
+    <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
+    <div id="privacidad"></div>
+    <div class="doc-heading">
+      <span class="num">II</span>
+      <h2>Política de Privacidad</h2>
+    </div>
+
+    <div class="article" id="p1">
+      <h3><span class="art-num">01</span> Responsable del tratamiento de datos</h3>
+      <p>El responsable del tratamiento de los datos personales recopilados a través de este sitio es <b>Nicolás Alberto Cordero Campos</b>, RUT 20.785.695-9, operando como Ginkko Paisajismo, con domicilio en Santiago, Chile.</p>
+    </div>
+
+    <div class="article" id="p2">
+      <h3><span class="art-num">02</span> Datos personales que recopilamos</h3>
+      <p>Recopilamos los siguientes datos, solo cuando tú decides entregarlos voluntariamente:</p>
+      <ul>
+        <li><b>Formulario de reseñas:</b> nombre, comuna o ubicación, comentario y calificación en estrellas.</li>
+        <li><b>Contacto por WhatsApp o correo:</b> nombre, número de teléfono, correo electrónico y el contenido del mensaje o consulta que redactes.</li>
+      </ul>
+      <p>No solicitamos datos bancarios, de tarjetas ni información financiera a través del sitio web.</p>
+    </div>
+
+    <div class="article" id="p3">
+      <h3><span class="art-num">03</span> Finalidad del tratamiento</h3>
+      <p>Usamos tus datos para: responder tu solicitud de cotización o consulta, publicar tu reseña en el sitio (cuando la envías voluntariamente), y mejorar la calidad de nuestros servicios de atención.</p>
+    </div>
+
+    <div class="article" id="p4">
+      <h3><span class="art-num">04</span> Base legal</h3>
+      <p>El tratamiento se basa en tu consentimiento, otorgado al completar voluntariamente el formulario de reseñas o al iniciar una conversación de contacto por WhatsApp o correo electrónico.</p>
+    </div>
+
+    <div class="article" id="p5">
+      <h3><span class="art-num">05</span> Almacenamiento y conservación</h3>
+      <p>Las reseñas y el contenido de la galería se almacenan en Firebase Realtime Database, servicio de infraestructura de Google. Las reseñas publicadas permanecen visibles públicamente en el sitio hasta que el usuario solicite su eliminación o Ginkko Paisajismo la retire conforme al punto 8 de los Términos y Condiciones.</p>
+    </div>
+
+    <div class="article" id="p6">
+      <h3><span class="art-num">06</span> Comunicación de datos a terceros</h3>
+      <p>No vendemos ni compartimos tus datos personales con fines comerciales de terceros. Tus datos solo se comparten con los proveedores tecnológicos necesarios para operar el sitio (Google/Firebase) y, cuando tú decides escribirnos, con WhatsApp/Meta como plataforma de mensajería.</p>
+    </div>
+
+    <div class="article" id="p7">
+      <h3><span class="art-num">07</span> Seguridad de la información</h3>
+      <p>Adoptamos medidas razonables para proteger los datos que nos entregas. Sin embargo, ninguna transmisión de datos por internet puede garantizarse como completamente segura al 100%.</p>
+    </div>
+
+    <div class="article" id="p8">
+      <h3><span class="art-num">08</span> Tus derechos sobre tus datos</h3>
+      <p>Conforme a la Ley N.° 19.628 sobre Protección de la Vida Privada, puedes ejercer en cualquier momento tus derechos de acceso, rectificación, cancelación y oposición (derechos ARCO) respecto de tus datos personales, incluyendo solicitar la eliminación de una reseña publicada.</p>
+      <div class="contact-block">
+        <div><b>WhatsApp</b><span><a href="https://wa.me/56972853944">+56 9 7285 3944</a></span></div>
+        <div><b>Correo</b><span><a href="mailto:ginkkopaisajismo@gmail.com">ginkkopaisajismo@gmail.com</a></span></div>
+      </div>
+    </div>
+
+    <div class="article" id="p9">
+      <h3><span class="art-num">09</span> Almacenamiento local del navegador</h3>
+      <p>El sitio guarda un pequeño registro en el navegador (localStorage) únicamente para limitar la frecuencia con la que un mismo dispositivo puede enviar reseñas. Este dato queda solo en tu propio navegador, no se usa para publicidad ni seguimiento con fines de marketing, y puedes borrarlo eliminando los datos de navegación de tu dispositivo.</p>
+    </div>
+
+    <div class="article" id="p10">
+      <h3><span class="art-num">10</span> Menores de edad</h3>
+      <p>Este sitio está dirigido a público general adulto. No recopilamos conscientemente datos de menores de edad sin la autorización de un padre, madre o adulto responsable.</p>
+    </div>
+
+    <div class="article" id="p11">
+      <h3><span class="art-num">11</span> Cambios a esta política</h3>
+      <p>Podemos actualizar esta Política de Privacidad para reflejar cambios normativos o en nuestro sitio. Publicaremos siempre la versión vigente en esta misma página, con su fecha de actualización.</p>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">Ginkko Paisajismo</div>
+    <div>© <span id="year"></span> Ginkko Paisajismo. Todos los derechos reservados.</div>
+    <div><a href="index.html#contacto">Volver a contacto</a></div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
