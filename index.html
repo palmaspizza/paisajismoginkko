@@ -707,7 +707,11 @@ h1, h2, h3, h4, h5, h6 {
         <div class="form-row full">
           <textarea id="reviewComment" placeholder="Escribe tu comentario…" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Publicar reseña</button>
+        <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;font-size:13.5px;color:#B9C7BC;cursor:pointer;">
+          <input type="checkbox" id="reviewTerms" required style="width:auto;margin-top:3px;flex-shrink:0;">
+          <span>He leído y acepto los <a href="terminos-y-privacidad" target="_blank" style="color:#E3C888;text-decoration:underline;">Términos y Condiciones y la Política de Privacidad</a>.</span>
+        </label>
+        <button type="submit" class="btn btn-primary" id="reviewSubmitBtn" disabled style="opacity:.5;cursor:not-allowed;">Publicar reseña</button>
         <div class="form-msg" id="reviewMsg"></div>
       </form>
     </div>
@@ -793,7 +797,7 @@ h1, h2, h3, h4, h5, h6 {
       <div><h5>Contacto</h5><ul><li>+56 9 7285 3944</li><li>ginkkopaisajismo@gmail.com</li><li>Santiago, Chile</li></ul></div>
     </div>
     <div class="footer-bottom">
-      <span>© <span id="year"></span> Ginkko Paisajismo. Todos los derechos reservados.</span>
+      <span>© <span id="year"></span> Ginkko Paisajismo. Todos los derechos reservados. · <a href="terminos-y-privacidad.html" style="color:#B9C7BC;text-decoration:underline;">Términos y Privacidad</a></span>
       <span>Sitio diseñado por PalmaCodes</span>
     </div>
   </div>
@@ -1178,7 +1182,13 @@ starPicker.querySelectorAll('span').forEach(s=>{
   s.onclick = ()=>{ selectedRating = +s.dataset.v; paintStars(); };
 });
 paintStars();
-
+const reviewTermsCheckbox = document.getElementById('reviewTerms');
+const reviewSubmitBtn = document.getElementById('reviewSubmitBtn');
+reviewTermsCheckbox.addEventListener('change', function(){
+  reviewSubmitBtn.disabled = !this.checked;
+  reviewSubmitBtn.style.opacity = this.checked ? '1' : '.5';
+  reviewSubmitBtn.style.cursor = this.checked ? 'pointer' : 'not-allowed';
+});
 document.getElementById('reviewForm').addEventListener('submit', function(e){
   e.preventDefault();
   const msgEl = document.getElementById('reviewMsg');
