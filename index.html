@@ -332,7 +332,7 @@ footer a:hover{color:var(--gold-light);}
 }
 .wa-float:hover{background:var(--primary-light);}
 
-/* ================= SIMULADOR DE CHAT WHATSAPP ================= */
+/* ================= CHATBOT COTIZADOR WHATSAPP ================= */
 .wa-modal{position:fixed;inset:0;background:rgba(11,32,24,.55);z-index:2100;display:none;align-items:center;justify-content:center;padding:18px;}
 .wa-modal.open{display:flex;}
 .wa-modal-inner{
@@ -345,12 +345,13 @@ footer a:hover{color:var(--gold-light);}
 .wa-back{color:#fff;font-size:20px;background:none;padding:0 2px;}
 .wa-avatar{
   width:38px;height:38px;border-radius:50%;background:#0F2A1E;display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.4);
+  font-size:18px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.4);overflow:hidden;
 }
+.wa-avatar img{width:100%;height:100%;object-fit:cover;}
 .wa-header-info{flex:1;line-height:1.25;}
 .wa-header-info b{display:block;font-size:15px;font-weight:600;}
 .wa-header-info span{font-size:12px;color:#CFE8DE;}
-.wa-header-icons{display:flex;gap:16px;font-size:16px;opacity:.9;}
+.wa-header-icons{display:flex;gap:16px;font-size:16px;opacity:.9;cursor:pointer;align-items:center;}
 .wa-modal-body{
   flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:8px;
   background-color:#E9E2D8;
@@ -358,28 +359,91 @@ footer a:hover{color:var(--gold-light);}
   background-size:16px 16px;
 }
 .wa-day-chip{align-self:center;background:#FFFFFF;color:#7A8580;font-size:11.5px;padding:5px 12px;border-radius:8px;margin-bottom:6px;box-shadow:0 1px 1px rgba(0,0,0,.08);}
-.wa-system-chip{align-self:center;background:#FCF3C7;color:#7A6A20;font-size:12px;text-align:center;padding:10px 14px;border-radius:8px;max-width:88%;margin-bottom:6px;line-height:1.4;}
-.wa-bubble{max-width:80%;padding:8px 10px 6px;border-radius:8px;font-size:14px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.08);position:relative;}
+.wa-bubble{max-width:82%;padding:8px 10px 6px;border-radius:8px;font-size:14px;line-height:1.45;box-shadow:0 1px 2px rgba(0,0,0,.12);position:relative;word-break:break-word;}
 .wa-bubble.in{align-self:flex-start;background:#fff;color:#1B211D;border-top-left-radius:2px;}
 .wa-bubble.out{align-self:flex-end;background:#DCF8C6;color:#1B211D;border-top-right-radius:2px;}
 .wa-bubble p{color:inherit;margin:0;}
-.wa-bubble .wa-time{display:block;text-align:right;font-size:10.5px;color:#7A8580;margin-top:4px;}
+/* Doble check azul cuando bot ya respondió */
+.wa-time{display:block;text-align:right;font-size:10.5px;color:#7A8580;margin-top:5px;}
+.wa-time.delivered{color:#34B7F1;}
+/* Animación typing 3 puntos */
+.wa-typing{align-self:flex-start;background:#fff;border-radius:8px;border-top-left-radius:2px;padding:11px 16px;box-shadow:0 1px 2px rgba(0,0,0,.12);display:flex;align-items:center;gap:5px;}
+.wa-typing span{width:7px;height:7px;border-radius:50%;background:#9E9E9E;display:inline-block;animation:waDot 1.1s infinite ease-in-out;}
+.wa-typing span:nth-child(2){animation-delay:.18s;}
+.wa-typing span:nth-child(3){animation-delay:.36s;}
+@keyframes waDot{0%,60%,100%{transform:translateY(0);opacity:.45;}30%{transform:translateY(-5px);opacity:1;}}
+/* Barra de opciones */
+.wa-options-bar{
+  flex-shrink:0;background:#f0ede6;border-top:1px solid rgba(0,0,0,.08);
+  padding:12px 10px 10px;display:flex;flex-wrap:wrap;gap:8px;
+}
+/* Botones de opción — profesional, sin caricatura */
+.wa-opt-btn{
+  position:relative;overflow:hidden;
+  padding:10px 16px;border-radius:10px;
+  border:1.5px solid #075E54;background:#fff;
+  color:#075E54;font-size:13.5px;font-weight:600;font-family:inherit;
+  cursor:pointer;line-height:1.3;letter-spacing:.01em;
+  box-shadow:0 2px 6px rgba(7,94,84,.10);
+  transition:background .18s ease, color .18s ease, box-shadow .18s ease, transform .12s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.wa-opt-btn::after{
+  content:'';position:absolute;inset:0;background:rgba(7,94,84,.06);
+  opacity:0;transition:opacity .15s;border-radius:10px;
+}
+.wa-opt-btn:hover{background:#075E54;color:#fff;box-shadow:0 4px 14px rgba(7,94,84,.25);transform:translateY(-1px);}
+.wa-opt-btn:active{transform:translateY(0) scale(.98);box-shadow:0 1px 4px rgba(7,94,84,.15);}
+.wa-opt-btn.selected{background:#075E54;color:#fff;box-shadow:0 4px 14px rgba(7,94,84,.25);}
+/* Input área */
 .wa-modal-input{
-  flex-shrink:0;background:#F0F0F0;padding:10px 12px;display:flex;align-items:flex-end;gap:10px;
+  flex-shrink:0;background:#F0F0F0;padding:10px 12px;display:flex;align-items:flex-end;gap:10px;border-top:1px solid #ddd;
 }
 .wa-modal-input textarea{
   flex:1;border:none;border-radius:20px;padding:10px 16px;font-size:14px;max-height:90px;
-  background:#fff;font-family:inherit;resize:none;line-height:1.35;
+  background:#fff;font-family:inherit;resize:none;line-height:1.35;color:#000;
 }
 .wa-modal-input textarea:focus{outline:none;}
+.wa-modal-input textarea:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed;}
 .wa-send{
   width:40px;height:40px;border-radius:50%;background:#075E54;color:#fff;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;
 }
-.wa-send:hover{background:#0b7d6e;}
-.wa-send:disabled{opacity:.5;}
-.wa-modal-hint{background:#075E54;color:#CFE8DE;text-align:center;font-size:11px;padding:6px 10px;margin:0;flex-shrink:0;}
-
+.wa-send:hover:not(:disabled){background:#0b7d6e;}
+.wa-send:disabled{opacity:.35;cursor:not-allowed;}
+/* Botón CTA final */
+.wa-cta-btn{
+  display:block;width:100%;margin-top:10px;padding:14px 18px;border-radius:12px;
+  background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-size:15px;
+  font-weight:700;text-align:center;cursor:pointer;border:none;font-family:inherit;
+  box-shadow:0 4px 16px rgba(18,140,126,.38);
+  transition:transform .18s ease, box-shadow .18s ease;
+  letter-spacing:.01em;
+}
+.wa-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(18,140,126,.45);}
+.wa-cta-btn:active{transform:translateY(0) scale(.98);}
+/* Input numérico m² */
+.wa-m2-input-wrap{display:flex;gap:8px;align-items:center;margin-top:10px;}
+.wa-m2-input{
+  flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid #ccc;font-size:16px;
+  font-family:inherit;color:#1B211D;background:#fff;transition:border-color .15s;
+}
+.wa-m2-input:focus{outline:none;border-color:#075E54;}
+.wa-m2-submit{
+  padding:10px 16px;border-radius:10px;background:#075E54;color:#fff;font-weight:700;
+  font-size:14px;font-family:inherit;cursor:pointer;border:none;
+  transition:background .15s, transform .12s;white-space:nowrap;
+}
+.wa-m2-submit:hover{background:#0b7d6e;transform:translateY(-1px);}
+.wa-m2-submit:active{transform:scale(.97);}
+/* Tarjeta cotización */
+.wa-quote-card{
+  background:linear-gradient(135deg,#0F2A1E,#1F5C42);color:#fff;border-radius:12px;
+  padding:16px;margin-top:4px;
+}
+.wa-quote-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#9ECFB8;margin-bottom:5px;}
+.wa-quote-card .price{font-size:23px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.2;}
+.wa-quote-card .sub{font-size:12px;color:#C3DDD3;line-height:1.4;}
 @media(max-width:900px){
   nav,.nav-right .btn-wa-desktop{display:none;}
   .burger{display:flex;}
@@ -807,28 +871,29 @@ h1, h2, h3, h4, h5, h6 {
   <svg width="38" height="38" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.38c1.44.79 3.06 1.2 4.71 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.92 6.45 17.5 2 12.04 2zm5.83 14.02c-.24.68-1.4 1.31-1.93 1.38-.5.07-1.09.1-1.75-.11-.4-.13-.92-.3-1.58-.59-2.78-1.2-4.6-4-4.74-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.98-2.32.26-.28.56-.35.75-.35h.53c.17 0 .4-.03.62.47.24.55.8 1.92.87 2.06.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
 </button>
 
-<!-- ============ SIMULADOR DE CHAT WHATSAPP ============ -->
+<!-- ============ SIMULADOR DE CHAT WHATSAPP — CHATBOT COTIZADOR ============ -->
 <div class="wa-modal" id="waModal">
   <div class="wa-modal-inner">
     <div class="wa-modal-header">
-      <button class="wa-back" id="waModalClose" aria-label="Cerrar chat">&larr;</button>
-      <div class="wa-avatar"><img src="logoicon.jpeg" style="border-radius: 50%;" alt=""></div>
-      <div class="wa-header-info"><b>Ginkko Paisajismo</b><span>Normalmente responde en el día</span></div>
-      <div class="wa-header-icons"><span></span><span>⋮</span></div>
+      <button class="wa-back" id="waModalClose" aria-label="Cerrar chat">&#8592;</button>
+      <div class="wa-avatar"><img src="logoicon.jpeg" style="border-radius:50%;" alt=""></div>
+      <div class="wa-header-info">
+        <b>Ginkko Paisajismo</b>
+        <span id="waOnlineStatus">en línea</span>
+      </div>
+      <div class="wa-header-icons">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff" style="opacity:.9;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.18 21 3 13.82 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff" style="opacity:.9;"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+</div>
     </div>
     <div class="wa-modal-body" id="waModalBody">
       <div class="wa-day-chip">Hoy</div>
-      <div class="wa-system-chip">Este chat se simula en el sitio web para que redactes tu mensaje. Al presionar enviar, se abrirá WhatsApp para completarlo con nuestra empresa.</div>
-      <div class="wa-bubble in">
-        <p>¡Hola! 👋 Bienvenido a <b>Ginkko Paisajismo</b>. Cuéntanos en qué podemos ayudarte con tu jardín o áreas verdes y te responderemos a la brevedad.</p>
-        <span class="wa-time" id="waWelcomeTime"></span>
-      </div>
     </div>
+    <div class="wa-options-bar" id="waOptionsBar" style="display:none;"></div>
     <div class="wa-modal-input">
-      <textarea style="color: #000;" id="waModalInput" placeholder="Escribe un mensaje" rows="1"></textarea>
-      <button class="wa-send" id="waModalSend" aria-label="Enviar mensaje">➤</button>
+      <textarea id="waModalInput" placeholder="Selecciona una opción arriba 👆" rows="1" disabled style="color:#555;"></textarea>
+      <button class="wa-send" id="waModalSend" aria-label="Enviar" disabled>&#10148;</button>
     </div>
-    <p class="wa-modal-hint">Serás redirigido a WhatsApp para enviar tu mensaje a nuestra empresa.</p>
   </div>
 </div>
 
@@ -874,6 +939,29 @@ const CONFIG = {
 function waLink(msg){
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
 }
+
+function buildWaMessage() {
+  let msg = `Hola Nicolás! Vi tu página web y quisiera cotizar un servicio de Ginkko Paisajismo.`;
+  
+  if (chatData.servicio) {
+    msg += ` Servicio: ${chatData.servicio}.`;
+  }
+  
+  // Se muestra siempre que el usuario haya ingresado los m²
+  if (chatData.m2) {
+    msg += ` Mi jardín tiene ${chatData.m2} m².`;
+  }
+  
+  // Solo se agrega si el precio fue calculado (jardines <= 300 m²)
+  if (chatData.precio) {
+    msg += ` El valor estimado es ${chatData.precio}.`;
+  }
+  
+  msg += ` Te adjunto foto del espacio 📷`;
+  return msg;
+}
+
+
 function starsHTML(rating){
   const full = Math.round(rating);
   return "★".repeat(full) + "☆".repeat(5-full);
@@ -907,71 +995,303 @@ mailBtn.target = '_blank';
 mailBtn.rel = 'noopener';
 
 /* ================================================================
-   SIMULADOR DE CHAT WHATSAPP — abre un modal con la apariencia de
-   WhatsApp. El visitante escribe su mensaje ahí, y al enviarlo se
-   abre WhatsApp real (wa.me) con ese texto ya redactado.
+   CHATBOT COTIZADOR WHATSAPP
    ================================================================ */
-const waModal = document.getElementById('waModal');
-const waModalInput = document.getElementById('waModalInput');
+const waModal     = document.getElementById('waModal');
 const waModalBody = document.getElementById('waModalBody');
+const waModalInput= document.getElementById('waModalInput');
+const waModalSend = document.getElementById('waModalSend');
+const waOptionsBar= document.getElementById('waOptionsBar');
 
 function nowHM(){
   return new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
 }
-document.getElementById('waWelcomeTime').textContent = nowHM();
 
-function openWaModal(prefill){
+/* Delay humano: varía entre min y max ms para que no parezca bot */
+function humanDelay(min=1400, max=3200){
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/* ---- helpers de burbujas ---- */
+function addBubble(html, who='in'){
+  return new Promise(resolve=>{
+    const d = document.createElement('div');
+    d.className = `wa-bubble ${who}`;
+    // Doble check azul en mensajes propios (out), normal en bot (in)
+    const timeClass = who === 'out' ? 'wa-time delivered' : 'wa-time';
+    const checkMark = who === 'out' ? ' ✓✓' : '';
+    d.innerHTML = `${html}<span class="${timeClass}">${nowHM()}${checkMark}</span>`;
+    waModalBody.appendChild(d);
+    waModalBody.scrollTop = waModalBody.scrollHeight;
+    resolve(d);
+  });
+}
+
+function showTyping(){
+  const t = document.createElement('div');
+  t.className='wa-typing'; t.id='waTypingIndicator';
+  t.innerHTML='<span></span><span></span><span></span>';
+  waModalBody.appendChild(t);
+  waModalBody.scrollTop = waModalBody.scrollHeight;
+  return t;
+}
+function removeTyping(){
+  const t = document.getElementById('waTypingIndicator');
+  if(t) t.remove();
+}
+
+/* botReply: muestra typing ~500-700ms antes de responder, luego delay variable humano */
+function botReply(htmlContent, extraDelay=0){
+  return new Promise(resolve=>{
+    const typingDelay = Math.floor(Math.random()*200) + 500; // 500–700ms antes de que aparezcan los puntos
+    setTimeout(()=>{
+      showTyping();
+      waModalBody.scrollTop = waModalBody.scrollHeight;
+      const replyDelay = humanDelay(1600, 2900) + extraDelay;
+      setTimeout(()=>{
+        removeTyping();
+        addBubble(`<p>${htmlContent}</p>`, 'in').then(resolve);
+      }, replyDelay);
+    }, typingDelay);
+  });
+}
+
+function setOptions(opts){
+  waOptionsBar.innerHTML = '';
+  if(!opts || !opts.length){ waOptionsBar.style.display='none'; return; }
+  waOptionsBar.style.display='flex';
+  opts.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className='wa-opt-btn';
+    btn.innerHTML = o.icon ? `<span style="margin-right:5px;">${o.icon}</span>${o.label}` : o.label;
+    btn.dataset.value = o.value;
+    btn.onclick = ()=> handleOption(o);
+    waOptionsBar.appendChild(btn);
+  });
+}
+function clearOptions(){ setOptions([]); }
+
+function enableInput(placeholder='Escribe aquí...'){
+  waModalInput.disabled = false;
+  waModalInput.placeholder = placeholder;
+  waModalSend.disabled = false;
+  waModalInput.focus();
+}
+function disableInput(){
+  waModalInput.disabled = true;
+  waModalInput.placeholder = 'Selecciona una opción 👆';
+  waModalSend.disabled = true;
+}
+
+/* ---- estado ---- */
+let chatState = 'idle';
+let chatData = { servicio: '', m2: '', precio: '' };
+/* ---- flujo principal ---- */
+async function startChat(){
+  disableInput();
+  clearOptions();
+  await botReply('¡Hola! 👋 Bienvenido a <b>Ginkko Paisajismo</b>. ¿En qué te puedo ayudar?');
+  setOptions([
+    {label:'Cotizar mantención de jardín', icon:'', value:'cotizar'},
+    {label:'Hablar con Nicolás directamente', icon:'🧑‍🌾', value:'nico'},
+  ]);
+  chatState = 'menu';
+}
+
+async function handleOption(opt){
+  waOptionsBar.querySelectorAll('.wa-opt-btn').forEach(b=> b.classList.remove('selected'));
+  const clicked = [...waOptionsBar.querySelectorAll('.wa-opt-btn')].find(b=>b.dataset.value===opt.value);
+  if(clicked) clicked.classList.add('selected');
+
+  if(opt.servicio) chatData.servicio = opt.servicio; // <-- Aquí es donde debe ir
+
+  await addBubble(`<p>${escapeHTML(opt.label)}</p>`, 'out');
+  clearOptions();
+  disableInput();
+  
+  if(opt.value === 'cotizar')       await flujoMantencion();
+  else if(opt.value === 'nico')     await flujoNico();
+  else if(opt.value === 'otro_servicio') await flujoOtroServicio();
+  else if(opt.value === 'si_m2')    await pedirM2();
+  else if(opt.value === 'no_m2')    await flujoNico();
+  else if(opt.value === 'reiniciar'){
+    waModalBody.innerHTML = '<div class="wa-day-chip">Hoy</div>';
+    chatData = { servicio: '', m2: '', precio: '' }; // Limpiar datos al reiniciar
+    chatState = 'idle';
+    startChat();
+  }
+}
+
+async function flujoMantencion(){
+  chatData.servicio = 'Mantención de jardín';
+  await botReply('Perfecto 🌱 El precio por mantención depende de los metros cuadrados (m²) de tu jardín.');
+  await botReply('¿Sabes aproximadamente cuántos m² tiene tu jardín?');
+  setOptions([
+    {label:'Sí, sé los m²', icon:'✅', value:'si_m2'},
+    {label:'No sé, pero tengo foto', icon:'📷', value:'no_m2'},
+  ]);
+  chatState = 'cotizar_m2_pregunta';
+}
+
+async function pedirM2(){
+  await botReply('Genial 📐 Ingresa los metros cuadrados y te calculo el valor por mantención al tiro:');
+
+  const wrap = document.createElement('div');
+  wrap.className='wa-m2-input-wrap';
+  wrap.innerHTML=`
+    <input type="number" class="wa-m2-input" id="waM2Val" placeholder="Ej: 120 m²" min="1" max="9999">
+    <button class="wa-m2-submit" id="waM2Btn">Calcular →</button>
+  `;
+  waModalBody.appendChild(wrap);
+  waModalBody.scrollTop = waModalBody.scrollHeight;
+  document.getElementById('waM2Val').focus();
+  document.getElementById('waM2Btn').onclick = calcularCotizacion;
+  document.getElementById('waM2Val').onkeydown = e=>{ if(e.key==='Enter') calcularCotizacion(); };
+  chatState = 'cotizar_m2_input';
+}
+
+async function calcularCotizacion(){
+  const input = document.getElementById('waM2Val');
+  if(!input) return;
+  const m2 = parseInt(input.value, 10);
+
+  if(!m2 || m2 < 1){
+    input.style.borderColor='#e55';
+    input.placeholder='Ingresa un número válido';
+    return;
+  }
+
+  const wrap = input.closest('.wa-m2-input-wrap');
+  if(wrap) wrap.remove();
+
+  await addBubble(`<p>Mi jardín tiene <b>${m2} m²</b></p>`, 'out');
+  disableInput();
+  chatData.m2 = m2;
+  let rangoTexto, rangoMin, rangoMax, esEspecial=false;
+  if(m2 >= 50 && m2 <= 100){
+    rangoMin=30000; rangoMax=40000;
+    rangoTexto=`entre <b>$30.000 y $40.000 CLP</b> por mantención`;
+  } else if(m2 > 100 && m2 <= 300){
+    rangoMin=35000; rangoMax=50000;
+    rangoTexto=`entre <b>$35.000 y $50.000 CLP</b> por mantención`;
+  } else if(m2 < 50){
+    rangoMin=25000; rangoMax=30000;
+    rangoTexto=`entre <b>$25.000 y $30.000 CLP</b> por mantención`;
+  } else {
+    esEspecial=true;
+  }
+
+  if(esEspecial){
+    await botReply(`Con <b>${m2} m²</b> tu jardín supera los 300 m², eso es un proyecto de mayor envergadura 🏢`);
+    await botReply('Para este tipo de proyectos grandes, se requiere una <b>revisión previa mediante fotografía</b> por WhatsApp para que Nicolás lo evalúe directamente ');
+    setOptions([
+      {label:'Agendar visita técnica', icon:'📅', value:'nico'},
+      {label:'Volver al inicio', icon:'🔄', value:'reiniciar'},
+    ]);
+  } else {
+chatData.precio = `$${rangoMin.toLocaleString('es-CL')} – $${rangoMax.toLocaleString('es-CL')}`;
+    await botReply(`Para un jardín de <b>${m2} m²</b>, el estimado es ${rangoTexto}.`);
+
+    // Tarjeta visual
+    const card = document.createElement('div');
+    card.className = 'wa-bubble in';
+    card.style.maxWidth='90%';
+    card.innerHTML = `
+      <div class="wa-quote-card">
+        <div class="label">📋 Estimado por mantención</div>
+        <div class="price">$${rangoMin.toLocaleString('es-CL')} – $${rangoMax.toLocaleString('es-CL')}</div>
+        <div class="sub">${m2} m² · Precio en CLP · Casa particular · Por cada visita</div>
+      </div>
+      <span class="wa-time">${nowHM()}</span>`;
+    waModalBody.appendChild(card);
+    waModalBody.scrollTop = waModalBody.scrollHeight;
+
+    await botReply('Este estimado es referencial. El valor exacto puede variar según el estado del jardín, tipo de plantas y lo que necesite cada visita ');
+    await botReply('¿Quieres que Nicolás te confirme el precio y coordinemos tu primera mantención?');
+
+    const ctaWrap = document.createElement('div');
+    ctaWrap.style.cssText='padding:4px 0 8px;align-self:flex-start;width:100%;';
+    const ctaMsg = buildWaMessage();
+    const ctaBtn = document.createElement('button');
+    ctaBtn.className = 'wa-cta-btn';
+    ctaBtn.innerHTML = '✅ ¡Lo quiero! Hablar con Nicolás por WhatsApp';
+    ctaBtn.onclick = ()=> window.open(waLink(ctaMsg), '_blank');
+    ctaWrap.appendChild(ctaBtn);
+    waModalBody.appendChild(ctaWrap);
+    waModalBody.scrollTop = waModalBody.scrollHeight;
+
+    setOptions([
+      {label:'Cotizar otro servicio', icon:'🔧', value:'otro_servicio'},
+      {label:'Volver al inicio', icon:'🔄', value:'reiniciar'},
+    ]);
+  }
+  chatState = 'fin';
+}
+
+async function flujoOtroServicio(){
+  await botReply('Claro 👍 ¿Qué servicio necesitas?');
+  setOptions([
+  {label:'Diseño de jardín', icon:'🏡', value:'nico', servicio:'Diseño de jardín'},
+  {label:'Riego automático', icon:'💧', value:'nico', servicio:'Riego automático'},
+  {label:'Poda / tala de árboles', icon:'🌳', value:'nico', servicio:'Poda / tala de árboles'},
+  {label:'Instalación de césped', icon:'🟩', value:'nico', servicio:'Instalación de césped'},
+  {label:'Otra consulta', icon:'💬', value:'nico', servicio:'Otra consulta'},
+]);
+}
+
+async function flujoNico(){
+  disableInput();
+  clearOptions();
+  await botReply('¡Perfecto! Te voy a conectar directo con <b>Nicolás</b>, el dueño de Ginkko Paisajismo 📲');
+  await botReply('Él te responde normalmente el mismo día. Puedes enviarle una foto del jardín para que te dé el precio exacto.');
+
+  const ctaMsg = buildWaMessage();
+
+  // Se abre solo a los 0.5 segundos
+  setTimeout(() => {
+    window.open(waLink(ctaMsg), '_blank');
+  }, 500);
+
+  // Botón de respaldo por si el navegador bloquea la apertura automática
+  const ctaWrap = document.createElement('div');
+  ctaWrap.style.cssText='padding:4px 0 8px;align-self:flex-start;width:100%;';
+  const ctaBtn = document.createElement('button');
+  ctaBtn.className = 'wa-cta-btn';
+  ctaBtn.innerHTML = '💬 ¿No se abrió? Abrir WhatsApp con Nicolás';
+  ctaBtn.onclick = ()=> window.open(waLink(ctaMsg), '_blank');
+  ctaWrap.appendChild(ctaBtn);
+  waModalBody.appendChild(ctaWrap);
+  waModalBody.scrollTop = waModalBody.scrollHeight;
+
+  setOptions([{label:'Volver al inicio', icon:'🔄', value:'reiniciar'}]);
+  chatState = 'fin';
+}
+
+/* ---- abrir / cerrar ---- */
+function openWaModal(){
   waModal.classList.add('open');
-  waModalInput.value = prefill || '';
-  autoResizeWaInput();
-  setTimeout(()=> waModalInput.focus(), 150);
+  if(chatState === 'idle') startChat();
 }
 function closeWaModal(){ waModal.classList.remove('open'); }
 document.getElementById('waModalClose').onclick = closeWaModal;
 waModal.addEventListener('click', e=>{ if(e.target===waModal) closeWaModal(); });
 
-function autoResizeWaInput(){
-  waModalInput.style.height='auto';
-  waModalInput.style.height = Math.min(waModalInput.scrollHeight,90)+'px';
-}
-waModalInput.addEventListener('input', autoResizeWaInput);
-waModalInput.addEventListener('keydown', e=>{
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendWaModalMessage(); }
-});
-
-function sendWaModalMessage(){
-  const text = waModalInput.value.trim();
-  if(!text) return;
-  const bubble = document.createElement('div');
-  bubble.className = 'wa-bubble out';
-  bubble.innerHTML = `<p>${escapeHTML(text)}</p><span class="wa-time">${nowHM()} ✓✓</span>`;
-  waModalBody.appendChild(bubble);
-  waModalBody.scrollTop = waModalBody.scrollHeight;
-  waModalInput.value=''; autoResizeWaInput();
-  window.open(waLink(text), '_blank');
-}
-document.getElementById('waModalSend').onclick = sendWaModalMessage;
-
-/* Todos los puntos de contacto por WhatsApp del sitio abren el simulador */
-document.getElementById('waHeaderBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
-document.getElementById('waHeroBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'); });
-document.getElementById('waFloatBtn').addEventListener('click', ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.'));
+/* ---- conectar todos los botones de la página ---- */
+document.getElementById('waHeaderBtn').addEventListener('click', e=>{ e.preventDefault(); openWaModal(); });
+document.getElementById('waHeroBtn').addEventListener('click',   e=>{ e.preventDefault(); openWaModal(); });
+document.getElementById('waFloatBtn').addEventListener('click',  ()=> openWaModal());
 document.getElementById('infoPhoneWa').parentElement.parentElement.style.cursor='pointer';
-document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> openWaModal('Hola, me gustaría cotizar un servicio de paisajismo.');
+document.getElementById('infoPhoneWa').parentElement.parentElement.onclick = ()=> openWaModal();
 
 const faqGrid = document.getElementById('faqGrid');
 CONFIG.faqQuestions.forEach(q=>{
   const b = document.createElement('button');
   b.type='button'; b.className='faq-btn';
   b.innerHTML = `💬 ${q}`;
-  b.onclick = ()=> openWaModal(q);
+  b.onclick = ()=> openWaModal();
   faqGrid.appendChild(b);
 });
-document.getElementById('customWaBtn').onclick = ()=>{
-  const val = document.getElementById('customWaMsg').value.trim();
-  openWaModal(val);
-};
-
+document.getElementById('customWaBtn').onclick = ()=> openWaModal();
 /* ================================================================
    4) CARRUSEL — lee de Firebase: /carousel/{id} = {imageUrl,title,subtitle,order}
    ================================================================ */
