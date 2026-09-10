@@ -1016,43 +1016,29 @@ function gpIniciarEstadoSuscripcion() {
   
   dbRef.on('value', (snapshot) => {
     const data = snapshot.val() || {};
-    const paidUntil = data.paidUntil || 0;
-    const ahora = Date.now();
-    
-    // Calcular días restantes
-    const diferenciaMs = paidUntil - ahora;
-    const diasRestantes = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    const estaBloqueado = data.bloquear === true; // El interruptor manual
     
     const overlay = document.getElementById('gpSusOverlay');
-    const modalBox = overlay.querySelector('.gp-sus-modal-box');
-    const modalTitle = overlay.querySelector('h3');
-    const modalDesc = overlay.querySelector('.gp-sus-text');
+    const modalBox = overlay ? overlay.querySelector('.gp-sus-modal-box') : null;
     const chipEstado = document.getElementById('gpChipEstado');
     
-    // Formatear la fecha para que se lea bien
-    const fechaVenc = new Date(paidUntil).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
-    
-    if (diasRestantes <= 0) {
-      // 🚨 LLEGÓ EL DÍA / VENCIDO: Se abre SOLO y bloquea la pantalla a la fuerza
+    if (estaBloqueado) {
+      // 🚨 BLOQUEO MANUAL: Se abre a la fuerza, sin X, nadie se sale
       if (overlay) overlay.style.display = 'flex';
-      if (modalBox) modalBox.classList.add('bloqueado'); // Le quita la X por CSS
-      
-      if (modalTitle) modalTitle.textContent = 'Renovación de suscripción';
-      if (modalDesc) modalDesc.textContent = `Tu suscripción cumplió su ciclo (${fechaVenc}). Realiza el pago para continuar usando el panel. Una vez acreditado, este aviso desaparecerá automáticamente.`;
+      if (modalBox) modalBox.classList.add('bloqueado');
       
       if (chipEstado) {
         chipEstado.innerHTML = '🔴 Pago pendiente';
         chipEstado.style.background = '#ffebee';
         chipEstado.style.color = '#c62828';
       }
-      
     } else {
-      // ✅ AL DÍA: Se cierra solo, no molesta y queda oculto
+      // ✅ DESBLOQUEADO: Todo libre
       if (overlay) overlay.style.display = 'none';
       if (modalBox) modalBox.classList.remove('bloqueado');
       
       if (chipEstado) {
-        chipEstado.innerHTML = `🌿 Activa (${diasRestantes}d)`;
+        chipEstado.innerHTML = '🌿 Activo';
         chipEstado.style.background = '#e8f5e9';
         chipEstado.style.color = '#2e7d32';
       }
