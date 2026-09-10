@@ -333,11 +333,13 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
     <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando…</div>
-      <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button><button id="btnPagarGinkko" style="background: #28a745; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-  Pagar Suscripción Mensual ($25.000)
-</button>
+      <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button>
+      
 
-<script>
+
+
+
+      <script>
   document.getElementById("btnPagarGinkko").addEventListener("click", async () => {
     const btn = document.getElementById("btnPagarGinkko");
     btn.textContent = "Generando pago...";
@@ -351,21 +353,31 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
       const data = await response.json();
       
       if (data.url) {
-        // Redirige automáticamente a Webpay/Flow
         window.location.href = data.url;
       } else {
-        alert("No se pudo generar el enlace de pago.");
+        console.error("Detalle del error:", data);
+        alert("Error de Flow: " + JSON.stringify(data.error || data));
         btn.textContent = "Pagar Suscripción Mensual ($25.000)";
         btn.disabled = false;
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error de conexión con la pasarela.");
+      alert("Error de conexión.");
       btn.textContent = "Pagar Suscripción Mensual ($25.000)";
       btn.disabled = false;
     }
   });
 </script>
+
+
+
+
+
+
+
+
+
+
       <button class="logout" id="logoutBtn">Salir</button><!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
 <div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
 
