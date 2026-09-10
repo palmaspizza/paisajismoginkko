@@ -5,306 +5,237 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin | Ginkko Paisajismo</title>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script><link rel="stylesheet" href="ginkko-estetica.css">
 <style>
 :root{
   --dark:#0F2A1E; --dark-2:#0B2018; --primary:#1F5C42; --primary-light:#3E7A5C;
-  --gold:#C6A15B; --gold-light:#E3C888; --cream:#F6F3EC; --cream-2:#EFE9DC;
-  --ink:#1B211D; --ink-soft:#4B564E; --line:rgba(27,33,29,.12); --radius:14px;
-  --danger:#C0503E;
+  --gold:#C6A15B; --gold-light:#E3C888; --danger:#C0503E; --success:#1F7A4D;
+  --radius:14px;
+  --bg:#F6F3EC; --bg-2:#EFE9DC; --surface:#FFFFFF; --surface-2:#FAF8F3;
+  --ink:#1B211D; --ink-soft:#4B564E; --line:rgba(27,33,29,.12);
+  --shadow: 0 6px 24px rgba(15,42,30,.08);
+  --ease: cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"]{
+  --bg:#10160F; --bg-2:#161D14; --surface:#1B2319; --surface-2:#212A1E;
+  --ink:#ECEFE9; --ink-soft:#AAB6A5; --line:rgba(255,255,255,.10);
+  --shadow: 0 6px 24px rgba(0,0,0,.35);
 }
 *,*::before,*::after{box-sizing:border-box;}
-body{margin:0;font-family:'Inter',-apple-system,Segoe UI,sans-serif;background:var(--cream);color:var(--ink);}
+html{color-scheme:light;}
+html[data-theme="dark"]{color-scheme:dark;}
+body{margin:0;font-family:'Inter',-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);
+  transition:background .35s var(--ease),color .35s var(--ease);}
 h1,h2,h3{font-family:'Fraunces',Georgia,serif;color:var(--dark);margin:0;}
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--gold-light);}
 button{cursor:pointer;font-family:inherit;border:none;}
-input,textarea,select{font-family:inherit;width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--line);font-size:14px;background:#fff;}
+input,textarea,select{font-family:inherit;width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--line);
+  font-size:14px;background:var(--surface);color:var(--ink);transition:border-color .2s var(--ease),background .3s var(--ease),box-shadow .2s var(--ease);}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(198,161,91,.15);}
 textarea{resize:vertical;min-height:80px;}
 label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:6px;}
 .field{margin-bottom:14px;}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;transition:.2s;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;
+  transition:.2s var(--ease);transform:translateZ(0);}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:translateY(0) scale(.98);}
 .btn-primary{background:var(--primary);color:#fff;}
-.btn-primary:hover{background:var(--primary-light);}
+.btn-primary:hover{background:var(--primary-light);box-shadow:0 4px 14px rgba(31,92,66,.35);}
 .btn-gold{background:var(--gold);color:var(--dark);}
-.btn-gold:hover{background:var(--gold-light);}
+.btn-gold:hover{background:var(--gold-light);box-shadow:0 4px 14px rgba(198,161,91,.35);}
 .btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);padding:8px 14px;font-size:12.5px;}
 .btn-danger:hover{background:var(--danger);color:#fff;}
-.btn:disabled{opacity:.5;cursor:not-allowed;}
-.btn-outline-dark-admin{background:#fff;border:1.5px solid var(--line);color:var(--ink-soft);font-size:13px;padding:10px 14px;}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline-dark-admin{background:var(--surface);border:1.5px solid var(--line);color:var(--ink-soft);font-size:13px;padding:10px 14px;}
 .gp-type-btn.active{background:var(--dark);border-color:var(--dark);color:#fff;}
 .gp-type-btn-carousel.active{background:var(--dark);border-color:var(--dark);color:#fff;}
 
+/* ---- animaciones base ---- */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes softPop{0%{transform:scale(.96);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.panel.active{animation:fadeInUp .45s var(--ease);}
+.login-box{animation:softPop .5s var(--ease);}
+
 /* ---- login ---- */
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
-.login-box{background:#fff;padding:44px;border-radius:var(--radius);width:100%;max-width:380px;text-align:center;}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);position:relative;}
+.login-box{background:var(--surface);padding:44px;border-radius:var(--radius);width:100%;max-width:380px;text-align:center;
+  box-shadow:var(--shadow);}
 .login-box h1{font-size:24px;margin-bottom:6px;}
 .login-box p{color:var(--ink-soft);font-size:14px;margin-bottom:24px;}
 .login-box input{margin-bottom:14px;}
 #loginError{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:10px;}
+.login-theme-toggle{position:absolute;top:18px;right:18px;}
 
 /* ---- layout ---- */
 #appScreen{display:none;min-height:100vh;}
-.topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;}
+.topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;}
 .topbar h1{color:#fff;font-size:19px;}
 .topbar span{color:var(--gold-light);font-size:12px;}
-.logout{color:#fff;font-size:13px;text-decoration:underline;background:none;}
-.tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto;}
-.tab{padding:16px 20px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap;}
+.topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.logout{color:#fff;font-size:13px;text-decoration:underline;background:none;transition:opacity .2s;}
+.logout:hover{opacity:.75;}
+.tabs{display:flex;gap:4px;background:var(--surface);border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto;
+  transition:background .35s var(--ease);}
+.tab{padding:16px 20px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;
+  white-space:nowrap;transition:color .2s var(--ease),border-color .25s var(--ease);}
+.tab:hover{color:var(--dark);}
+[data-theme="dark"] .tab:hover{color:var(--gold-light);}
 .tab.active{color:var(--dark);border-color:var(--gold);}
+[data-theme="dark"] .tab.active{color:var(--gold-light);}
 .panel{display:none;padding:28px;max-width:1100px;margin:0 auto;}
 .panel.active{display:block;}
 .grid2{display:grid;grid-template-columns:380px 1fr;gap:26px;align-items:start;}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  transition:background .35s var(--ease),border-color .35s var(--ease);}
 .card h3{font-size:17px;margin-bottom:16px;}
 .items-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
-.item-card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.item-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .35s var(--ease);}
+.item-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
 .item-card img{width:100%;height:130px;object-fit:cover;display:block;background:#eee;}
 .item-body{padding:12px;}
 .item-body h4{font-size:14px;margin:0 0 4px;color:var(--dark);}
+[data-theme="dark"] .item-body h4{color:var(--gold-light);}
 .item-body p{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.4;max-height:36px;overflow:hidden;}
 .item-actions{display:flex;justify-content:space-between;align-items:center;}
 .order-badge{font-size:11px;color:var(--ink-soft);}
-.upload-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;font-size:13px;color:var(--ink-soft);margin-bottom:14px;cursor:pointer;transition:.2s;}
-.upload-drop:hover{border-color:var(--gold);}
+.upload-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;font-size:13px;color:var(--ink-soft);
+  margin-bottom:14px;cursor:pointer;transition:.2s var(--ease);}
+.upload-drop:hover{border-color:var(--gold);background:rgba(198,161,91,.06);}
 .upload-drop input{display:none;}
-.preview-thumb{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;display:none;}
-.progress{height:6px;background:var(--cream-2);border-radius:4px;overflow:hidden;margin-bottom:14px;display:none;}
-.progress-bar{height:100%;background:var(--gold);width:0%;transition:.2s;}
-.msg{font-size:13px;margin-top:10px;min-height:18px;}
-.msg.ok{color:#1F5C42;} .msg.err{color:var(--danger);}
+.preview-thumb{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;display:none;animation:fadeIn .3s var(--ease);}
+.progress{height:6px;background:var(--bg-2);border-radius:4px;overflow:hidden;margin-bottom:14px;display:none;}
+.progress-bar{height:100%;background:var(--gold);width:0%;transition:.2s var(--ease);}
+.msg{font-size:13px;margin-top:10px;min-height:18px;transition:opacity .2s var(--ease);}
+.msg.ok{color:var(--success);} .msg.err{color:var(--danger);}
 .star-picker-admin{display:flex;gap:4px;font-size:26px;margin-bottom:14px;cursor:pointer;}
-.star-picker-admin span{color:var(--line);}
+.star-picker-admin span{color:var(--line);transition:color .15s var(--ease),transform .15s var(--ease);}
+.star-picker-admin span:hover{transform:scale(1.15);}
 .star-picker-admin span.filled{color:var(--gold);}
 .empty-note{color:var(--ink-soft);font-size:13.5px;grid-column:1/-1;}
-.info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;margin-bottom:22px;line-height:1.5;}
+.info-banner{background:#FFF7E6;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:10px;font-size:13px;
+  margin-bottom:22px;line-height:1.5;}
+[data-theme="dark"] .info-banner{background:rgba(255,204,0,.08);border-color:rgba(255,204,0,.25);color:#E8C468;}
 
 /* ══════════════════════════════════════════
-   SISTEMA DE SUSCRIPCIÓN — GINKKO PAISAJISMO
-   ══════════════════════════════════════════
-   FIX APLICADO: el overlay usaba display:flex + align-items:center,
-   lo que en varios navegadores móviles (Safari iOS en particular)
-   IMPIDE hacer scroll hasta la parte superior de un contenido más
-   alto que la pantalla ("flexbox centering scroll trap"). La solución
-   es usar display:block con overflow-y:auto y centrar la tarjeta con
-   margin:auto en vez de con align-items. */
-#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
-#gpSusOverlay.activo{display:block;}
-.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:24px auto;box-sizing:border-box;}
-.gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
-.gpSusHero{position:relative;margin:-28px -20px 18px;padding:26px 20px 20px;border-radius:20px 20px 0 0;
-  background:linear-gradient(155deg,#241a05,#1a1a2e 70%);border-bottom:1px solid rgba(255,215,0,0.18);text-align:center;overflow:hidden;}
-.gpSusHero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(255,215,0,0.16),transparent 60%);pointer-events:none;}
-#gpSusBtnCerrar{position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.08);border:none;color:#ccc;font-size:1rem;
-  width:26px;height:26px;border-radius:50%;cursor:pointer;z-index:2;}
-.gpSusHeroIcono{font-size:2.4rem;margin-bottom:4px;position:relative;z-index:1;}
-.gpSusHeroTitulo{font-size:1.25rem;font-weight:800;color:#FFD700;position:relative;z-index:1;}
-.gpSusHeroSub{font-size:0.8rem;color:#B9C7BC;margin-top:4px;position:relative;z-index:1;line-height:1.4;}
-.gpSusHero.ok{background:linear-gradient(155deg,#0d2818,#0f2a1e 70%);border-bottom-color:rgba(51,209,122,0.25);}
-.gpSusHero.ok::before{background:radial-gradient(circle at 30% 0%,rgba(51,209,122,0.18),transparent 60%);}
-.gpSusHero.ok .gpSusHeroTitulo{color:#33d17a;}
-.gpSusHero.warn{background:linear-gradient(155deg,#2e1d05,#1a1a2e 70%);}
-.gpSusHero.warn .gpSusHeroTitulo{color:#FFB65C;}
-.gpSusHero.danger{background:linear-gradient(155deg,#340f0c,#1a1a2e 70%);border-bottom-color:rgba(224,67,53,0.3);}
-.gpSusHero.danger .gpSusHeroTitulo{color:#FF8A80;}
-.gpSusSubtitulo{font-size:0.8rem;color:#888;text-align:center;margin-bottom:20px;line-height:1.5;}
-.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);gap:8px;}
-.gpDatosFila:last-child{border-bottom:none;}
-.gpDatosLabel{font-size:0.72rem;color:#888;width:90px;flex-shrink:0;}
-.gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;word-break:break-word;}
-.gpBtnCopiar{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:6px;padding:4px 9px;font-size:0.7rem;cursor:pointer;white-space:nowrap;}
-.gpBtnCopiarTodo{width:100%;padding:11px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;margin-top:12px;}
-.gpBtnBanco{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0f2a45);border:1px solid rgba(41,182,246,0.4);color:#29B6F6;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:8px;}
-.gpSusInfoPago{background:#12121f;border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:14px;margin-bottom:18px;}
-.gpSusUploadArea{border:2px dashed rgba(255,215,0,0.3);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:#12121f;}
-.gpSusUploadArea:hover{border-color:#FFD700;}
-.gpSusUploadArea.con-imagen{border-color:#33d17a;border-style:solid;}
-#gpSusPreview{width:100%;max-height:100px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;border:1px solid rgba(255,215,0,0.2);}
-.gpSusBtn{width:100%;padding:13px;background:linear-gradient(135deg,#FFD700,#b8960c);color:#000;font-weight:800;font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
-.gpSusBtn:disabled{opacity:0.5;cursor:not-allowed;}
-.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
-.gpSusEstado.error{color:#ff6b6b;}
-.gpSusEstado.ok{color:#33d17a;}
-#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03));border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:10px 16px;font-size:0.8rem;color:#fff !important;margin:0 26px 14px;align-items:center;gap:8px;}
+   THEME TOGGLE (claro / oscuro)
+   ══════════════════════════════════════════ */
+.theme-toggle{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+  color:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;transition:.25s var(--ease);}
+.theme-toggle:hover{background:rgba(255,255,255,.16);transform:translateY(-1px);}
+.theme-toggle .icon{font-size:15px;display:inline-block;transition:transform .4s var(--ease);}
+.theme-toggle.spin .icon{transform:rotate(180deg);}
+.login-theme-toggle.theme-toggle{background:rgba(255,255,255,.1);color:#fff;}
 
-/* Chip de estado siempre visible en el topbar */
+/* ══════════════════════════════════════════
+   INDICADOR DE SUSCRIPCIÓN — discreto, sin bloqueos
+   ══════════════════════════════════════════ */
 .gp-chip{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;
-  white-space:nowrap;border:1px solid transparent;transition:.3s ease;}
+  white-space:nowrap;border:1px solid transparent;transition:.3s var(--ease);cursor:pointer;}
+.gp-chip:hover{transform:translateY(-1px);}
 .gp-chip-loading{background:rgba(255,255,255,0.08);color:#B9C7BC;}
 .gp-chip-ok{background:rgba(51,209,122,0.14);color:#7CE8A4;border-color:rgba(51,209,122,0.4);}
 .gp-chip-soon{background:rgba(255,193,7,0.14);color:#FFD666;border-color:rgba(255,193,7,0.4);}
-.gp-chip-warn{background:rgba(255,152,0,0.16);color:#FFB65C;border-color:rgba(255,152,0,0.45);animation:gpChipPulse 1.6s ease-in-out infinite;}
-.gp-chip-danger{background:rgba(224,67,53,0.18);color:#FF8A80;border-color:rgba(224,67,53,0.5);animation:gpChipPulse 1s ease-in-out infinite;}
-@keyframes gpChipPulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.gp-chip-info{background:rgba(198,161,91,0.16);color:#E3C888;border-color:rgba(198,161,91,0.4);}
 .gp-chip-days{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;
   border-radius:999px;background:rgba(255,255,255,0.18);font-size:11px;margin-left:2px;}
-.gpSusExitoIcono{font-size:3.5rem;text-align:center;display:block;animation:gpBounce .5s both;}
-@keyframes gpBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-.gpSusExitoTitulo{font-size:1.3rem;font-weight:800;color:#33d17a;text-align:center;margin:10px 0 6px;}
-.gpSusExitoSub{font-size:0.82rem;color:#888;text-align:center;}
-.gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999999;pointer-events:none;}
+
+#gpBannerSus{display:none;background:linear-gradient(135deg,rgba(51,209,122,0.10),rgba(51,209,122,0.03));
+  border:1px solid rgba(51,209,122,0.3);border-radius:10px;padding:11px 18px;font-size:13px;color:var(--ink) !important;
+  margin:0 26px 14px;align-items:center;gap:8px;animation:fadeIn .4s var(--ease);transition:background .3s,border-color .3s;}
+#gpBannerSus b{color:var(--success);}
+[data-theme="dark"] #gpBannerSus b{color:#7CE8A4;}
+
+/* ══════════════════════════════════════════
+   MODAL DE SUSCRIPCIÓN — informativo, con botón Flow
+   FIX: display:block + overflow-y:auto (no flex centering)
+   para permitir scroll correcto en móviles (iOS Safari).
+   ══════════════════════════════════════════ */
+#gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999999;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
+#gpSusOverlay.activo{display:block;animation:fadeIn .25s var(--ease);}
+.gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:0 0 22px;max-width:420px;
+  width:100%;margin:24px auto;box-sizing:border-box;animation:softPop .35s var(--ease);overflow:hidden;}
+.gpSusHero{position:relative;padding:26px 20px 20px;background:linear-gradient(155deg,#0d2818,#1a1a2e 70%);
+  border-bottom:1px solid rgba(51,209,122,0.2);text-align:center;overflow:hidden;}
+.gpSusHero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(51,209,122,0.16),transparent 60%);pointer-events:none;}
+#gpSusBtnCerrar{position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.08);border:none;color:#ccc;font-size:1rem;
+  width:26px;height:26px;border-radius:50%;cursor:pointer;z-index:2;transition:.2s;}
+#gpSusBtnCerrar:hover{background:rgba(255,255,255,.18);}
+.gpSusHeroIcono{font-size:2.4rem;margin-bottom:4px;position:relative;z-index:1;}
+.gpSusHeroTitulo{font-size:1.25rem;font-weight:800;color:#33d17a;position:relative;z-index:1;}
+.gpSusHeroSub{font-size:0.82rem;color:#B9C7BC;margin-top:4px;position:relative;z-index:1;line-height:1.45;}
+.gpSusBody{padding:22px 20px 0;}
+.gpSusInfoPago{background:#12121f;border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:14px;margin-bottom:16px;}
+.gpDatosFila{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);gap:8px;}
+.gpDatosFila:last-child{border-bottom:none;}
+.gpDatosLabel{font-size:0.72rem;color:#888;flex-shrink:0;}
+.gpDatosValor{font-size:0.84rem;color:#fff;font-weight:600;text-align:right;word-break:break-word;}
+.gpSusNota{font-size:0.75rem;color:#7c8a80;text-align:center;margin:0 0 16px;line-height:1.5;}
+.gpSusBtnFlow{width:100%;padding:14px;background:linear-gradient(135deg,#33d17a,#1F7A4D);color:#fff;font-weight:800;
+  font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:.2s var(--ease);
+  display:flex;align-items:center;justify-content:center;gap:8px;}
+.gpSusBtnFlow:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 18px rgba(51,209,122,.35);}
+.gpSusBtnFlow:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:18px;white-space:pre-line;}
+.gpSusEstado.error{color:#ff6b6b;}
+.gpSusFlowLogo{width:16px;height:16px;flex-shrink:0;}
+
+.gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;
+  border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;
+  opacity:0;transition:all .25s var(--ease);z-index:9999999;pointer-events:none;}
 .gpToastCopy.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* Loader — mismo fix: sin justify-content:center para no atrapar el scroll en pantallas bajas */
-#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;align-items:center;font-family:inherit;padding:60px 16px 40px;box-sizing:border-box;}
-#gpSusLoader.activo{display:flex;}
-.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;flex-shrink:0;}
-.gpLoaderOrb::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:gpOrbSpin 3s linear infinite;}
-@keyframes gpOrbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-@keyframes gpOrbSpin{to{transform:rotate(360deg);}}
-.gpLoaderTitulo{font-size:1.1rem;font-weight:800;color:#FFD700;margin-bottom:6px;text-align:center;}
-.gpLoaderSub{font-size:0.78rem;color:#666;margin-bottom:24px;text-align:center;}
-.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-bottom:24px;}
-.gpLoaderPaso{display:flex;align-items:center;gap:10px;background:#13141C;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;font-size:0.78rem;color:#555;transition:all .4s;}
-.gpLoaderPaso.activo{color:#fff;border-color:rgba(255,215,0,0.4);background:#1a1b10;}
-.gpLoaderPaso.listo{color:#33d17a;border-color:rgba(51,209,122,0.3);background:#0d1a12;}
-.gpLoaderPasoIcono{font-size:1rem;width:22px;text-align:center;flex-shrink:0;}
-.gpLoaderPasoSpinner{width:14px;height:14px;border:2px solid rgba(255,215,0,0.2);border-top-color:#FFD700;border-radius:50%;animation:gpSpin .7s linear infinite;flex-shrink:0;display:none;}
-.gpLoaderPaso.activo .gpLoaderPasoSpinner{display:block;}
-.gpLoaderPaso.activo .gpLoaderPasoIcono{display:none;}
-.gpLoaderPaso.listo .gpLoaderPasoSpinner{display:none;}
-@keyframes gpSpin{to{transform:rotate(360deg);}}
-.gpLoaderBarra{width:100%;max-width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;flex-shrink:0;}
-.gpLoaderBarraFill{height:100%;width:0%;background:linear-gradient(90deg,#7a6000,#FFD700);border-radius:99px;transition:width .6s ease;}
-.gpLoaderMsg{font-size:0.72rem;color:#555;text-align:center;min-height:18px;}
-.gpLoaderParticulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
-.gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
-@keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
 
 /* ══════════════════════════════════════════
    RESPONSIVE MÓVIL — BREAKPOINTS
    ══════════════════════════════════════════ */
-
-/* --- Tablet y abajo (≤768px) --- */
 @media(max-width:768px){
-
-  /* Login */
   .login-box{padding:32px 24px;margin:16px;}
-
-  /* Topbar: apila en dos filas */
-  .topbar{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    padding:14px 16px;
-  }
+  .topbar{flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px;}
   .topbar h1{font-size:16px;}
-  .topbar > div:last-child{
-    width:100%;
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    align-items:center;
-  }
+  .topbar-actions{width:100%;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
   #gpSusChip{font-size:11.5px;padding:6px 11px;}
   .logout{font-size:12px;}
-
-  /* Tabs: scroll horizontal con separador sutil */
   .tabs{padding:0 12px;gap:0;}
   .tab{padding:13px 14px;font-size:13px;}
-
-  /* Panel: menos padding lateral */
   .panel{padding:16px 12px;}
-
-  /* Grid de 2 columnas → 1 columna */
-  .grid2{
-    grid-template-columns:1fr;
-    gap:18px;
-  }
-
-  /* Cards */
+  .grid2{grid-template-columns:1fr;gap:18px;}
   .card{padding:16px;}
   .card h3{font-size:15px;margin-bottom:12px;}
-
-  /* Lista de ítems: 2 columnas en tablet */
-  .items-list{
-    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-    gap:12px;
-  }
-
-  /* Info banner */
+  .items-list{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
   .info-banner{font-size:12.5px;padding:12px 14px;margin-bottom:16px;}
-
-  /* Inputs táctiles más altos */
-  input,textarea,select{padding:13px 14px;font-size:16px;} /* 16px evita zoom en iOS */
-
-  /* Botones de tipo publicación */
+  input,textarea,select{padding:13px 14px;font-size:16px;}
   .gp-type-btn{font-size:12px;padding:10px 10px;}
   .gp-type-btn-carousel{font-size:12px;padding:10px 10px;}
-
-  /* Botones de acción de tarjeta */
   .item-actions{flex-direction:column;align-items:flex-start;gap:6px;}
-
-  /* Upload drop más compacto */
   .upload-drop{padding:18px 14px;font-size:12.5px;}
-
-  /* Overlay de suscripción: sin margen lateral extra */
   #gpSusOverlay{padding:10px;}
-  .gpSusCard{margin:16px auto;padding:24px 16px;}
-
-  /* Loader más compacto */
-  #gpSusLoader{padding:40px 16px 30px;}
-  .gpLoaderOrb{width:72px;height:72px;margin-bottom:18px;}
-  .gpLoaderTitulo{font-size:1rem;}
-  .gpLoaderPasos{max-width:100%;}
-  .gpLoaderBarra{max-width:100%;}
-
-  /* Banner de suscripción */
+  .gpSusCard{margin:16px auto;}
   #gpBannerSus{margin:0 12px 12px;font-size:0.78rem;}
 }
-
-/* --- Móvil chico (≤480px) --- */
 @media(max-width:480px){
-
-  /* Login más ajustado */
   .login-box{padding:28px 18px;border-radius:12px;}
   .login-box h1{font-size:20px;}
-
-  /* Topbar muy compacto */
   .topbar{padding:12px 14px;gap:8px;}
   .topbar h1{font-size:14.5px;}
   #gpSusChip{font-size:11px;padding:5px 9px;}
-
-  /* Ocultar el subtítulo "· Panel de administración" para ganar espacio */
   .topbar span{display:none;}
-
-  /* Tabs: texto más pequeño */
   .tab{padding:12px 10px;font-size:12px;}
-
-  /* Panel: mínimo padding */
   .panel{padding:12px 10px;}
-
-  /* Ítems: 1 sola columna en móvil muy chico */
   .items-list{grid-template-columns:1fr;}
-
-  /* Botones de Exportar/Cerrar: más pequeños */
   .logout{font-size:11.5px;}
-
-  /* Card padding mínimo */
   .card{padding:14px 12px;border-radius:12px;}
-
-  /* Imagen preview más pequeña */
   .preview-thumb{height:110px;}
-
-  /* Upload drop más compacto */
   .upload-drop{padding:16px 12px;}
-
-  /* Datos de suscripción: etiqueta y valor en columna si no caben */
-  .gpDatosLabel{width:78px;font-size:0.7rem;}
+  .gpDatosLabel{font-size:0.7rem;}
   .gpDatosValor{font-size:0.78rem;}
-  .gpBtnCopiar{padding:4px 7px;font-size:0.66rem;}
-
-  /* Loader: orb más pequeño */
-  .gpLoaderOrb{width:60px;height:60px;}
-  .gpLoaderTitulo{font-size:0.95rem;}
-  .gpLoaderSub{font-size:0.72rem;margin-bottom:16px;}
-  .gpLoaderPaso{font-size:0.74rem;padding:8px 10px;}
-
-  /* Card de suscripción */
-  .gpSusCard{padding:20px 14px;border-radius:16px;}
+  .gpSusCard{border-radius:16px;}
   .gpSusHeroTitulo{font-size:1.1rem;}
   .gpSusHeroSub{font-size:0.75rem;}
-  .gpSusBtn{padding:14px;font-size:0.9rem;}
+  .gpSusBtnFlow{padding:13px;font-size:0.88rem;}
 }
-
-/* --- Móvil muy chico (≤360px, ej. Galaxy A series) --- */
 @media(max-width:360px){
   .topbar h1{font-size:13.5px;}
   .tab{padding:11px 8px;font-size:11.5px;}
@@ -312,12 +243,16 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
   .card{padding:12px 10px;}
   .items-list{grid-template-columns:1fr;}
 }
+
 </style>
 </head>
 <body>
 
 <!-- ================= LOGIN ================= -->
 <div id="loginScreen">
+  <button class="theme-toggle login-theme-toggle" id="themeToggleLogin" type="button" title="Cambiar tema">
+    <span class="icon" id="themeIconLogin">🌙</span>
+  </button>
   <div class="login-box">
     <h1>Panel Ginkko</h1>
     <p>Ingresa la clave de administración para continuar.</p>
@@ -331,59 +266,20 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 <div id="appScreen">
   <div class="topbar">
     <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando…</div>
+    <div class="topbar-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" title="Cambiar tema">
+        <span class="icon" id="themeIcon">🌙</span><span id="themeLabel">Oscuro</span>
+      </button>
+      <div id="gpSusChip" class="gp-chip gp-chip-loading" title="Ver detalle de la suscripción">⏳ Verificando…</div>
       <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button>
-      
-
-
-
-<button id="btnPagarGinkko">Pagar Suscripción Mensual ($25.000)</button>
-      <script>
- document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("btnPagarGinkko");
-  if (!btn) return; // Si el botón no está en esta pantalla, frena de inmediato sin romper nada.
-
-  btn.addEventListener("click", async () => {
-    btn.textContent = "Generando pago...";
-    btn.disabled = true;
-
-    try {
-      const response = await fetch("https://raspy-moon-8811.mago-diepa.workers.dev", {
-        method: "POST"
-      });
-      
-      const data = await response.json();
-      
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Error: " + JSON.stringify(data.error || "No se pudo generar el enlace"));
-        btn.textContent = "Pagar Suscripción Mensual ($25.000)";
-        btn.disabled = false;
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error de conexión con la pasarela.");
-      btn.textContent = "Pagar Suscripción Mensual ($25.000)";
-      btn.disabled = false;
-    }
-  });
-});
-</script>
-
-
-
-
-
-
-
-
-      <button class="logout" id="logoutBtn">Salir</button><!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
-<div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
-
+      <button class="logout" id="btnAbrirSuscripcion">💳 Suscripción</button>
+      <button class="logout" id="logoutBtn">Salir</button>
     </div>
   </div>
+
+  <!-- Banner discreto de estado de suscripción -->
+  <div id="gpBannerSus">✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;margin-left:4px;"></span></div>
+
   <div class="tabs">
     <div class="tab active" data-tab="carousel">Carrusel destacado</div>
     <div class="tab" data-tab="gallery">Galería de trabajos</div>
@@ -494,15 +390,56 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     MODAL DE SUSCRIPCIÓN — informativo / soporte.
+     No bloquea nunca el panel. Solo sirve para
+     autorizar la tarjeta la primera vez con Flow,
+     o para que el cliente revise/renueve voluntariamente.
+     ══════════════════════════════════════════════ -->
+<div id="gpSusOverlay">
+  <div class="gpSusCard">
+    <div class="gpSusHero" id="gpSusHero">
+      <button id="gpSusBtnCerrar" onclick="gpCerrarOverlay()">✕</button>
+      <div class="gpSusHeroIcono" id="gpSusHeroIcono">🌿</div>
+      <div class="gpSusHeroTitulo" id="gpSusHeroTitulo">Suscripción automática</div>
+      <div class="gpSusHeroSub" id="gpSusHeroSub">Cargando estado de tu suscripción…</div>
+    </div>
+    <div class="gpSusBody">
+      <div class="gpSusInfoPago">
+        <div class="gpDatosFila">
+          <span class="gpDatosLabel">📦 Plan</span>
+          <span class="gpDatosValor">GINKKO-25000</span>
+        </div>
+        <div class="gpDatosFila">
+          <span class="gpDatosLabel">💰 Monto</span>
+          <span class="gpDatosValor">$25.000 CLP / mes</span>
+        </div>
+        <div class="gpDatosFila">
+          <span class="gpDatosLabel">🗓️ Vigencia</span>
+          <span class="gpDatosValor" id="gpModalVigencia">—</span>
+        </div>
+        <div class="gpDatosFila">
+          <span class="gpDatosLabel">⚡ Cobro</span>
+          <span class="gpDatosValor">Automático vía Flow</span>
+        </div>
+      </div>
+      <p class="gpSusNota">Tu tarjeta queda autorizada una sola vez con Flow y el cobro mensual se realiza solo, sin que tengas que hacer nada. Usa el botón solo si necesitas autorizar tu tarjeta por primera vez o revisar/renovar tu suscripción.</p>
+      <button class="gpSusBtnFlow" id="btnPagarGinkko" type="button">
+        <span>⚡</span> Gestionar suscripción con Flow
+      </button>
+      <p class="gpSusEstado" id="gpSusEstado"></p>
+    </div>
+  </div>
+</div>
+
+<div class="gpToastCopy" id="gpToastCopy">¡Listo!</div>
+
 <script>
 /* ================================================================
    1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
    ================================================================ */
 
 // --- CLAVE DE ACCESO AL PANEL ---
-// Seguridad simple del lado del cliente (adecuada para plan gratuito sin backend).
-// Para mayor seguridad real, complementa con reglas de Firebase que exijan
-// un token/valor secreto antes de permitir escritura (ver notas al final del archivo).
 const ADMIN_PASSWORD = "ginkko2026"; // <-- CAMBIA ESTA CLAVE
 
 // --- FIREBASE REALTIME DATABASE (debe ser el MISMO proyecto que index.html) ---
@@ -516,39 +453,67 @@ const firebaseConfig = {
   appId: "1:197255768197:web:f24663c800dfafcd9661ec",
   measurementId: "G-7K1YRS5396"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // --- CLOUDINARY (plan gratuito, subida "unsigned") ---
-// 1. Crea cuenta gratuita en cloudinary.com
-// 2. Ve a Settings > Upload > Upload presets > Add upload preset
-//    - Signing Mode: "Unsigned"
-//    - (opcional) limita carpeta y tamaño máximo
-// 3. Copia el Cloud Name y el nombre del preset abajo:
 const CLOUDINARY_CLOUD_NAME = "dkszomv2f";
 const CLOUDINARY_UPLOAD_PRESET = "paisajismoginkko";
 
 // --- CLOUDINARY: credenciales para BORRAR imágenes (Settings > Access Keys) ---
-// ⚠️ AVISO DE SEGURIDAD IMPORTANTE:
-// El borrado real en Cloudinary requiere una firma hecha con tu API Secret.
-// Como este panel NO tiene servidor propio, el secreto queda visible en el
-// código fuente de esta página para cualquiera que la abra. Es un compromiso
-// aceptable SOLO SI mantienes esta URL de admin privada (no la enlaces desde
-// el sitio público, no la compartas, considera cambiar el nombre del archivo
-// a algo no adivinable). Si en el futuro quieres seguridad real, esto debería
-// moverse a una función serverless (Cloud Function) que guarde el secreto
-// fuera del navegador.
+// ⚠️ AVISO DE SEGURIDAD: el borrado real requiere firmar con el API Secret. Como
+// este panel no tiene servidor propio, mantén esta URL de admin privada.
 const CLOUDINARY_API_KEY = "TU_API_KEY_DE_CLOUDINARY";
 const CLOUDINARY_API_SECRET = "TU_API_SECRET_DE_CLOUDINARY";
 
 // --- LÍMITES PARA PROTEGER LOS CRÉDITOS DEL PLAN GRATUITO ---
-const MAX_CAROUSEL_ITEMS = 10;   // el carrusel es una vitrina, no necesita más
-const MAX_GALLERY_ITEMS  = 300;  // portafolio amplio pero acotado
-const MAX_FILE_SIZE_MB   = 10;   // rechaza fotos más pesadas que esto
+const MAX_CAROUSEL_ITEMS = 10;
+const MAX_GALLERY_ITEMS  = 300;
+const MAX_FILE_SIZE_MB   = 10;
+
+// --- SUSCRIPCIÓN AUTOMÁTICA (Flow) ---
+const GP_RTDB_PATH = 'configuracion/suscripcion'; // { isPaid, paidUntil, planId, ... }
+const GP_FLOW_WORKER = 'https://raspy-moon-8811.mago-diepa.workers.dev';
+const GP_DIAS_AVISO = 5; // umbral de días para mostrar el aviso "por vencer" (nunca bloquea)
 
 /* ================================================================
-   2) LOGIN
+   2) TEMA CLARO / OSCURO
+   ================================================================ */
+(function initTheme(){
+  const saved = localStorage.getItem('ginkko-theme');
+  const preferido = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  aplicarTema(preferido, false);
+})();
+
+function aplicarTema(tema, animar){
+  document.documentElement.setAttribute('data-theme', tema);
+  localStorage.setItem('ginkko-theme', tema);
+  const esOscuro = tema === 'dark';
+  const icono = esOscuro ? '☀️' : '🌙';
+  const etiqueta = esOscuro ? 'Tema: Claro' : 'Tema: Oscuro';
+  ['themeIcon','themeIconLogin'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = icono;
+  });
+  const label = document.getElementById('themeLabel');
+  if(label) label.textContent = etiqueta;
+  if(animar){
+    [document.getElementById('themeToggle'), document.getElementById('themeToggleLogin')].forEach(btn=>{
+      if(!btn) return;
+      btn.classList.add('spin');
+      setTimeout(()=>btn.classList.remove('spin'), 400);
+    });
+  }
+}
+function toggleTema(){
+  const actual = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  aplicarTema(actual === 'dark' ? 'light' : 'dark', true);
+}
+document.getElementById('themeToggle').onclick = toggleTema;
+document.getElementById('themeToggleLogin').onclick = toggleTema;
+
+/* ================================================================
+   3) LOGIN
    ================================================================ */
 const loginScreen = document.getElementById('loginScreen');
 const appScreen = document.getElementById('appScreen');
@@ -577,7 +542,7 @@ if(sessionStorage.getItem('ginkko_admin_ok')==='1'){
 }
 
 /* ================================================================
-   3) TABS
+   4) TABS
    ================================================================ */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.onclick = ()=>{
@@ -589,7 +554,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 });
 
 /* ================================================================
-   4) UTILIDADES
+   5) UTILIDADES
    ================================================================ */
 function escapeHTML(str){ const d=document.createElement('div'); d.textContent=str||""; return d.innerHTML; }
 
@@ -633,7 +598,7 @@ function uploadToCloudinary(file, progressBarEl, progressWrapEl){
       progressWrapEl.style.display='none';
       if(xhr.status>=200 && xhr.status<300){
         const res = JSON.parse(xhr.responseText);
-        resolve({ url: res.secure_url, publicId: res.public_id }); // devolvemos también el public_id para poder borrarla después
+        resolve({ url: res.secure_url, publicId: res.public_id });
       } else {
         reject(new Error('Error al subir la imagen a Cloudinary. Revisa el cloud name y el upload preset.'));
       }
@@ -650,7 +615,7 @@ async function sha1Hex(message){
   return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 async function deleteFromCloudinary(publicId){
-  if(!publicId) return; // fotos subidas antes de esta función no tienen public_id guardado
+  if(!publicId) return;
   const timestamp = Math.floor(Date.now()/1000);
   const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
   const signature = await sha1Hex(paramsToSign + CLOUDINARY_API_SECRET);
@@ -671,10 +636,7 @@ async function countItems(path){
 }
 
 /* ---------- Compresión de imágenes antes de subir (ahorra créditos) ---------- */
-// Reduce fotos gigantescas (ej. 20MB / 8000px) a un máximo razonable ANTES de
-// subirlas a Cloudinary. Si la imagen ya es pequeña, no la toca. 100% en el
-// navegador, sin costo ni dependencias externas.
-const MAX_UPLOAD_DIMENSION = 2400; // lado más largo, en píxeles (de sobra para pantallas 4K)
+const MAX_UPLOAD_DIMENSION = 2400;
 const UPLOAD_JPEG_QUALITY = 0.85;
 function compressImage(file, maxDim = MAX_UPLOAD_DIMENSION, quality = UPLOAD_JPEG_QUALITY){
   return new Promise((resolve)=>{
@@ -684,7 +646,7 @@ function compressImage(file, maxDim = MAX_UPLOAD_DIMENSION, quality = UPLOAD_JPE
       const img = new Image();
       img.onload = ()=>{
         let { width, height } = img;
-        if(width <= maxDim && height <= maxDim){ resolve(file); return; } // ya es razonable
+        if(width <= maxDim && height <= maxDim){ resolve(file); return; }
         const scale = Math.min(maxDim/width, maxDim/height);
         width = Math.round(width*scale); height = Math.round(height*scale);
         const canvas = document.createElement('canvas');
@@ -736,7 +698,7 @@ document.getElementById('exportBackupBtn').onclick = async ()=>{
 };
 
 /* ================================================================
-   5) INICIALIZACIÓN DE LA APP (tras login)
+   6) INICIALIZACIÓN DE LA APP (tras login)
    ================================================================ */
 function initApp(){
   setupDropzone('carouselDrop','carouselFile','carouselPreview');
@@ -1030,482 +992,112 @@ function initApp(){
       };
     });
   });
+
+  gpIniciarEstadoSuscripcion();
 }
-</script>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SISTEMA DE SUSCRIPCIÓN (mensualidad) — bloquea el panel hasta
-     que se verifique una transferencia bancaria mediante IA (Gemini,
-     a través de un Cloudflare Worker que oculta la API key).
-     ══════════════════════════════════════════════════════════════ -->
-
-<!-- Overlay de suscripción -->
-<div id="gpSusOverlay">
-  <div class="gpSusCard" id="gpSusContenido">
-    <div class="gpSusHero" id="gpSusHero">
-      <button id="gpSusBtnCerrar" onclick="gpCerrarOverlay()" style="display:none;">✕</button>
-      <div class="gpSusHeroIcono" id="gpSusHeroIcono">🔐</div>
-      <div class="gpSusHeroTitulo" id="gpSusHeroTitulo">Suscripción requerida</div>
-      <div class="gpSusHeroSub" id="gpSusHeroSub">Para usar este panel necesitas una suscripción activa</div>
-    </div>
-    <p class="gpSusSubtitulo">Realiza la transferencia con estos datos y sube el comprobante.</p>
-
-    <div class="gpSusInfoPago">
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">💰 Monto</span>
-        <span class="gpDatosValor">$25.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">👤 Nombre</span>
-        <span class="gpDatosValor">Diego Francisco Palma</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🪪 RUT</span>
-        <span class="gpDatosValor">22.141.143-9</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🏦 Banco</span>
-        <span class="gpDatosValor">BancoEstado</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">💳 Tipo</span>
-        <span class="gpDatosValor">CuentaRUT</span>
-      </div>
-      <div class="gpDatosFila">
-        <span class="gpDatosLabel">🔢 N° Cuenta</span>
-        <span class="gpDatosValor">22141143</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22141143',this)">Copiar</button>
-      </div>
-      <button class="gpBtnCopiarTodo" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
-      <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
-    </div>
-
-    <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
-    <p class="gpSusEstado" id="gpSusEstado"></p>
-    <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
-      <div style="font-size:2rem;margin-bottom:8px;">📄</div>
-      <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
-    </div>
-    <input type="file" id="gpSusInput" accept="image/*" hidden>
-    <img id="gpSusPreview" alt="Vista previa">
-  </div>
-</div>
-
-
-<!-- Toast copiado -->
-<div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
-
-<!-- Loader IA -->
-<div id="gpSusLoader">
-  <div class="gpLoaderParticulas" id="gpLoaderParticulas"></div>
-  <div class="gpLoaderOrb"></div>
-  <div class="gpLoaderTitulo">Verificando comprobante</div>
-  <div class="gpLoaderSub">La IA está analizando tu transferencia</div>
-  <div class="gpLoaderPasos">
-    <div class="gpLoaderPaso" id="gpPaso1"><span class="gpLoaderPasoIcono">📄</span><div class="gpLoaderPasoSpinner"></div><span>Leyendo imagen</span></div>
-    <div class="gpLoaderPaso" id="gpPaso2"><span class="gpLoaderPasoIcono">🔍</span><div class="gpLoaderPasoSpinner"></div><span>Verificando comprobante</span></div>
-    <div class="gpLoaderPaso" id="gpPaso3"><span class="gpLoaderPasoIcono">💰</span><div class="gpLoaderPasoSpinner"></div><span>Verificando monto</span></div>
-    <div class="gpLoaderPaso" id="gpPaso4"><span class="gpLoaderPasoIcono">🏦</span><div class="gpLoaderPasoSpinner"></div><span>Confirmando destinatario</span></div>
-    <div class="gpLoaderPaso" id="gpPaso5"><span class="gpLoaderPasoIcono">🔐</span><div class="gpLoaderPasoSpinner"></div><span>Validando número de operación</span></div>
-  </div>
-  <div class="gpLoaderBarra"><div class="gpLoaderBarraFill" id="gpLoaderBarraFill"></div></div>
-  <div class="gpLoaderMsg" id="gpLoaderMsg">Iniciando análisis...</div>
-</div>
-
-<script>
-// ══════════════════════════════════════════════
-// CONFIG SUSCRIPCIÓN — CAMBIA ESTOS VALORES SI ES NECESARIO
-// ══════════════════════════════════════════════
-// ⚠️ IMPORTANTE:
-// Tu Worker real es un "pasamano" (passthrough): reenvía tal cual el body
-// que le mandes a la API de Gemini y te devuelve la respuesta de Gemini sin
-// tocarla. Por eso el FRONTEND (aquí abajo) arma el body completo de Gemini
-// (contents + generationConfig + responseSchema), y luego desenvuelve la
-// respuesta nativa de Gemini (candidates[0].content.parts[0].text).
-const GP_VERIFY_ENDPOINT = 'https://wandering-cell-a87e.mago-diepa.workers.dev';
-const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
-const GP_DESTINATARIO = 'diego francisco palma';
-const GP_RUT_DEST     = '221411439'; // RUT del destinatario, SIN puntos ni guión
-const GP_BANCO_DEST   = '';  // vacío = acepta transferencias desde cualquier banco
-const GP_RTDB_PATH    = 'configuracion/suscripcion';
-const GP_DIAS_GRACIA1 = 5;   // días con solo banner amarillo
-const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
-
-// ══════════════════════════════════════════════
-// VERIFICAR SUSCRIPCIÓN AL CARGAR — actualiza SIEMPRE 3 lugares:
-// el chip del topbar, el banner bajo las pestañas, y la franja
-// del overlay (si está abierto). Todos muestran días restantes.
-// ══════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════
+   SISTEMA DE SUSCRIPCIÓN AUTOMÁTICA (Flow)
+   Solo lectura de estado + botón de gestión. Nunca bloquea el
+   panel ni muestra alertas de vencimiento.
+   ══════════════════════════════════════════════════════════════ */
 function gpFormatoFecha(ts){
   return new Date(ts).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
 }
 
-function gpActualizarUI(estado){
-  const chip = document.getElementById('gpSusChip');
-  const banner = document.getElementById('gpBannerSus');
-  const hero = document.getElementById('gpSusHero');
-  const heroIcono = document.getElementById('gpSusHeroIcono');
-  const heroTitulo = document.getElementById('gpSusHeroTitulo');
-  const heroSub = document.getElementById('gpSusHeroSub');
+function gpIniciarEstadoSuscripcion(){
+  db.ref(GP_RTDB_PATH).on('value', snap=>{
+    const sus = snap.val() || {};
+    const ahora = Date.now();
+    const pagadoHasta = sus.paidUntil || 0;
+    const activo = pagadoHasta > ahora;
 
-  chip.className = 'gp-chip gp-chip-' + estado.nivel;
-  chip.innerHTML = estado.chip;
+    const chip = document.getElementById('gpSusChip');
+    const banner = document.getElementById('gpBannerSus');
+    const bannerVence = document.getElementById('gpBannerSusVence');
+    const heroIcono = document.getElementById('gpSusHeroIcono');
+    const heroTitulo = document.getElementById('gpSusHeroTitulo');
+    const heroSub = document.getElementById('gpSusHeroSub');
+    const modalVigencia = document.getElementById('gpModalVigencia');
 
-  banner.style.display = 'flex';
-  banner.className = '';
-  banner.style.background = estado.bannerBg;
-  banner.style.borderColor = estado.bannerBorder;
-  banner.style.color = estado.bannerColor;
-  banner.innerHTML = estado.banner;
+    if(!pagadoHasta){
+      chip.className = 'gp-chip gp-chip-info';
+      chip.innerHTML = '🌿 Suscripción Flow';
+      banner.style.display = 'none';
+      heroIcono.textContent = '🌿';
+      heroTitulo.textContent = 'Suscripción automática';
+      heroSub.textContent = 'Autoriza tu tarjeta con Flow para activar los cobros automáticos.';
+      modalVigencia.textContent = 'Pendiente de autorización';
+      return;
+    }
 
-  hero.className = 'gpSusHero ' + estado.heroClase;
-  heroIcono.textContent = estado.heroIcono;
-  heroTitulo.textContent = estado.heroTitulo;
-  heroSub.innerHTML = estado.heroSub;
+    const diasRestantes = Math.max(0, Math.ceil((pagadoHasta - ahora)/(1000*60*60*24)));
+    const vence = gpFormatoFecha(pagadoHasta);
+    modalVigencia.textContent = `Hasta el ${vence}`;
+
+    if(activo){
+      const porVencer = diasRestantes <= GP_DIAS_AVISO;
+      chip.className = 'gp-chip ' + (porVencer ? 'gp-chip-soon' : 'gp-chip-ok');
+      chip.innerHTML = porVencer
+        ? `⏳ Renueva en <span class="gp-chip-days">${diasRestantes}d</span>`
+        : `🌿 Activa · <span class="gp-chip-days">${diasRestantes}d</span>`;
+
+      banner.style.display = 'flex';
+      bannerVence.textContent = `${vence} · ${diasRestantes} día(s) restantes`;
+
+      heroIcono.textContent = porVencer ? '⏳' : '🌿';
+      heroTitulo.textContent = porVencer ? 'Tu renovación está cerca' : 'Suscripción activa';
+      heroSub.innerHTML = `Flow renovará tu suscripción automáticamente. Vigente hasta el <b>${vence}</b>.`;
+    } else {
+      // Informativo: el cobro es automático, así que esto solo pasa si el cobro
+      // aún no se procesa. No se bloquea ni se muestran alertas agresivas.
+      chip.className = 'gp-chip gp-chip-info';
+      chip.innerHTML = '🌿 Suscripción Flow';
+      banner.style.display = 'none';
+      heroIcono.textContent = '🌿';
+      heroTitulo.textContent = 'Suscripción automática';
+      heroSub.innerHTML = `Última vigencia registrada: <b>${vence}</b>. El cobro automático de Flow se procesará en la fecha correspondiente.`;
+    }
+  });
 }
 
-(function gpChequear(){
-  const intervalo = setInterval(()=>{
-    if(typeof db==='undefined') return;
-    clearInterval(intervalo);
-    db.ref(GP_RTDB_PATH).on('value', snap=>{
-      const sus = snap.val() || {};
-      const ahora = Date.now();
-      const pagadoHasta = sus.paidUntil || 0;
-      const activo = sus.isPaid===true && pagadoHasta > ahora;
-
-      if(activo){
-        document.getElementById('gpSusOverlay').classList.remove('activo');
-        const diasRestantes = Math.max(1, Math.ceil((pagadoHasta - ahora)/(1000*60*60*24)));
-        const porVencer = diasRestantes <= GP_DIAS_GRACIA1; // avisa antes incluso de vencer
-
-        gpActualizarUI({
-          nivel: porVencer ? 'soon' : 'ok',
-          chip: porVencer
-            ? `⏳ Vence en <span class="gp-chip-days">${diasRestantes}d</span>`
-            : `🌿 Activa · <span class="gp-chip-days">${diasRestantes}d</span> restantes`,
-          bannerBg: porVencer ? 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))' : 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))',
-          bannerBorder: porVencer ? 'rgba(255,204,0,0.4)' : 'rgba(51,209,122,0.3)',
-          bannerColor: porVencer ? '#FFD166' : '#cdeedb',
-          banner: porVencer
-            ? `⏳ Tu suscripción vence en <b>${diasRestantes} día(s)</b> — el ${gpFormatoFecha(pagadoHasta)}. Renueva cuando quieras desde este mismo panel.`
-            : `✅ Suscripción activa hasta <b>${gpFormatoFecha(pagadoHasta)}</b> · quedan ${diasRestantes} día(s).`,
-          heroClase: porVencer ? 'warn' : 'ok',
-          heroIcono: porVencer ? '⏳' : '✅',
-          heroTitulo: porVencer ? `Vence en ${diasRestantes} día(s)` : 'Suscripción activa',
-          heroSub: `Válida hasta el <b>${gpFormatoFecha(pagadoHasta)}</b>`
-        });
-
-      } else {
-        const diasVencido = pagadoHasta > 0
-          ? Math.floor((ahora - pagadoHasta)/(1000*60*60*24))
-          : 999;
-
-        if(diasVencido <= GP_DIAS_GRACIA1){
-          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
-          gpActualizarUI({
-            nivel: 'warn',
-            chip: `⚠️ Vencida hace <span class="gp-chip-days">${diasVencido}d</span>`,
-            bannerBg: 'linear-gradient(135deg,rgba(255,152,0,0.14),rgba(255,152,0,0.04))',
-            bannerBorder: 'rgba(255,152,0,0.45)',
-            bannerColor: '#FFB65C',
-            banner: `⚠️ Suscripción vencida hace <b>${diasVencido} día(s)</b>. Te quedan <b>${diasParaBloqueo} día(s)</b> antes de que el panel se bloquee.`,
-            heroClase: 'warn',
-            heroIcono: '⚠️',
-            heroTitulo: `Vencida hace ${diasVencido} día(s)`,
-            heroSub: `Renueva antes de <b>${diasParaBloqueo} día(s)</b> para evitar el bloqueo del panel`
-          });
-
-        } else if(diasVencido <= GP_DIAS_GRACIA2){
-          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
-          document.getElementById('gpSusBtnCerrar').style.display = 'block';
-          gpActualizarUI({
-            nivel: 'danger',
-            chip: `🚨 Bloqueo en <span class="gp-chip-days">${diasParaBloqueo}d</span>`,
-            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
-            bannerBorder: 'rgba(224,67,53,0.5)',
-            bannerColor: '#FF8A80',
-            banner: `🚨 Suscripción vencida hace <b>${diasVencido} día(s)</b>. El panel se bloqueará en <b>${diasParaBloqueo} día(s)</b> si no renuevas.`,
-            heroClase: 'danger',
-            heroIcono: '🚨',
-            heroTitulo: `Bloqueo en ${diasParaBloqueo} día(s)`,
-            heroSub: `Vencida hace <b>${diasVencido} día(s)</b> — renueva ahora para evitar interrupciones`
-          });
-          const ya = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
-          if(!ya){
-            setTimeout(()=>{
-              if(confirm(`⚠️ Tu suscripción venció hace ${diasVencido} días.\nTe quedan ${diasParaBloqueo} día(s) antes del bloqueo.\n¿Ir a renovar ahora?`)){
-                document.getElementById('gpSusOverlay').classList.add('activo');
-              } else {
-                sessionStorage.setItem('gpSusRecordar_'+Math.floor(ahora/3600000),'1');
-              }
-            },1500);
-          }
-        } else {
-          gpActualizarUI({
-            nivel: 'danger',
-            chip: `🔒 Suscripción Inactiva`,
-            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
-            bannerBorder: 'rgba(224,67,53,0.5)',
-            bannerColor: '#FF8A80',
-            banner: `🔒 Suscripción Inactiva por falta de pago. Verifica un comprobante para reactivarlo.`,
-            heroClase: 'danger',
-            heroIcono: '🔒',
-            heroTitulo: 'Suscripción Inactiva',
-            heroSub: `Verifica tu comprobante de transferencia para reactivarlo`
-          });
-          document.getElementById('gpSusOverlay').classList.add('activo');
-        }
-      }
-    });
-  },300);
-})();
-
+function gpAbrirOverlay(){
+  document.getElementById('gpSusOverlay').classList.add('activo');
+}
 function gpCerrarOverlay(){
   document.getElementById('gpSusOverlay').classList.remove('activo');
-  sessionStorage.setItem('gpSusRecordar_'+Math.floor(Date.now()/3600000),'1');
 }
+document.getElementById('btnAbrirSuscripcion').onclick = gpAbrirOverlay;
+document.getElementById('gpSusChip').onclick = gpAbrirOverlay;
 
-// ══════════════════════════════════════════════
-// PREVIEW IMAGEN
-// ══════════════════════════════════════════════
-let gpImagenBase64 = null;
-
-document.getElementById('gpSusInput').addEventListener('change', function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    gpImagenBase64 = e.target.result;
-    const preview = document.getElementById('gpSusPreview');
-    preview.src = gpImagenBase64;
-    preview.style.display = 'block';
-    document.getElementById('gpSusUploadArea').classList.add('con-imagen');
-    document.getElementById('gpSusUploadArea').innerHTML =
-      '<div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-size:0.8rem;color:#33d17a;font-weight:700;">Imagen lista · Toca para cambiarla</div>';
-    document.getElementById('gpSusBtn').disabled = false;
-    document.getElementById('gpSusEstado').textContent = '';
-  };
-  reader.readAsDataURL(file);
-});
-
-// ══════════════════════════════════════════════
-// VERIFICAR COMPROBANTE (vía Worker "pasamano" hacia Gemini)
-// ══════════════════════════════════════════════
-async function gpAnalizarConGemini(){
-  const mimeType = gpImagenBase64.split(';')[0].split(':')[1]; // ej: image/jpeg
-  const base64Puro = gpImagenBase64.split(',')[1];
-
-  const geminiBody = {
-    contents: [{
-      parts: [
-        { text: `Analiza este comprobante bancario chileno y extrae los datos exactos. Si algún dato no es 100% legible, asigna esValido: false. El campo "banco" debe ser el banco DESTINATARIO (a quien se transfirió el dinero), no el banco de origen. El campo "destinatario" es el nombre de la persona que recibió la transferencia.` },
-        { inline_data: { mime_type: mimeType, data: base64Puro } }
-      ]
-    }],
-    safetySettings: [
-      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-    ],
-    generationConfig: {
-      temperature: 0,
-      maxOutputTokens: 2048,
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: 'OBJECT',
-        properties: {
-          esValido: { type: 'BOOLEAN' },
-          monto: { type: 'NUMBER' },
-          fecha: { type: 'STRING' },
-          numeroOperacion: { type: 'STRING' },
-          banco: { type: 'STRING' },
-          destinatario: { type: 'STRING' },
-          rut: { type: 'STRING' },
-          confianza: { type: 'STRING', enum: ['alta','media','baja'] }
-        },
-        required: ['esValido','monto','fecha','numeroOperacion','banco','destinatario','rut','confianza']
-      }
-    }
-  };
-
-  const res = await fetch(GP_VERIFY_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(geminiBody)
-  });
-
-  const data = await res.json();
-
-  if(!res.ok){
-    throw new Error('Gemini: ' + (data.error?.message || res.status));
-  }
-
-  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if(!texto){
-    const finishReason = data.candidates?.[0]?.finishReason;
-    throw new Error(`La IA no devolvió texto legible. Razón: ${finishReason || 'desconocida'}. Intenta con una imagen más clara.`);
-  }
-
-  // Por seguridad, por si algún día se saca responseSchema y vuelve texto con backticks:
-  const limpio = texto.replace(/```json|```/g,'').trim();
-  const match = limpio.match(/\{[\s\S]*\}/);
-  if(!match) throw new Error('No se pudo interpretar la respuesta de la IA.');
-  return JSON.parse(match[0]);
-}
-
-// ══════════════════════════════════════════════
-// VALIDAR Y GUARDAR EN FIREBASE
-// ══════════════════════════════════════════════
-async function gpValidarYGuardar(a){
-  const errores=[];
-  if(!a.esValido) errores.push('La imagen no parece un comprobante válido.');
-  if(a.confianza==='baja') errores.push('Imagen poco clara. Intenta con una captura más nítida.');
-  if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
-  // Banco origen no se valida: se aceptan transferencias desde cualquier banco chileno.
-  if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
-  if(a.rut){
-    const rutLimpio = a.rut.toString().toLowerCase().replace(/[.\-\s]/g,'');
-    if(rutLimpio !== GP_RUT_DEST) errores.push('El RUT del destinatario no coincide.');
-  }
-  if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
-  if(errores.length) throw new Error(errores.join('\n'));
-
-  const snap = await db.ref(GP_RTDB_PATH+'/usedComprobantes').once('value');
-  const usados = snap.val()||{};
-  if(Object.values(usados).includes(a.numeroOperacion.trim())) throw new Error('Este comprobante ya fue utilizado.');
-
-  const ahora = Date.now();
-  const paidUntil = ahora+(30*24*60*60*1000);
-  await db.ref(GP_RTDB_PATH+'/usedComprobantes').push(a.numeroOperacion.trim());
-  await db.ref().update({
-    [GP_RTDB_PATH+'/isPaid']: true,
-    [GP_RTDB_PATH+'/paidUntil']: paidUntil,
-    [GP_RTDB_PATH+'/ultimoPago']: {fecha:a.fecha,monto:a.monto,numeroOperacion:a.numeroOperacion.trim(),ts:ahora}
-  });
-  return paidUntil;
-}
-
-// ══════════════════════════════════════════════
-// FLUJO PRINCIPAL
-// ══════════════════════════════════════════════
-async function gpVerificarComprobante(){
-  if(!gpImagenBase64) return;
-  const btn = document.getElementById('gpSusBtn');
+/* ---------- Botón de pago / gestión Flow ---------- */
+document.getElementById('btnPagarGinkko').addEventListener('click', async () => {
+  const btn = document.getElementById('btnPagarGinkko');
+  const estado = document.getElementById('gpSusEstado');
+  const original = btn.innerHTML;
   btn.disabled = true;
+  btn.innerHTML = '<span>⏳</span> Generando enlace de pago…';
+  estado.textContent = ''; estado.className = 'gpSusEstado';
+
   try {
-    gpLoaderMostrar();
-    let analisis;
-    for(let intento=1; intento<=3; intento++){
-      try { analisis = await gpAnalizarConGemini(); break; }
-      catch(e){
-        if(intento===3) throw e;
-        await new Promise(r=>setTimeout(r, intento*4000));
-      }
+    const response = await fetch(GP_FLOW_WORKER, { method: 'POST' });
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      estado.textContent = 'No se pudo generar el enlace: ' + (data.error || 'error desconocido');
+      estado.className = 'gpSusEstado error';
+      btn.innerHTML = original;
+      btn.disabled = false;
     }
-    gpLoaderOcultar();
-    const paidUntil = await gpValidarYGuardar(analisis);
-    gpMostrarExito(paidUntil);
-  } catch(err){
-    gpLoaderOcultar();
-    const msg = err.message||'';
-    const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
-    document.getElementById('gpSusEstado').textContent = esSaturacion
-      ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
-      : msg||'Error al verificar.';
-    document.getElementById('gpSusEstado').className = 'gpSusEstado error';
+  } catch (error) {
+    console.error('Error:', error);
+    estado.textContent = 'Error de conexión con la pasarela de pago. Intenta nuevamente.';
+    estado.className = 'gpSusEstado error';
+    btn.innerHTML = original;
     btn.disabled = false;
   }
-}
-
-function gpMostrarExito(paidUntil){
-  const vence = new Date(paidUntil).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('gpSusContenido').innerHTML=`
-    <span class="gpSusExitoIcono">✅</span>
-    <div class="gpSusExitoTitulo">¡Suscripción activada!</div>
-    <p class="gpSusExitoSub">Activa hasta el <b style="color:#FFD700;">${vence}</b></p>
-    <p class="gpSusExitoSub" style="margin-top:8px;font-size:0.73rem;">El panel se abrirá en 3 segundos...</p>`;
-  setTimeout(()=>document.getElementById('gpSusOverlay').classList.remove('activo'),3000);
-}
-
-// ══════════════════════════════════════════════
-// COPIAR AL PORTAPAPELES
-// ══════════════════════════════════════════════
-function gpCopiar(texto, btn){
-  navigator.clipboard.writeText(texto).then(()=>{
-    const t=document.getElementById('gpToastCopy');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2000);
-    if(btn){const o=btn.textContent;btn.textContent='✅';setTimeout(()=>btn.textContent=o,2000);}
-  });
-}
-function gpCopiarTodo(){
-  gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
-  const btn=document.querySelector('.gpBtnCopiarTodo');
-  if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
-}
-function gpAbrirBanco(){
-  const links=[
-    {n:'BancoEstado',u:'bancoestado://'},
-    {n:'Santander',u:'santander://'},
-    {n:'BCI',u:'bci://'},
-    {n:'Scotiabank',u:'scotiabank://'},
-    {n:'Mercado Pago',u:'mercadopago://'}
-  ];
-  let m=document.getElementById('gpBancoModal');
-  if(!m){m=document.createElement('div');m.id='gpBancoModal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
-    m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
-  m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
-    <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
-    ${links.map(b=>`<button onclick="window.location.href='${b.u}';document.getElementById('gpBancoModal').remove();"
-      style="width:100%;padding:12px;margin-bottom:7px;background:#12121f;border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;text-align:left;">🏦 ${b.n}</button>`).join('')}
-    <button onclick="document.getElementById('gpBancoModal').remove()"
-      style="width:100%;padding:10px;margin-top:4px;background:none;border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:10px;font-size:0.8rem;cursor:pointer;">Cancelar</button>
-  </div>`;
-}
-
-// ══════════════════════════════════════════════
-// LOADER ANIMADO
-// ══════════════════════════════════════════════
-const GP_LOADER_MSGS=['Procesando imagen con visión artificial...','Identificando campos del comprobante...','Comparando datos bancarios...','Verificando autenticidad...','Comprobando número de operación único...','Aplicando validaciones de seguridad...','Casi listo...'];
-let gpLoaderInterval=null, gpLoaderMsgIdx=0;
-
-function gpLoaderMostrar(){
-  document.getElementById('gpSusLoader').classList.add('activo');
-  gpLoaderBarraFill(0);
-  ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
-  gpLoaderMsgIdx=0;
-  document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
-  const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
-  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
-    p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
-    p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
-  setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
-  setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
-  setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
-  setTimeout(()=>{gpLoaderListo('gpPaso3');gpLoaderActivar('gpPaso4');gpLoaderBarraFill(60);},2400);
-  setTimeout(()=>{gpLoaderListo('gpPaso4');gpLoaderActivar('gpPaso5');gpLoaderBarraFill(80);},3200);
-  gpLoaderInterval=setInterval(()=>{
-    gpLoaderMsgIdx=(gpLoaderMsgIdx+1)%GP_LOADER_MSGS.length;
-    document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[gpLoaderMsgIdx];
-  },1100);
-}
-function gpLoaderOcultar(){
-  gpLoaderListo('gpPaso5');gpLoaderBarraFill(100);
-  clearInterval(gpLoaderInterval);
-  setTimeout(()=>document.getElementById('gpSusLoader').classList.remove('activo'),600);
-}
-function gpLoaderActivar(id){document.getElementById(id).classList.add('activo');}
-function gpLoaderListo(id){
-  const el=document.getElementById(id);
-  el.classList.remove('activo');el.classList.add('listo');
-  el.querySelector('.gpLoaderPasoIcono').textContent='✅';
-}
-function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').style.width=pct+'%';}
+});
 </script>
 </body>
 </html>
