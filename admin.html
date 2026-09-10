@@ -1075,23 +1075,36 @@ document.getElementById('btnPagarGinkko').addEventListener('click', async () => 
   const estado = document.getElementById('gpSusEstado');
   const original = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Generando enlace de pago…';
+  btn.innerHTML = '<span>⏳</span> Procesando suscripción…';
   estado.textContent = ''; estado.className = 'gpSusEstado';
 
   try {
     const response = await fetch(GP_FLOW_WORKER, { method: 'POST' });
     const data = await response.json();
-    if (data.url) {
-      window.location.href = data.url;
+    
+    if (response.ok && (data.success || data.subscriptionId)) {
+      estado.textContent = data.message || '¡Suscripción creada con éxito! Revisa tu correo para autorizar el cobro.';
+      estado.className = 'gpSusEstado';
+      btn.innerHTML = '<span>✅</span> ¡Listo!';
+      setTimeout(() => {
+        gpCerrarOverlay();
+        btn.innerHTML = original;
+        btn.disabled = false;
+      }, 3500);
     } else {
-      estado.textContent = 'No se pudo generar el enlace: ' + (data.error || 'error desconocido');
+      let errMsg = 'error desconocido';
+      if (typeof data.error === 'string') errMsg = data.error;
+      else if (data.error?.message) errMsg = data.error.message;
+      else if (data.message) errMsg = data.message;
+      
+      estado.textContent = 'No se pudo procesar: ' + errMsg;
       estado.className = 'gpSusEstado error';
       btn.innerHTML = original;
       btn.disabled = false;
     }
   } catch (error) {
     console.error('Error:', error);
-    estado.textContent = 'Error de conexión con la pasarela de pago. Intenta nuevamente.';
+    estado.textContent = 'Error de conexión con el servidor. Intenta nuevamente.';
     estado.className = 'gpSusEstado error';
     btn.innerHTML = original;
     btn.disabled = false;
