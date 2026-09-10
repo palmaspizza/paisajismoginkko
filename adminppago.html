@@ -66,7 +66,10 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .login-box input{margin-bottom:14px;}
 #loginError{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:10px;}
 .login-theme-toggle{position:absolute;top:18px;right:18px;}
-
+/* Si el modal está en modo bloqueo total, la X desaparece */
+.gp-sus-modal-box.bloqueado .gp-close-x {
+  display: none !important;
+}
 /* ---- layout ---- */
 #appScreen{display:none;min-height:100vh;}
 .topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;
@@ -1005,61 +1008,60 @@ function gpFormatoFecha(ts){
   return new Date(ts).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
 }
 
-function gpIniciarEstadoSuscripcion(){
-  db.ref(GP_RTDB_PATH).on('value', snap=>{
-    const sus = snap.val() || {};
+
+
+
+function gpIniciarEstadoSuscripcion() {
+  const dbRef = firebase.database().ref('configuracion/suscripcion');
+  
+  dbRef.on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    const paidUntil = data.paidUntil || 0;
     const ahora = Date.now();
-    const pagadoHasta = sus.paidUntil || 0;
-    const activo = pagadoHasta > ahora;
-
-    const chip = document.getElementById('gpSusChip');
-    const banner = document.getElementById('gpBannerSus');
-    const bannerVence = document.getElementById('gpBannerSusVence');
-    const heroIcono = document.getElementById('gpSusHeroIcono');
-    const heroTitulo = document.getElementById('gpSusHeroTitulo');
-    const heroSub = document.getElementById('gpSusHeroSub');
-    const modalVigencia = document.getElementById('gpModalVigencia');
-
-    if(!pagadoHasta){
-      chip.className = 'gp-chip gp-chip-info';
-      chip.innerHTML = '🌿 Suscripción Flow';
-      banner.style.display = 'none';
-      heroIcono.textContent = '🌿';
-      heroTitulo.textContent = 'Suscripción automática';
-      heroSub.textContent = 'Autoriza tu tarjeta con Flow para activar los cobros automáticos.';
-      modalVigencia.textContent = 'Pendiente de autorización';
-      return;
-    }
-
-    const diasRestantes = Math.max(0, Math.ceil((pagadoHasta - ahora)/(1000*60*60*24)));
-    const vence = gpFormatoFecha(pagadoHasta);
-    modalVigencia.textContent = `Hasta el ${vence}`;
-
-    if(activo){
-      const porVencer = diasRestantes <= GP_DIAS_AVISO;
-      chip.className = 'gp-chip ' + (porVencer ? 'gp-chip-soon' : 'gp-chip-ok');
-      chip.innerHTML = porVencer
-        ? `⏳ Renueva en <span class="gp-chip-days">${diasRestantes}d</span>`
-        : `🌿 Activa · <span class="gp-chip-days">${diasRestantes}d</span>`;
-
-      banner.style.display = 'flex';
-      bannerVence.textContent = `${vence} · ${diasRestantes} día(s) restantes`;
-
-      heroIcono.textContent = porVencer ? '⏳' : '🌿';
-      heroTitulo.textContent = porVencer ? 'Tu renovación está cerca' : 'Suscripción activa';
-      heroSub.innerHTML = `Flow renovará tu suscripción automáticamente. Vigente hasta el <b>${vence}</b>.`;
+    
+    // Calcular días restantes
+    const diferenciaMs = paidUntil - ahora;
+    const diasRestantes = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    
+    const overlay = document.getElementById('gpSusOverlay');
+    const modalBox = overlay.querySelector('.gp-sus-modal-box');
+    const modalTitle = overlay.querySelector('h3');
+    const modalDesc = overlay.querySelector('.gp-sus-text');
+    const chipEstado = document.getElementById('gpChipEstado');
+    
+    // Formatear la fecha para que se lea bien
+    const fechaVenc = new Date(paidUntil).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+    
+    if (diasRestantes <= 0) {
+      // 🚨 LLEGÓ EL DÍA / VENCIDO: Se abre SOLO y bloquea la pantalla a la fuerza
+      if (overlay) overlay.style.display = 'flex';
+      if (modalBox) modalBox.classList.add('bloqueado'); // Le quita la X por CSS
+      
+      if (modalTitle) modalTitle.textContent = 'Renovación de suscripción';
+      if (modalDesc) modalDesc.textContent = `Tu suscripción cumplió su ciclo (${fechaVenc}). Realiza el pago para continuar usando el panel. Una vez acreditado, este aviso desaparecerá automáticamente.`;
+      
+      if (chipEstado) {
+        chipEstado.innerHTML = '🔴 Pago pendiente';
+        chipEstado.style.background = '#ffebee';
+        chipEstado.style.color = '#c62828';
+      }
+      
     } else {
-      // Informativo: el cobro es automático, así que esto solo pasa si el cobro
-      // aún no se procesa. No se bloquea ni se muestran alertas agresivas.
-      chip.className = 'gp-chip gp-chip-info';
-      chip.innerHTML = '🌿 Suscripción Flow';
-      banner.style.display = 'none';
-      heroIcono.textContent = '🌿';
-      heroTitulo.textContent = 'Suscripción automática';
-      heroSub.innerHTML = `Última vigencia registrada: <b>${vence}</b>. El cobro automático de Flow se procesará en la fecha correspondiente.`;
+      // ✅ AL DÍA: Se cierra solo, no molesta y queda oculto
+      if (overlay) overlay.style.display = 'none';
+      if (modalBox) modalBox.classList.remove('bloqueado');
+      
+      if (chipEstado) {
+        chipEstado.innerHTML = `🌿 Activa (${diasRestantes}d)`;
+        chipEstado.style.background = '#e8f5e9';
+        chipEstado.style.color = '#2e7d32';
+      }
     }
   });
 }
+
+
+
 
 function gpAbrirOverlay(){
   document.getElementById('gpSusOverlay').classList.add('activo');
