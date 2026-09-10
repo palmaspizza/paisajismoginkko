@@ -338,10 +338,13 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 
 
 
-
+<button id="btnPagarGinkko">Pagar Suscripción Mensual ($25.000)</button>
       <script>
-  document.getElementById("btnPagarGinkko").addEventListener("click", async () => {
-    const btn = document.getElementById("btnPagarGinkko");
+ document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btnPagarGinkko");
+  if (!btn) return; // Si el botón no está en esta pantalla, frena de inmediato sin romper nada.
+
+  btn.addEventListener("click", async () => {
     btn.textContent = "Generando pago...";
     btn.disabled = true;
 
@@ -355,21 +358,19 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error("Detalle del error:", data);
-        alert("Error de Flow: " + JSON.stringify(data.error || data));
+        alert("Error: " + JSON.stringify(data.error || "No se pudo generar el enlace"));
         btn.textContent = "Pagar Suscripción Mensual ($25.000)";
         btn.disabled = false;
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error de conexión.");
+      alert("Error de conexión con la pasarela.");
       btn.textContent = "Pagar Suscripción Mensual ($25.000)";
       btn.disabled = false;
     }
   });
+});
 </script>
-
-
 
 
 
