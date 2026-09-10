@@ -1012,40 +1012,82 @@ function gpFormatoFecha(ts){
 
 
 function gpIniciarEstadoSuscripcion() {
+  // Asegurarnos de que Firebase esté inicializado y la referencia sea correcta
+  if (typeof firebase === 'undefined' || !firebase.database) {
+    console.error("Firebase no está cargado.");
+    return;
+  }
+
   const dbRef = firebase.database().ref('configuracion/suscripcion');
   
   dbRef.on('value', (snapshot) => {
-    const data = snapshot.val() || {};
-    const estaBloqueado = data.bloquear === true; // El interruptor manual
+    const data = snapshot.val();
     
+    // Elementos de la interfaz
     const overlay = document.getElementById('gpSusOverlay');
     const modalBox = overlay ? overlay.querySelector('.gp-sus-modal-box') : null;
+    const modalTitle = overlay ? overlay.querySelector('h3') : null;
+    const modalDesc = overlay ? overlay.querySelector('.gp-sus-text') : null;
     const chipEstado = document.getElementById('gpChipEstado');
     
-    if (estaBloqueado) {
-      // 🚨 BLOQUEO MANUAL: Se abre a la fuerza, sin X, nadie se sale
-      if (overlay) overlay.style.display = 'flex';
-      if (modalBox) modalBox.classList.add('bloqueado');
+    // Si no existe el modal en este HTML, evitamos errores
+    if (!overlay || !modalBox) {
+      console.warn("No se encontró el contenedor del modal de suscripción en el DOM.");
+      return;
+    }
+
+    // Si Firebase no tiene datos aún, evitamos que rompa
+    if (!data || !data.paidUntil) {
+      overlay.style.display = 'none';
+      modalBox.classList.remove('bloqueado');
+      if (chipEstado) chipEstado.innerHTML = '🌿 Activo';
+      return;
+    }
+
+    const paidUntil = Number(data.paidUntil);
+    const ahora = Date.now();
+    
+    // Calcular días restantes
+    const diferenciaMs = paidUntil - ahora;
+    const diasRestantes = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    
+    // Formatear fecha para mostrarla limpia si hace falta
+    const fechaVenc = new Date(paidUntil).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+    
+    if (diasRestantes <= 0) {
+      // 🚨 VENCIDO: Se abre solo, se bloquea y oculta la "X"
+      overlay.style.display = 'flex';
+      modalBox.classList.add('bloqueado'); 
+      
+      if (modalTitle) modalTitle.textContent = 'Renovación de suscripción';
+      if (modalDesc) modalDesc.textContent = `Tu suscripción expiró el ${fechaVenc}. Realiza el pago para continuar operando el panel.`;
       
       if (chipEstado) {
         chipEstado.innerHTML = '🔴 Pago pendiente';
         chipEstado.style.background = '#ffebee';
         chipEstado.style.color = '#c62828';
       }
+      
     } else {
-      // ✅ DESBLOQUEADO: Todo libre
-      if (overlay) overlay.style.display = 'none';
-      if (modalBox) modalBox.classList.remove('bloqueado');
+      // ✅ AL DÍA: Se cierra solo por completo y libera el panel
+      overlay.style.display = 'none';
+      modalBox.classList.remove('bloqueado');
       
       if (chipEstado) {
-        chipEstado.innerHTML = '🌿 Activo';
+        chipEstado.innerHTML = `🌿 Activa (${diasRestantes}d)`;
         chipEstado.style.background = '#e8f5e9';
         chipEstado.style.color = '#2e7d32';
       }
     }
+  }, (error) => {
+    console.error("Error al leer Firebase:", error);
   });
 }
 
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  gpIniciarEstadoSuscripcion();
+});
 
 
 
