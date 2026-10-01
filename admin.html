@@ -2077,7 +2077,8 @@ async function gpAnalizarConGemini(){
   const geminiBody = {
     contents: [{
       parts: [
-        { text: `Analiza este comprobante bancario chileno y extrae los datos exactos. Si algún dato no es 100% legible, asigna esValido: false. El campo "banco" debe ser el banco DESTINATARIO (a quien se transfirió el dinero), no el banco de origen. El campo "destinatario" es el nombre de la persona que recibió la transferencia.` },
+        // Cambia la primera línea del prompt a esto:
+{ text: `Analiza este comprobante bancario chileno y extrae los datos exactos. Si el comprobante no muestra explícitamente el RUT del destinatario, deja el campo "rut" como una cadena vacía "". El campo "banco" debe ser el banco DESTINATARIO. El campo "destinatario" es el nombre de la persona que recibió la transferencia.` },
         { inline_data: { mime_type: mimeType, data: base64Puro } }
       ]
     }],
@@ -2103,7 +2104,7 @@ async function gpAnalizarConGemini(){
           rut: { type: 'STRING' },
           confianza: { type: 'STRING', enum: ['alta','media','baja'] }
         },
-        required: ['esValido','monto','fecha','numeroOperacion','banco','destinatario','rut','confianza']
+        required: ['esValido','monto','fecha','numeroOperacion','banco','destinatario','confianza']
       }
     }
   };
@@ -2143,10 +2144,12 @@ async function gpValidarYGuardar(a){
   if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
   // Banco origen no se valida: se aceptan transferencias desde cualquier banco chileno.
   if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
-  if(a.rut){
-    const rutLimpio = a.rut.toString().toLowerCase().replace(/[.\-\s]/g,'');
-    if(rutLimpio !== GP_RUT_DEST) errores.push('El RUT del destinatario no coincide.');
+if (a.rut && a.rut.trim() !== '') {
+  const rutLimpio = a.rut.toString().toLowerCase().replace(/[.\-\s]/g, '');
+  if (rutLimpio.length >= 7 && rutLimpio !== GP_RUT_DEST) {
+    errores.push('El RUT del destinatario no coincide.');
   }
+}
   if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
   if(errores.length) throw new Error(errores.join('\n'));
 
