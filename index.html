@@ -922,6 +922,7 @@ const db = firebase.database();
 // --- DATOS DE CONTACTO DE LA EMPRESA ---
 const CONFIG = {
   whatsappNumber: "56972853944", // formato internacional sin + ni espacios
+  metaPixelId: "", // [NUEVO] pegar aquí el ID numérico del Píxel de Meta cuando exista. Vacío = desactivado
   email: "ginkkopaisajismo@gmail.com",
   faqQuestions: [
     "Quiero cotizar mantención de áreas verdes",
@@ -938,6 +939,58 @@ const CONFIG = {
    ================================================================ */
 function waLink(msg){
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+}
+
+/* ---------- [NUEVO] ORIGEN QR + MÉTRICAS ----------
+   El QR apunta a ginkkopaisajismo.cl/qr, que redirige (ver _redirects) a:
+   /?utm_source=qr&cotizar=1  → cuenta la visita como QR y abre el cotizador solo. */
+const ORIGEN_QR = (function(){
+  try{
+    const viaQr = new URLSearchParams(location.search).get('utm_source') === 'qr';
+    if(viaQr) sessionStorage.setItem('ginkko_qr','1');
+    return viaQr || sessionStorage.getItem('ginkko_qr') === '1';
+  }catch(e){ return false; }
+})();
+
+/* Contador diario en Firebase: /stats/AAAA-MM-DD/{evento} = número.
+   Usa increment atómico del servidor; si las reglas no lo permiten, falla en silencio. */
+function track(evento){
+  try{
+    const d = new Date();
+    const dia = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    db.ref('stats/'+dia+'/'+evento).set(firebase.database.ServerValue.increment(1)).catch(()=>{});
+  }catch(e){}
+}
+
+/* Visita única por sesión (y visita QR única por sesión) */
+(function registrarVisita(){
+  try{
+    if(!sessionStorage.getItem('ginkko_visita')){
+      sessionStorage.setItem('ginkko_visita','1');
+      track('visitas');
+    }
+    if(new URLSearchParams(location.search).get('utm_source') === 'qr' && !sessionStorage.getItem('ginkko_visita_qr')){
+      sessionStorage.setItem('ginkko_visita_qr','1');
+      track('visitas_qr');
+    }
+  }catch(e){}
+})();
+
+/* Píxel de Meta: solo se carga si CONFIG.metaPixelId tiene un ID */
+(function initMetaPixel(id){
+  if(!id) return;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', id);
+  fbq('track','PageView');
+})(CONFIG.metaPixelId);
+
+/* Abre WhatsApp y cuenta el contacto (contar=false para el botón de respaldo) */
+function abrirWhatsApp(msg, contar=true){
+  if(contar){
+    track('whatsapp_click');
+    try{ if(window.fbq) fbq('track','Lead'); }catch(e){}
+  }
+  window.open(waLink(msg), '_blank');
 }
 
 function buildWaMessage() {
@@ -958,6 +1011,7 @@ function buildWaMessage() {
   }
   
   msg += ` Te adjunto foto del espacio 📷`;
+  if (ORIGEN_QR) msg += ` (Llegué escaneando tu QR)`;
   return msg;
 }
 
@@ -1167,6 +1221,7 @@ async function calcularCotizacion(){
   await addBubble(`<p>Mi jardín tiene <b>${m2} m²</b></p>`, 'out');
   disableInput();
   chatData.m2 = m2;
+  track('cotizacion_calculada');
   let rangoTexto, rangoMin, rangoMax, esEspecial=false;
   if(m2 >= 50 && m2 <= 100){
     rangoMin=30000; rangoMax=40000;
@@ -1215,7 +1270,7 @@ chatData.precio = `$${rangoMin.toLocaleString('es-CL')} – $${rangoMax.toLocale
     const ctaBtn = document.createElement('button');
     ctaBtn.className = 'wa-cta-btn';
     ctaBtn.innerHTML = '✅ ¡Lo quiero! Hablar con Nicolás por WhatsApp';
-    ctaBtn.onclick = ()=> window.open(waLink(ctaMsg), '_blank');
+    ctaBtn.onclick = ()=> abrirWhatsApp(ctaMsg);
     ctaWrap.appendChild(ctaBtn);
     waModalBody.appendChild(ctaWrap);
     waModalBody.scrollTop = waModalBody.scrollHeight;
@@ -1249,7 +1304,7 @@ async function flujoNico(){
 
   // Se abre solo a los 0.5 segundos
   setTimeout(() => {
-    window.open(waLink(ctaMsg), '_blank');
+    abrirWhatsApp(ctaMsg);
   }, 500);
 
   // Botón de respaldo por si el navegador bloquea la apertura automática
@@ -1258,7 +1313,7 @@ async function flujoNico(){
   const ctaBtn = document.createElement('button');
   ctaBtn.className = 'wa-cta-btn';
   ctaBtn.innerHTML = '💬 ¿No se abrió? Abrir WhatsApp con Nicolás';
-  ctaBtn.onclick = ()=> window.open(waLink(ctaMsg), '_blank');
+  ctaBtn.onclick = ()=> abrirWhatsApp(ctaMsg, false);
   ctaWrap.appendChild(ctaBtn);
   waModalBody.appendChild(ctaWrap);
   waModalBody.scrollTop = waModalBody.scrollHeight;
@@ -1269,6 +1324,7 @@ async function flujoNico(){
 
 /* ---- abrir / cerrar ---- */
 function openWaModal(){
+  if(!waModal.classList.contains('open')) track('cotizador_abierto');
   waModal.classList.add('open');
   if(chatState === 'idle') startChat();
 }
@@ -1292,6 +1348,12 @@ CONFIG.faqQuestions.forEach(q=>{
   faqGrid.appendChild(b);
 });
 document.getElementById('customWaBtn').onclick = ()=> openWaModal();
+
+/* [NUEVO] Llegada por QR (/qr → /?utm_source=qr&cotizar=1): abre el cotizador automáticamente.
+   Para que el QR lleve al inicio normal, basta quitar "&cotizar=1" en el archivo _redirects. */
+if(new URLSearchParams(location.search).get('cotizar') === '1'){
+  setTimeout(openWaModal, 800);
+}
 /* ================================================================
    4) CARRUSEL — lee de Firebase: /carousel/{id} = {imageUrl,title,subtitle,order}
    ================================================================ */
@@ -1302,7 +1364,7 @@ const carDots = document.getElementById('carouselDots');
 
 function renderCarousel(){
   if(!carouselItems.length){
-    carTrack.innerHTML = '<div class="carousel-empty">Aún no hay proyectos destacados. Agrégalos desde el panel de administración.</div>';
+    carTrack.innerHTML = '<div class="carousel-empty" style="padding:60px 20px 230px;">Estamos preparando nuestros proyectos destacados. ¡Pronto los verás aquí!</div>';
     carDots.innerHTML='';
     return;
   }
@@ -1390,7 +1452,7 @@ function wireBaSlider(container){
 
 function renderGalleryBatch(){
   if(!galleryItems.length){
-    galleryGrid.innerHTML = '<div class="gallery-empty">Aún no hay proyectos en la galería. Súbelos desde el panel de administración.</div>';
+    galleryGrid.innerHTML = '<div class="gallery-empty"><p style="margin-bottom:18px;">Estamos preparando nuestro portafolio de proyectos. Mientras tanto, cotiza tu mantención al instante y sin compromiso.</p><button type="button" class="btn btn-primary" onclick="openWaModal()">Cotizar mi jardín</button></div>';
     loadMoreWrap.style.display='none';
     return;
   }
