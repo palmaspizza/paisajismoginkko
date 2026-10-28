@@ -253,7 +253,9 @@
             body: notification.body || 'Tienes una actualización de pago.',
             icon: '/logoicon.jpeg',
             tag: payload.data && payload.data.tag,
-            renotify: false
+            renotify: true,
+            requireInteraction: true,
+            vibrate: [300, 100, 300, 100, 500]
           }
         );
       }
