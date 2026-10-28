@@ -765,11 +765,11 @@ h1, h2, h3, h4, h5, h6 {
           <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
         </div>
         <div class="form-row">
-          <input type="text" id="reviewName" placeholder="Tu nombre" required>
-          <input type="text" id="reviewLocation" placeholder="Comuna / ciudad (opcional)">
+          <input type="text" id="reviewName" placeholder="Tu nombre" maxlength="80" required>
+          <input type="text" id="reviewLocation" placeholder="Comuna / ciudad (opcional)" maxlength="80">
         </div>
         <div class="form-row full">
-          <textarea id="reviewComment" placeholder="Escribe tu comentario…" required></textarea>
+          <textarea id="reviewComment" placeholder="Escribe tu comentario…" maxlength="1000" required></textarea>
         </div>
         <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;font-size:13.5px;color:#B9C7BC;cursor:pointer;">
           <input type="checkbox" id="reviewTerms" required style="width:auto;margin-top:3px;flex-shrink:0;">
