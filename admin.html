@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin | Ginkko Paisajismo</title>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<meta name="robots" content="noindex,nofollow">
 <style>
 :root{
   --dark:#0F2A1E; --dark-2:#0B2018; --primary:#1F5C42; --primary-light:#3E7A5C;
@@ -45,7 +47,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 #appScreen{display:none;min-height:100vh;}
 .topbar{background:var(--dark);color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;}
 .topbar h1{color:#fff;font-size:19px;}
-.topbar span{color:var(--gold-light);font-size:12px;}
+.topbar h1 span{color:var(--gold-light);font-size:12px;}
 .logout{color:#fff;font-size:13px;text-decoration:underline;background:none;}
 .tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto;}
 .tab{padding:16px 20px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap;}
@@ -89,7 +91,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 #gpSusOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:999999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;}
 #gpSusOverlay.activo{display:block;}
 .gpSusCard{background:#1a1a2e;border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:28px 20px;max-width:420px;width:100%;margin:24px auto;box-sizing:border-box;}
-.gpSusTitulo{font-size:1.2rem;font-weight:800;color:#FFD700;text-align:center;margin-bottom:6px;}
+
 .gpSusHero{position:relative;margin:-28px -20px 18px;padding:26px 20px 20px;border-radius:20px 20px 0 0;
   background:linear-gradient(155deg,#241a05,#1a1a2e 70%);border-bottom:1px solid rgba(255,215,0,0.18);text-align:center;overflow:hidden;}
 .gpSusHero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(255,215,0,0.16),transparent 60%);pointer-events:none;}
@@ -112,12 +114,12 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpDatosValor{font-size:0.82rem;color:#fff;font-weight:600;flex:1;word-break:break-word;}
 .gpBtnCopiar{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:6px;padding:4px 9px;font-size:0.7rem;cursor:pointer;white-space:nowrap;}
 .gpBtnCopiarTodo{width:100%;padding:11px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:#FFD700;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;margin-top:12px;}
-.gpBtnBanco{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0f2a45);border:1px solid rgba(41,182,246,0.4);color:#29B6F6;border-radius:10px;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:8px;}
+
 .gpSusInfoPago{background:#12121f;border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:14px;margin-bottom:18px;}
-.gpSusUploadArea{border:2px dashed rgba(255,215,0,0.3);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:#12121f;}
-.gpSusUploadArea:hover{border-color:#FFD700;}
-.gpSusUploadArea.con-imagen{border-color:#33d17a;border-style:solid;}
-#gpSusPreview{width:100%;max-height:100px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;border:1px solid rgba(255,215,0,0.2);}
+
+
+
+
 .gpSusBtn{width:100%;padding:13px;background:linear-gradient(135deg,#FFD700,#b8960c);color:#000;font-weight:800;font-size:0.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
 .gpSusBtn:disabled{opacity:0.5;cursor:not-allowed;}
 .gpSusEstado{text-align:center;margin-top:12px;font-size:0.8rem;color:#888;min-height:20px;white-space:pre-line;}
@@ -142,31 +144,30 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
 .gpSusExitoSub{font-size:0.82rem;color:#888;text-align:center;}
 .gpToastCopy{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e2e;border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:9px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999999;pointer-events:none;}
 .gpToastCopy.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* Loader — mismo fix: sin justify-content:center para no atrapar el scroll en pantallas bajas */
-#gpSusLoader{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999999;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;align-items:center;font-family:inherit;padding:60px 16px 40px;box-sizing:border-box;}
-#gpSusLoader.activo{display:flex;}
-.gpLoaderOrb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD700,#7a6000);box-shadow:0 0 60px rgba(255,215,0,0.5);animation:gpOrbPulse 1.8s ease-in-out infinite;position:relative;margin-bottom:24px;flex-shrink:0;}
-.gpLoaderOrb::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:gpOrbSpin 3s linear infinite;}
-@keyframes gpOrbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-@keyframes gpOrbSpin{to{transform:rotate(360deg);}}
-.gpLoaderTitulo{font-size:1.1rem;font-weight:800;color:#FFD700;margin-bottom:6px;text-align:center;}
-.gpLoaderSub{font-size:0.78rem;color:#666;margin-bottom:24px;text-align:center;}
-.gpLoaderPasos{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-bottom:24px;}
-.gpLoaderPaso{display:flex;align-items:center;gap:10px;background:#13141C;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;font-size:0.78rem;color:#555;transition:all .4s;}
-.gpLoaderPaso.activo{color:#fff;border-color:rgba(255,215,0,0.4);background:#1a1b10;}
-.gpLoaderPaso.listo{color:#33d17a;border-color:rgba(51,209,122,0.3);background:#0d1a12;}
-.gpLoaderPasoIcono{font-size:1rem;width:22px;text-align:center;flex-shrink:0;}
-.gpLoaderPasoSpinner{width:14px;height:14px;border:2px solid rgba(255,215,0,0.2);border-top-color:#FFD700;border-radius:50%;animation:gpSpin .7s linear infinite;flex-shrink:0;display:none;}
-.gpLoaderPaso.activo .gpLoaderPasoSpinner{display:block;}
-.gpLoaderPaso.activo .gpLoaderPasoIcono{display:none;}
-.gpLoaderPaso.listo .gpLoaderPasoSpinner{display:none;}
-@keyframes gpSpin{to{transform:rotate(360deg);}}
-.gpLoaderBarra{width:100%;max-width:260px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:16px;flex-shrink:0;}
-.gpLoaderBarraFill{height:100%;width:0%;background:linear-gradient(90deg,#7a6000,#FFD700);border-radius:99px;transition:width .6s ease;}
-.gpLoaderMsg{font-size:0.72rem;color:#555;text-align:center;min-height:18px;}
-.gpLoaderParticulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;}
-.gpLoaderParticula{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:gpFloat linear infinite;opacity:0;}
-@keyframes gpFloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-100px);opacity:0;}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ══════════════════════════════════════════
    RESPONSIVE MÓVIL — BREAKPOINTS
@@ -263,7 +264,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-soft);display:block;margin-
   #gpSusChip{font-size:11px;padding:5px 9px;}
 
   /* Ocultar el subtítulo "· Panel de administración" para ganar espacio */
-  .topbar span{display:none;}
+  .topbar h1 span{display:none;}
 
   /* Tabs: texto más pequeño */
   .tab{padding:12px 10px;font-size:12px;}
@@ -650,7 +651,7 @@ body::before {
   50%       { transform: scale(1.4); box-shadow: 0 0 18px rgba(198,161,91,1); }
 }
 
-.topbar span {
+.topbar h1 span {
   color: var(--gk-muted);
   font-size: 12px;
   font-weight: 500;
@@ -1060,7 +1061,7 @@ select option { background: var(--gk-surface-2); color: var(--gk-text); }
   .login-box  { padding: 36px 22px; border-radius: 18px; }
   .login-box h1 { font-size: 24px; }
   .topbar     { padding: 12px 14px; }
-  .topbar span { display: none; }
+  .topbar h1 span { display: none; }
   .tab        { padding: 12px 10px; font-size: 12px; }
   .panel      { padding: 14px 10px; }
   .card       { padding: 16px 14px; border-radius: 14px; }
@@ -1127,18 +1128,48 @@ select option { background: var(--gk-surface-2); color: var(--gk-text); }
 button{
   border-radius: 2% !important;
 }
+
+/* ===== Seguridad: login, cambio de clave, modales ===== */
+.linkBtn{background:none;border:none;color:var(--gk-gold,#C6A15B);font-size:12.5px;text-decoration:underline;margin-top:14px;padding:4px;cursor:pointer;}
+.linkBtn:disabled{opacity:.5;cursor:not-allowed;}
+.modalBack{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000000;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.modalBack.open{display:flex;}
+.modalCard{background:#fff;border-radius:16px;padding:26px 22px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.35);}
+.modalCard h3{font-size:20px;margin-bottom:6px;}
+.modalHint{font-size:13px;color:var(--ink-soft);margin:0 0 16px;line-height:1.5;}
+.modalActions{display:flex;gap:10px;margin-top:6px;}
+.modalActions .btn{flex:1;justify-content:center;}
+.btn-ghost{background:#EFE9DC;color:var(--dark);}
+.btn-ghost:hover{background:#e4dcc9;}
+#gpSusChip{cursor:pointer;}
+#gpOwnerModal{z-index:10000000;background:rgba(0,0,0,.85);}
+#gpOwnerModal .modalCard{background:#1a1a2e;border:1px solid rgba(255,215,0,.25);color:#e8e8ee;}
+#gpOwnerModal h3{color:#FFD700;}
+#gpOwnerModal .modalHint{color:#9aa3a0;}
+#gpOwnerModal label{color:#B9C7BC;}
+#gpOwnerModal input{background:#12121f;border:1px solid rgba(255,255,255,.12);color:#fff;}
+.gpOwnerResumen{background:#12121f;border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:14px;font-size:13px;line-height:1.7;margin-bottom:14px;}
+.gpOwnerResumen b{color:#FFD700;}
+.gpOwnerLink{display:block;width:100%;margin-top:16px;padding:9px;background:none;border:1px dashed rgba(255,255,255,.18);color:#8f98a0;border-radius:10px;font-size:.74rem;cursor:pointer;}
+.gpOwnerLink:hover{color:#FFD700;border-color:rgba(255,215,0,.4);}
+.gpBtnWsp{width:100%;padding:13px;background:#25D366;color:#06210f;font-weight:800;font-size:.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
+.gpBtnWsp:hover{background:#2ee673;}
+@media(max-width:768px){.gpSusHero{margin:-24px -16px 18px;}}
+@media(max-width:480px){.gpSusHero{margin:-20px -14px 18px;}}
 </style>
 </head>
 <body>
 
 <!-- ================= LOGIN ================= -->
-<div id="loginScreen">
+<div id="loginScreen" style="display:none;">
   <div class="login-box">
     <h1>Panel Ginkko</h1>
-    <p>Ingresa la clave de administración para continuar.</p>
-    <input type="password" id="loginPass" placeholder="Clave de acceso">
+    <p>Ingresa con tu correo y tu clave de administración.</p>
+    <input type="email" id="loginEmail" placeholder="Correo" autocomplete="username" inputmode="email">
+    <input type="password" id="loginPass" placeholder="Clave de acceso" autocomplete="current-password">
     <div id="loginError"></div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Ingresar</button>
+    <button type="button" class="linkBtn" id="loginResetBtn">¿Olvidaste tu clave?</button>
   </div>
 </div>
 
@@ -1147,13 +1178,14 @@ button{
   <div class="topbar">
     <div><h1>Ginkko Paisajismo <span>· Panel de administración</span></h1></div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <div id="gpSusChip" class="gp-chip gp-chip-loading">⏳ Verificando…</div>
+      <div id="gpSusChip" class="gp-chip gp-chip-loading" title="Ver estado de la suscripción">⏳ Verificando…</div>
+      <button class="logout" id="changePassBtn">🔑 Clave</button>
       <button class="logout" id="exportBackupBtn">⬇️ Respaldo</button>
-      <button class="logout" id="logoutBtn">Salir</button><!-- Banner de estado de suscripción (se inserta arriba del contenido del panel) -->
-<div id="gpBannerSus" >✅ Suscripción activa hasta <span id="gpBannerSusVence" style="font-weight:700;color:#33d17a;margin-left:6px;"></span></div>
-
+      <button class="logout" id="logoutBtn">Salir</button>
     </div>
   </div>
+  <!-- Banner de estado de suscripción -->
+  <div id="gpBannerSus"></div>
   <div class="tabs">
     <div class="tab active" data-tab="carousel">Carrusel destacado</div>
     <div class="tab" data-tab="gallery">Galería de trabajos</div>
@@ -1202,8 +1234,8 @@ button{
           <div class="progress" id="carouselAfterProgress"><div class="progress-bar" id="carouselAfterProgressBar"></div></div>
         </div>
 
-        <div class="field"><label>Título</label><input id="carouselTitle" placeholder="Ej: Jardín residencial Las Condes"></div>
-        <div class="field"><label>Subtítulo / descripción corta</label><input id="carouselSubtitle" placeholder="Ej: Diseño e instalación completa en 3 semanas"></div>
+        <div class="field"><label>Título</label><input id="carouselTitle" maxlength="120" placeholder="Ej: Jardín residencial Las Condes"></div>
+        <div class="field"><label>Subtítulo / descripción corta</label><input id="carouselSubtitle" maxlength="250" placeholder="Ej: Diseño e instalación completa en 3 semanas"></div>
         <div class="field"><label>Orden (menor número aparece primero)</label><input id="carouselOrder" type="number" value="0"></div>
         <button class="btn btn-gold" id="carouselSubmit" style="width:100%;justify-content:center;">Subir al carrusel</button>
         <div class="msg" id="carouselMsg"></div>
@@ -1230,8 +1262,8 @@ button{
           <div class="progress" id="galleryProgress"><div class="progress-bar" id="galleryProgressBar"></div></div>
         </div>
 
-        <div class="field"><label>Título</label><input id="galleryTitle" placeholder="Ej: Mantención jardín corporativo"></div>
-        <div class="field"><label>Descripción</label><textarea id="galleryDescription" placeholder="Detalles del proyecto…"></textarea></div>
+        <div class="field"><label>Título</label><input id="galleryTitle" maxlength="120" placeholder="Ej: Mantención jardín corporativo"></div>
+        <div class="field"><label>Descripción</label><textarea id="galleryDescription" maxlength="1500" placeholder="Detalles del proyecto…"></textarea></div>
         <div class="field"><label>Orden / prioridad</label><input id="galleryOrder" type="number" value="0"></div>
         <button class="btn btn-gold" id="gallerySubmit" style="width:100%;justify-content:center;">Subir a la galería</button>
         <div class="msg" id="galleryMsg"></div>
@@ -1251,9 +1283,9 @@ button{
         <div class="star-picker-admin" id="adminStarPicker">
           <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
         </div>
-        <div class="field"><label>Nombre del cliente</label><input id="reviewName" placeholder="Ej: Marcela R."></div>
-        <div class="field"><label>Comuna / ciudad (opcional)</label><input id="reviewLocation" placeholder="Ej: Las Condes"></div>
-        <div class="field"><label>Comentario</label><textarea id="reviewComment" placeholder="Escribe el comentario…"></textarea></div>
+        <div class="field"><label>Nombre del cliente</label><input id="reviewName" maxlength="60" placeholder="Ej: Marcela R."></div>
+        <div class="field"><label>Comuna / ciudad (opcional)</label><input id="reviewLocation" maxlength="60" placeholder="Ej: Las Condes"></div>
+        <div class="field"><label>Comentario</label><textarea id="reviewComment" maxlength="1000" placeholder="Escribe el comentario…"></textarea></div>
         <button class="btn btn-gold" id="reviewSubmit" style="width:100%;justify-content:center;">Publicar reseña</button>
         <div class="msg" id="reviewMsg"></div>
       </div>
@@ -1264,16 +1296,32 @@ button{
   </div>
 </div>
 
+<!-- ================= CAMBIAR CLAVE ================= -->
+<div class="modalBack" id="cpModal">
+  <div class="modalCard">
+    <h3>Cambiar clave</h3>
+    <p class="modalHint">Por seguridad confirma tu clave actual. La nueva debe tener al menos 10 caracteres.</p>
+    <div class="field"><label for="cpCurrent">Clave actual</label><input type="password" id="cpCurrent" autocomplete="current-password"></div>
+    <div class="field"><label for="cpNew">Nueva clave</label><input type="password" id="cpNew" autocomplete="new-password"></div>
+    <div class="field"><label for="cpNew2">Repite la nueva clave</label><input type="password" id="cpNew2" autocomplete="new-password"></div>
+    <div class="msg" id="cpMsg"></div>
+    <div class="modalActions">
+      <button class="btn btn-gold" id="cpSave">Guardar</button>
+      <button class="btn btn-ghost" id="cpCancel" type="button">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ================================================================
    1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
    ================================================================ */
 
-// --- CLAVE DE ACCESO AL PANEL ---
-// Seguridad simple del lado del cliente (adecuada para plan gratuito sin backend).
-// Para mayor seguridad real, complementa con reglas de Firebase que exijan
-// un token/valor secreto antes de permitir escritura (ver notas al final del archivo).
-const ADMIN_PASSWORD = "ginkko2026"; // <-- CAMBIA ESTA CLAVE
+// --- ACCESO AL PANEL (Firebase Authentication · correo + clave) ---
+// La clave YA NO está en el código. Se crea el usuario en:
+//   Firebase Console > Authentication > Users > Add user
+// con el correo de abajo, y su UID se pega en las reglas (reemplazando "keyauth").
+const ADMIN_EMAIL = "ginkko@palmacodes.cl";
 
 // --- FIREBASE REALTIME DATABASE (debe ser el MISMO proyecto que index.html) ---
 const firebaseConfig = {
@@ -1288,6 +1336,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.database();
 
 // --- CLOUDINARY (plan gratuito, subida "unsigned") ---
@@ -1299,18 +1348,22 @@ const db = firebase.database();
 const CLOUDINARY_CLOUD_NAME = "dkszomv2f";
 const CLOUDINARY_UPLOAD_PRESET = "paisajismoginkko";
 
-// --- CLOUDINARY: credenciales para BORRAR imágenes (Settings > Access Keys) ---
-// ⚠️ AVISO DE SEGURIDAD IMPORTANTE:
-// El borrado real en Cloudinary requiere una firma hecha con tu API Secret.
-// Como este panel NO tiene servidor propio, el secreto queda visible en el
-// código fuente de esta página para cualquiera que la abra. Es un compromiso
-// aceptable SOLO SI mantienes esta URL de admin privada (no la enlaces desde
-// el sitio público, no la compartas, considera cambiar el nombre del archivo
-// a algo no adivinable). Si en el futuro quieres seguridad real, esto debería
-// moverse a una función serverless (Cloud Function) que guarde el secreto
-// fuera del navegador.
-const CLOUDINARY_API_KEY = "TU_API_KEY_DE_CLOUDINARY";
-const CLOUDINARY_API_SECRET = "TU_API_SECRET_DE_CLOUDINARY";
+// --- CLOUDINARY: credenciales para BORRAR imágenes ---
+// El API Key / API Secret ya NO están en este archivo (cualquiera podía leerlos
+// con "ver código fuente"). Se guardan en Firebase, en el nodo privado
+//   privado/cloudinary  ->  { "apiKey": "...", "apiSecret": "..." }
+// que las reglas solo dejan leer al admin con sesión iniciada.
+let _cldCreds = null;
+async function getCloudinaryCreds(){
+  if(_cldCreds) return _cldCreds;
+  const snap = await db.ref('privado/cloudinary').once('value');
+  const v = snap.val();
+  if(!v || !v.apiKey || !v.apiSecret){
+    throw new Error('faltan apiKey/apiSecret en Firebase (privado/cloudinary)');
+  }
+  _cldCreds = v;
+  return v;
+}
 
 // --- LÍMITES PARA PROTEGER LOS CRÉDITOS DEL PLAN GRATUITO ---
 const MAX_CAROUSEL_ITEMS = 10;   // el carrusel es una vitrina, no necesita más
@@ -1318,33 +1371,129 @@ const MAX_GALLERY_ITEMS  = 300;  // portafolio amplio pero acotado
 const MAX_FILE_SIZE_MB   = 10;   // rechaza fotos más pesadas que esto
 
 /* ================================================================
-   2) LOGIN
+   2) LOGIN (Firebase Authentication)
    ================================================================ */
 const loginScreen = document.getElementById('loginScreen');
 const appScreen = document.getElementById('appScreen');
+const loginEmailEl = document.getElementById('loginEmail');
+const loginPassEl = document.getElementById('loginPass');
+const loginErrorEl = document.getElementById('loginError');
+loginEmailEl.value = ADMIN_EMAIL;
 
-function tryLogin(){
-  const val = document.getElementById('loginPass').value;
-  if(val === ADMIN_PASSWORD){
-    sessionStorage.setItem('ginkko_admin_ok','1');
-    loginScreen.style.display='none';
-    appScreen.style.display='block';
-    initApp();
-  } else {
-    document.getElementById('loginError').textContent = 'Clave incorrecta.';
+function authErrMsg(e){
+  switch(e && e.code){
+    case 'auth/invalid-email': return 'El correo no es válido.';
+    case 'auth/user-disabled': return 'Esta cuenta está deshabilitada.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+    case 'auth/invalid-login-credentials': return 'Correo o clave incorrectos.';
+    case 'auth/too-many-requests': return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+    case 'auth/network-request-failed': return 'Sin conexión. Revisa tu internet.';
+    case 'auth/weak-password': return 'La clave es demasiado débil.';
+    case 'auth/requires-recent-login': return 'Por seguridad, vuelve a iniciar sesión e inténtalo otra vez.';
+    default: return 'No se pudo completar la acción (' + ((e && e.code) || 'error') + ').';
   }
 }
+function setLoginMsg(text, ok){
+  loginErrorEl.textContent = text || '';
+  loginErrorEl.style.color = ok ? '#7CE8A4' : '';
+}
+
+async function tryLogin(){
+  const email = loginEmailEl.value.trim();
+  const pass = loginPassEl.value;
+  if(!email || !pass){ setLoginMsg('Ingresa tu correo y tu clave.'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; setLoginMsg('');
+  try{
+    await auth.signInWithEmailAndPassword(email, pass);
+    loginPassEl.value = '';
+  }catch(e){
+    setLoginMsg(authErrMsg(e));
+  }
+  btn.disabled = false;
+}
 document.getElementById('loginBtn').onclick = tryLogin;
-document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
-document.getElementById('logoutBtn').onclick = ()=>{
-  sessionStorage.removeItem('ginkko_admin_ok');
+loginPassEl.addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+loginEmailEl.addEventListener('keydown', e=>{ if(e.key==='Enter') loginPassEl.focus(); });
+
+// "¿Olvidaste tu clave?" -> Firebase envía un enlace de restablecimiento al correo.
+document.getElementById('loginResetBtn').onclick = async ()=>{
+  const email = loginEmailEl.value.trim();
+  if(!email){ setLoginMsg('Escribe tu correo para enviarte el enlace.'); return; }
+  const btn = document.getElementById('loginResetBtn');
+  btn.disabled = true;
+  try{
+    await auth.sendPasswordResetEmail(email);
+  }catch(e){
+    if(e && (e.code==='auth/network-request-failed' || e.code==='auth/too-many-requests' || e.code==='auth/invalid-email')){
+      setLoginMsg(authErrMsg(e)); btn.disabled = false; return;
+    }
+    // cualquier otro caso: mensaje neutro (no revela si el correo existe)
+  }
+  setLoginMsg('Si el correo está registrado, te enviamos un enlace para restablecer la clave.', true);
+  btn.disabled = false;
+};
+
+document.getElementById('logoutBtn').onclick = async ()=>{
+  try{ await auth.signOut(); }catch(e){ console.error(e); }
   location.reload();
 };
-if(sessionStorage.getItem('ginkko_admin_ok')==='1'){
-  loginScreen.style.display='none';
-  appScreen.style.display='block';
-  initApp();
+
+let appStarted = false;
+auth.onAuthStateChanged(user=>{
+  if(user){
+    if((user.email||'').toLowerCase() !== ADMIN_EMAIL.toLowerCase()){
+      auth.signOut();
+      loginScreen.style.display = 'flex';
+      setLoginMsg('Esta cuenta no está autorizada para el panel.');
+      return;
+    }
+    loginScreen.style.display = 'none';
+    appScreen.style.display = 'block';
+    if(!appStarted){ appStarted = true; initApp(); }
+  } else {
+    appScreen.style.display = 'none';
+    loginScreen.style.display = 'flex';
+  }
+});
+
+/* ---------- Cambiar clave (pide la clave actual y valida la nueva) ---------- */
+const cpModal = document.getElementById('cpModal');
+const cpMsg = document.getElementById('cpMsg');
+function cpClose(){
+  cpModal.classList.remove('open');
+  ['cpCurrent','cpNew','cpNew2'].forEach(id=> document.getElementById(id).value='');
+  cpMsg.textContent=''; cpMsg.className='msg';
 }
+document.getElementById('changePassBtn').onclick = ()=>{ cpMsg.textContent=''; cpModal.classList.add('open'); document.getElementById('cpCurrent').focus(); };
+document.getElementById('cpCancel').onclick = cpClose;
+cpModal.addEventListener('click', e=>{ if(e.target===cpModal) cpClose(); });
+document.getElementById('cpSave').onclick = async ()=>{
+  const cur = document.getElementById('cpCurrent').value;
+  const n1 = document.getElementById('cpNew').value;
+  const n2 = document.getElementById('cpNew2').value;
+  const err = t=>{ cpMsg.textContent=t; cpMsg.className='msg err'; };
+  if(!cur){ err('Escribe tu clave actual.'); return; }
+  if(n1.length < 10){ err('La nueva clave debe tener al menos 10 caracteres.'); return; }
+  if(n1 !== n2){ err('Las claves nuevas no coinciden.'); return; }
+  if(n1 === cur){ err('La nueva clave debe ser distinta de la actual.'); return; }
+  const user = auth.currentUser;
+  if(!user){ err('Tu sesión expiró. Vuelve a ingresar.'); return; }
+  const btn = document.getElementById('cpSave');
+  btn.disabled = true; cpMsg.textContent='Guardando…'; cpMsg.className='msg';
+  try{
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, cur);
+    await user.reauthenticateWithCredential(cred);   // confirma que eres tú
+    await user.updatePassword(n1);
+    cpMsg.textContent='¡Clave actualizada!'; cpMsg.className='msg ok';
+    setTimeout(cpClose, 1400);
+  }catch(e){
+    err(authErrMsg(e));
+  }
+  btn.disabled = false;
+};
 
 /* ================================================================
    3) TABS
@@ -1361,7 +1510,11 @@ document.querySelectorAll('.tab').forEach(tab=>{
 /* ================================================================
    4) UTILIDADES
    ================================================================ */
-function escapeHTML(str){ const d=document.createElement('div'); d.textContent=str||""; return d.innerHTML; }
+function escapeHTML(str){
+  if(str===null || str===undefined) return '';
+  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function stars(n){ n = Math.min(5, Math.max(1, Math.round(+n || 5))); return '★'.repeat(n) + '☆'.repeat(5-n); }
 
 function setupDropzone(dropId, fileId, previewId){
   const drop = document.getElementById(dropId);
@@ -1421,13 +1574,14 @@ async function sha1Hex(message){
 }
 async function deleteFromCloudinary(publicId){
   if(!publicId) return; // fotos subidas antes de esta función no tienen public_id guardado
+  const { apiKey, apiSecret } = await getCloudinaryCreds();
   const timestamp = Math.floor(Date.now()/1000);
   const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
-  const signature = await sha1Hex(paramsToSign + CLOUDINARY_API_SECRET);
+  const signature = await sha1Hex(paramsToSign + apiSecret);
   const formData = new FormData();
   formData.append('public_id', publicId);
   formData.append('timestamp', timestamp);
-  formData.append('api_key', CLOUDINARY_API_KEY);
+  formData.append('api_key', apiKey);
   formData.append('signature', signature);
   const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`, { method:'POST', body:formData });
   const data = await res.json();
@@ -1483,14 +1637,14 @@ document.getElementById('exportBackupBtn').onclick = async ()=>{
       db.ref('carousel').once('value'),
       db.ref('gallery').once('value'),
       db.ref('reviews').once('value'),
-      db.ref('configuracion').once('value')
+      db.ref('configuracion/suscripcion').once('value')
     ]);
     const backup = {
       exportedAt: new Date().toISOString(),
       carousel: c.val() || {},
       gallery: g.val() || {},
       reviews: r.val() || {},
-      configuracion: s.val() || {}
+      suscripcion: s.val() || {}
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type:'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1508,7 +1662,16 @@ document.getElementById('exportBackupBtn').onclick = async ()=>{
 /* ================================================================
    5) INICIALIZACIÓN DE LA APP (tras login)
    ================================================================ */
+function listen(path, cb){
+  db.ref(path).on('value', cb, err=>{
+    console.error('Error leyendo '+path, err);
+    alert('No se pudo leer "'+path+'" de la base de datos. Revisa tu sesión y las reglas de Firebase.');
+  });
+}
+
 function initApp(){
+  // Estado de la suscripción (script al final del archivo)
+  (function esperar(){ if(typeof gpIniciarSuscripcion==='function') gpIniciarSuscripcion(); else setTimeout(esperar, 50); })();
   setupDropzone('carouselDrop','carouselFile','carouselPreview');
   setupDropzone('carouselBeforeDrop','carouselBeforeFile','carouselBeforePreview');
   setupDropzone('carouselAfterDrop','carouselAfterFile','carouselAfterPreview');
@@ -1600,7 +1763,7 @@ function initApp(){
     }
   };
 
-  db.ref('carousel').on('value', snap=>{
+  listen('carousel', snap=>{
     const val = snap.val() || {};
     const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(a.order||0)-(b.order||0));
     document.getElementById('carouselCount').textContent = `${items.length} / ${MAX_CAROUSEL_ITEMS} usadas`;
@@ -1611,28 +1774,28 @@ function initApp(){
         return `
         <div class="item-card">
           <div style="display:flex;">
-            <img src="${it.beforeUrl}" style="width:50%;height:130px;object-fit:cover;">
-            <img src="${it.afterUrl}" style="width:50%;height:130px;object-fit:cover;">
+            <img src="${escapeHTML(it.beforeUrl)}" style="width:50%;height:130px;object-fit:cover;">
+            <img src="${escapeHTML(it.afterUrl)}" style="width:50%;height:130px;object-fit:cover;">
           </div>
           <div class="item-body">
             <h4>${escapeHTML(it.title||'(sin título)')} <span class="order-badge">· ANTES/DESPUÉS</span></h4>
             <p>${escapeHTML(it.subtitle||'')}</p>
             <div class="item-actions">
               <span class="order-badge">Orden: ${it.order||0}</span>
-              <button class="btn-danger" data-id="${it.id}" data-ba="1" data-before-id="${it.beforePublicId||''}" data-after-id="${it.afterPublicId||''}">Eliminar</button>
+              <button class="btn-danger" data-id="${escapeHTML(it.id)}" data-ba="1" data-before-id="${escapeHTML(it.beforePublicId)}" data-after-id="${escapeHTML(it.afterPublicId)}">Eliminar</button>
             </div>
           </div>
         </div>`;
       }
       return `
       <div class="item-card">
-        <img src="${it.imageUrl}">
+        <img src="${escapeHTML(it.imageUrl)}" alt="">
         <div class="item-body">
           <h4>${escapeHTML(it.title||'(sin título)')}</h4>
           <p>${escapeHTML(it.subtitle||'')}</p>
           <div class="item-actions">
             <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
+            <button class="btn-danger" data-id="${escapeHTML(it.id)}" data-public-id="${escapeHTML(it.publicId)}">Eliminar</button>
           </div>
         </div>
       </div>`;
@@ -1692,7 +1855,7 @@ function initApp(){
     btn.disabled = false;
   };
 
-  db.ref('gallery').on('value', snap=>{
+  listen('gallery', snap=>{
     const val = snap.val() || {};
     const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.order||0)-(a.order||0));
     document.getElementById('galleryCount').textContent = `${items.length} / ${MAX_GALLERY_ITEMS} usadas`;
@@ -1703,28 +1866,28 @@ function initApp(){
         return `
         <div class="item-card">
           <div style="display:flex;">
-            <img src="${it.beforeUrl}" style="width:50%;height:130px;object-fit:cover;">
-            <img src="${it.afterUrl}" style="width:50%;height:130px;object-fit:cover;">
+            <img src="${escapeHTML(it.beforeUrl)}" style="width:50%;height:130px;object-fit:cover;">
+            <img src="${escapeHTML(it.afterUrl)}" style="width:50%;height:130px;object-fit:cover;">
           </div>
           <div class="item-body">
             <h4>${escapeHTML(it.title||'(sin título)')} <span class="order-badge">· ANTES/DESPUÉS</span></h4>
             <p>${escapeHTML(it.description||'')}</p>
             <div class="item-actions">
               <span class="order-badge">Orden: ${it.order||0}</span>
-              <button class="btn-danger" data-id="${it.id}" data-ba="1" data-before-id="${it.beforePublicId||''}" data-after-id="${it.afterPublicId||''}">Eliminar</button>
+              <button class="btn-danger" data-id="${escapeHTML(it.id)}" data-ba="1" data-before-id="${escapeHTML(it.beforePublicId)}" data-after-id="${escapeHTML(it.afterPublicId)}">Eliminar</button>
             </div>
           </div>
         </div>`;
       }
       return `
       <div class="item-card">
-        <img src="${it.imageUrl}">
+        <img src="${escapeHTML(it.imageUrl)}" alt="">
         <div class="item-body">
           <h4>${escapeHTML(it.title||'(sin título)')}</h4>
           <p>${escapeHTML(it.description||'')}</p>
           <div class="item-actions">
             <span class="order-badge">Orden: ${it.order||0}</span>
-            <button class="btn-danger" data-id="${it.id}" data-public-id="${it.publicId||''}">Eliminar</button>
+            <button class="btn-danger" data-id="${escapeHTML(it.id)}" data-public-id="${escapeHTML(it.publicId)}">Eliminar</button>
           </div>
         </div>
       </div>`;
@@ -1777,7 +1940,7 @@ function initApp(){
     }
   };
 
-  db.ref('reviews').on('value', snap=>{
+  listen('reviews', snap=>{
     const val = snap.val() || {};
     const items = Object.entries(val).map(([id,v])=>({id,...v})).sort((a,b)=>(b.date||0)-(a.date||0));
     const list = document.getElementById('reviewsList');
@@ -1785,12 +1948,12 @@ function initApp(){
     list.innerHTML = items.map(it=>`
       <div class="item-card">
         <div class="item-body">
-          <div style="color:#C6A15B;font-size:15px;margin-bottom:6px;">${'★'.repeat(it.rating||5)}${'☆'.repeat(5-(it.rating||5))}</div>
+          <div style="color:#C6A15B;font-size:15px;margin-bottom:6px;">${stars(it.rating)}</div>
           <h4>${escapeHTML(it.name||'Anónimo')} ${it.fromAdmin?'<span style="color:#C6A15B;font-size:10px;">· ADMIN</span>':''}</h4>
           <p>${escapeHTML(it.comment||'')}</p>
           <div class="item-actions">
             <span class="order-badge">${escapeHTML(it.location||'')}</span>
-            <button class="btn-danger" data-id="${it.id}">Eliminar</button>
+            <button class="btn-danger" data-id="${escapeHTML(it.id)}">Eliminar</button>
           </div>
         </div>
       </div>`).join('');
@@ -1804,27 +1967,29 @@ function initApp(){
 </script>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SISTEMA DE SUSCRIPCIÓN (mensualidad) — bloquea el panel hasta
-     que se verifique una transferencia bancaria mediante IA (Gemini,
-     a través de un Cloudflare Worker que oculta la API key).
+     SISTEMA DE SUSCRIPCIÓN (mensualidad, vence cada día 29)
+     - El cliente transfiere y le avisa a Diego por WhatsApp.
+     - Diego registra el pago desde "Registrar pago (solo Diego)", que exige
+       iniciar sesión con SU cuenta de Firebase. Las reglas de la base de datos
+       solo dejan escribir la suscripción a ese usuario (no se puede saltar).
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- Overlay de suscripción -->
 <div id="gpSusOverlay">
   <div class="gpSusCard" id="gpSusContenido">
     <div class="gpSusHero" id="gpSusHero">
-      <button id="gpSusBtnCerrar" onclick="" style="display:none;"></button>
+      <button id="gpSusBtnCerrar" type="button" aria-label="Cerrar" style="display:none;">✕</button>
       <div class="gpSusHeroIcono" id="gpSusHeroIcono">🔐</div>
       <div class="gpSusHeroTitulo" id="gpSusHeroTitulo">Suscripción requerida</div>
       <div class="gpSusHeroSub" id="gpSusHeroSub">Para usar este panel necesitas una suscripción activa</div>
     </div>
-    <p class="gpSusSubtitulo">Realiza la transferencia con estos datos y sube el comprobante.</p>
+    <p class="gpSusSubtitulo">Transfiere con estos datos y luego avisa a Diego por WhatsApp para que registre tu pago.</p>
 
     <div class="gpSusInfoPago">
       <div class="gpDatosFila">
         <span class="gpDatosLabel">💰 Monto</span>
         <span class="gpDatosValor">$25.000</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('25000',this)">Copiar</button>
+        <button class="gpBtnCopiar" type="button" onclick="gpCopiar('25000',this)">Copiar</button>
       </div>
       <div class="gpDatosFila">
         <span class="gpDatosLabel">👤 Nombre</span>
@@ -1833,7 +1998,7 @@ function initApp(){
       <div class="gpDatosFila">
         <span class="gpDatosLabel">🪪 RUT</span>
         <span class="gpDatosValor">22.141.143-9</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
+        <button class="gpBtnCopiar" type="button" onclick="gpCopiar('22.141.143-9',this)">Copiar</button>
       </div>
       <div class="gpDatosFila">
         <span class="gpDatosLabel">🏦 Banco</span>
@@ -1846,448 +2011,363 @@ function initApp(){
       <div class="gpDatosFila">
         <span class="gpDatosLabel">🔢 N° Cuenta</span>
         <span class="gpDatosValor">22141143</span>
-        <button class="gpBtnCopiar" onclick="gpCopiar('22141143',this)">Copiar</button>
+        <button class="gpBtnCopiar" type="button" onclick="gpCopiar('22141143',this)">Copiar</button>
       </div>
-      <button class="gpBtnCopiarTodo" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
-      <button hidden class="gpBtnBanco" onclick="gpAbrirBanco()">🏦 Abrir App de Banco</button>
+      <button class="gpBtnCopiarTodo" type="button" onclick="gpCopiarTodo()">📋 Copiar todos los datos</button>
     </div>
 
-    <button class="gpSusBtn" id="gpSusBtn" onclick="gpVerificarComprobante()" disabled>🔍 Verificar comprobante</button>
+    <button class="gpBtnWsp" type="button" id="gpContactBtn">💬 Contactar con Diego</button>
     <p class="gpSusEstado" id="gpSusEstado"></p>
-    <div class="gpSusUploadArea" id="gpSusUploadArea" onclick="document.getElementById('gpSusInput').click()">
-      <div style="font-size:2rem;margin-bottom:8px;">📄</div>
-      <div style="font-size:0.82rem;color:#888;"><b style="color:#FFD700;">Toca aquí para subir el comprobante</b><br>Captura de pantalla o foto</div>
-    </div>
-    <input type="file" id="gpSusInput" accept="image/*" hidden>
-    <img id="gpSusPreview" alt="Vista previa">
+
+    <button class="gpOwnerLink" type="button" id="gpOwnerBtn">💳 Registrar pago (solo Diego)</button>
   </div>
 </div>
 
+<!-- Modal: registrar pago (cuenta de Diego) -->
+<div class="modalBack" id="gpOwnerModal">
+  <div class="modalCard">
+    <h3>Registrar pago</h3>
+    <div id="gpOwnerPaso1">
+      <p class="modalHint">Inicia sesión con tu cuenta de propietario. Es distinta a la clave del panel.</p>
+      <div class="field"><label for="gpOwnerEmail">Correo</label><input type="email" id="gpOwnerEmail" autocomplete="off" inputmode="email"></div>
+      <div class="field"><label for="gpOwnerPass">Clave</label><input type="password" id="gpOwnerPass" autocomplete="off"></div>
+    </div>
+    <div id="gpOwnerPaso2" style="display:none;">
+      <div class="gpOwnerResumen" id="gpOwnerResumen"></div>
+    </div>
+    <div class="msg" id="gpOwnerMsg"></div>
+    <div class="modalActions">
+      <button class="btn btn-gold" type="button" id="gpOwnerOk">Continuar</button>
+      <button class="btn btn-ghost" type="button" id="gpOwnerCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 <!-- Toast copiado -->
 <div class="gpToastCopy" id="gpToastCopy">¡Copiado!</div>
 
-<!-- Loader IA -->
-<div id="gpSusLoader">
-  <div class="gpLoaderParticulas" id="gpLoaderParticulas"></div>
-  <div class="gpLoaderOrb"></div>
-  <div class="gpLoaderTitulo">Verificando comprobante</div>
-  <div class="gpLoaderSub">La IA está analizando tu transferencia</div>
-  <div class="gpLoaderPasos">
-    <div class="gpLoaderPaso" id="gpPaso1"><span class="gpLoaderPasoIcono">📄</span><div class="gpLoaderPasoSpinner"></div><span>Leyendo imagen</span></div>
-    <div class="gpLoaderPaso" id="gpPaso2"><span class="gpLoaderPasoIcono">🔍</span><div class="gpLoaderPasoSpinner"></div><span>Verificando comprobante</span></div>
-    <div class="gpLoaderPaso" id="gpPaso3"><span class="gpLoaderPasoIcono">💰</span><div class="gpLoaderPasoSpinner"></div><span>Verificando monto</span></div>
-    <div class="gpLoaderPaso" id="gpPaso4"><span class="gpLoaderPasoIcono">🏦</span><div class="gpLoaderPasoSpinner"></div><span>Confirmando destinatario</span></div>
-    <div class="gpLoaderPaso" id="gpPaso5"><span class="gpLoaderPasoIcono">🔐</span><div class="gpLoaderPasoSpinner"></div><span>Validando número de operación</span></div>
-  </div>
-  <div class="gpLoaderBarra"><div class="gpLoaderBarraFill" id="gpLoaderBarraFill"></div></div>
-  <div class="gpLoaderMsg" id="gpLoaderMsg">Iniciando análisis...</div>
-</div>
-
 <script>
 // ══════════════════════════════════════════════
-// CONFIG SUSCRIPCIÓN — CAMBIA ESTOS VALORES SI ES NECESARIO
+// CONFIG SUSCRIPCIÓN
 // ══════════════════════════════════════════════
-// ⚠️ IMPORTANTE:
-// Tu Worker real es un "pasamano" (passthrough): reenvía tal cual el body
-// que le mandes a la API de Gemini y te devuelve la respuesta de Gemini sin
-// tocarla. Por eso el FRONTEND (aquí abajo) arma el body completo de Gemini
-// (contents + generationConfig + responseSchema), y luego desenvuelve la
-// respuesta nativa de Gemini (candidates[0].content.parts[0].text).
-const GP_VERIFY_ENDPOINT = 'https://wandering-cell-a87e.mago-diepa.workers.dev';
-const GP_MONTO_MIN    = 25000;      // ← monto mensual requerido
-const GP_DESTINATARIO = 'diego francisco palma';
-const GP_RUT_DEST     = '221411439'; // RUT del destinatario, SIN puntos ni guión
-const GP_BANCO_DEST   = '';  // vacío = acepta transferencias desde cualquier banco
+const GP_MONTO        = 25000;                 // mensualidad (solo informativo / mensaje de WhatsApp)
+const GP_WHATSAPP     = '56954998792';         // WhatsApp de Diego (formato internacional, sin +)
 const GP_RTDB_PATH    = 'configuracion/suscripcion';
-const GP_DIAS_GRACIA1 = 5;   // días con solo banner amarillo
-const GP_DIAS_GRACIA2 = 10;  // días con modal cerrable (hasta aquí)
+const GP_DIA_COBRO    = 29;                    // la suscripción vence el día 29 de cada mes
+const GP_DIAS_GRACIA1 = 5;                     // días con aviso naranja
+const GP_DIAS_GRACIA2 = 10;                    // a los 10 días de vencida se bloquea (igual que las reglas de Firebase)
+
+const GP_MIN_DIAS_CICLO = 15;                  // un pago de suscripción vencida debe cubrir al menos esto
+const GP_DIA_MS = 24*60*60*1000;
+let gpEstadoSus = { activo:false, pagadoHasta:0 };
 
 // ══════════════════════════════════════════════
-// VERIFICAR SUSCRIPCIÓN AL CARGAR — actualiza SIEMPRE 3 lugares:
-// el chip del topbar, el banner bajo las pestañas, y la franja
-// del overlay (si está abierto). Todos muestran días restantes.
+// FECHAS: el pago cubre hasta el día 29 (23:59:59 hora local)
 // ══════════════════════════════════════════════
 function gpFormatoFecha(ts){
   return new Date(ts).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
 }
+function gpFinDeCiclo(y, m){ // m: 0-11. En febrero usa el último día si no existe el 29.
+  const ultimo = new Date(y, m+1, 0).getDate();
+  return new Date(y, m, Math.min(GP_DIA_COBRO, ultimo), 23, 59, 59, 0).getTime();
+}
+// Primer día 29 posterior a la fecha base (la base es lo que sea mayor: hoy o el vencimiento actual).
+// Si la suscripción ya estaba vencida y el pago cubriría menos de GP_MIN_DIAS_CICLO días
+// (ej.: se paga el 28 y vence el 29), se suma también el mes siguiente para no cobrar $25.000 por 1 día.
+function gpProximoVencimiento(paidUntil, ahora){
+  const vencida = !(paidUntil > ahora);
+  const base = new Date(Math.max(ahora, paidUntil || 0));
+  let y = base.getFullYear(), m = base.getMonth();
+  const siguiente = ()=>{ m++; if(m > 11){ m = 0; y++; } };
+  let c = gpFinDeCiclo(y, m);
+  if(c <= base.getTime()){ siguiente(); c = gpFinDeCiclo(y, m); }
+  if(vencida && (c - ahora) < GP_MIN_DIAS_CICLO*GP_DIA_MS){ siguiente(); c = gpFinDeCiclo(y, m); }
+  return c;
+}
+function gpDias(n){ return n + ' día' + (n===1 ? '' : 's'); }
 
-function gpActualizarUI(estado){
+// ══════════════════════════════════════════════
+// ESTADO DE LA SUSCRIPCIÓN → chip + banner + overlay
+// ══════════════════════════════════════════════
+function gpActualizarUI(e){
   const chip = document.getElementById('gpSusChip');
   const banner = document.getElementById('gpBannerSus');
-  const hero = document.getElementById('gpSusHero');
-  const heroIcono = document.getElementById('gpSusHeroIcono');
-  const heroTitulo = document.getElementById('gpSusHeroTitulo');
-  const heroSub = document.getElementById('gpSusHeroSub');
-
-  chip.className = 'gp-chip gp-chip-' + estado.nivel;
-  chip.innerHTML = estado.chip;
+  chip.className = 'gp-chip gp-chip-' + e.nivel;
+  chip.innerHTML = e.chip;
 
   banner.style.display = 'flex';
-  banner.className = '';
-  banner.style.background = estado.bannerBg;
-  banner.style.borderColor = estado.bannerBorder;
-  banner.style.color = estado.bannerColor;
-  banner.innerHTML = estado.banner;
+  banner.style.background = e.bannerBg;
+  banner.style.borderColor = e.bannerBorder;
+  banner.style.color = e.bannerColor;
+  banner.innerHTML = '<span style="line-height:1.5">' + e.banner + '</span>';
 
-  hero.className = 'gpSusHero ' + estado.heroClase;
-  heroIcono.textContent = estado.heroIcono;
-  heroTitulo.textContent = estado.heroTitulo;
-  heroSub.innerHTML = estado.heroSub;
+  document.getElementById('gpSusHero').className = 'gpSusHero ' + e.heroClase;
+  document.getElementById('gpSusHeroIcono').textContent = e.heroIcono;
+  document.getElementById('gpSusHeroTitulo').textContent = e.heroTitulo;
+  document.getElementById('gpSusHeroSub').innerHTML = e.heroSub;
+  document.getElementById('gpSusBtnCerrar').style.display = e.cerrable ? 'block' : 'none';
 }
 
-(function gpChequear(){
-  const intervalo = setInterval(()=>{
-    if(typeof db==='undefined') return;
-    clearInterval(intervalo);
-    db.ref(GP_RTDB_PATH).on('value', snap=>{
-      const sus = snap.val() || {};
-      const ahora = Date.now();
-      const pagadoHasta = sus.paidUntil || 0;
-      const activo = sus.isPaid===true && pagadoHasta > ahora;
-
-      if(activo){
-        document.getElementById('gpSusOverlay').classList.remove('activo');
-        const diasRestantes = Math.max(1, Math.ceil((pagadoHasta - ahora)/(1000*60*60*24)));
-        const porVencer = diasRestantes <= GP_DIAS_GRACIA1; // avisa antes incluso de vencer
-
-        gpActualizarUI({
-          nivel: porVencer ? 'soon' : 'ok',
-          chip: porVencer
-            ? `⏳ Vence en <span class="gp-chip-days">${diasRestantes}d</span>`
-            : `🌿 Activa · <span class="gp-chip-days">${diasRestantes}d</span> restantes`,
-          bannerBg: porVencer ? 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))' : 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))',
-          bannerBorder: porVencer ? 'rgba(255,204,0,0.4)' : 'rgba(51,209,122,0.3)',
-          bannerColor: porVencer ? '#FFD166' : '#cdeedb',
-          banner: porVencer
-            ? `⏳ Tu suscripción vence en <b>${diasRestantes} día(s)</b> — el ${gpFormatoFecha(pagadoHasta)}. Renueva cuando quieras desde este mismo panel.`
-            : `✅ Suscripción activa hasta <b>${gpFormatoFecha(pagadoHasta)}</b> · quedan ${diasRestantes} día(s).`,
-          heroClase: porVencer ? 'warn' : 'ok',
-          heroIcono: porVencer ? '⏳' : '✅',
-          heroTitulo: porVencer ? `Vence en ${diasRestantes} día(s)` : 'Suscripción activa',
-          heroSub: `Válida hasta el <b>${gpFormatoFecha(pagadoHasta)}</b>`
-        });
-
-      } else {
-        const diasVencido = pagadoHasta > 0
-          ? Math.floor((ahora - pagadoHasta)/(1000*60*60*24))
-          : 999;
-
-        if(diasVencido <= GP_DIAS_GRACIA1){
-          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
-          gpActualizarUI({
-            nivel: 'warn',
-            chip: `⚠️ Renueva la suscripción <span class="gp-chip-days">${diasVencido}d</span>`,
-            bannerBg: 'linear-gradient(135deg,rgba(255,152,0,0.14),rgba(255,152,0,0.04))',
-            bannerBorder: 'rgba(255,152,0,0.45)',
-            bannerColor: '#FFB65C',
-            banner: `⚠️ Suscripción Renueva la suscripción . Te quedan <b>${diasParaBloqueo} día(s)</b> antes de que el panel se bloquee.`,
-            heroClase: 'warn',
-            heroIcono: '⚠️',
-            heroTitulo: `Renueva la suscripción `,
-            heroSub: ``
-          });
-          // Mostrar overlay inmediatamente al vencer, pero con botón de cerrar (período de gracia)
-          document.getElementById('gpSusBtnCerrar').style.display = 'block';
-          const yaGracia = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
-          if(!yaGracia){
-            document.getElementById('gpSusOverlay').classList.add('activo');
-          }
-
-        } else if(diasVencido <= GP_DIAS_GRACIA2){
-          const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
-          document.getElementById('gpSusBtnCerrar').style.display = 'block';
-          gpActualizarUI({
-            nivel: 'danger',
-            chip: `🚨 Bloqueo en <span class="gp-chip-days">${diasParaBloqueo}d</span>`,
-            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
-            bannerBorder: 'rgba(224,67,53,0.5)',
-            bannerColor: '#FF8A80',
-            banner: `🚨 Renueva la suscripción . El panel se bloqueará en <b>${diasParaBloqueo} día(s)</b> si no renuevas.`,
-            heroClase: 'danger',
-            heroIcono: '🚨',
-            heroTitulo: `Bloqueo en ${diasParaBloqueo} día(s)`,
-            heroSub: `Renueva la suscripción <b>${diasVencido} día(s)</b> — renueva ahora para evitar interrupciones`
-          });
-          const ya = sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
-          if(!ya){
-            setTimeout(()=>{
-              if(confirm(`⚠️\nTe quedan ${diasParaBloqueo} día(s) antes del bloqueo.\n¿Ir a renovar ahora?`)){
-                document.getElementById('gpSusOverlay').classList.add('activo');
-              } else {
-                sessionStorage.setItem('gpSusRecordar_'+Math.floor(ahora/3600000),'1');
-              }
-            },1500);
-          }
-        } else {
-          gpActualizarUI({
-            nivel: 'danger',
-            chip: `🔒 Suscripción Inactiva`,
-            bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
-            bannerBorder: 'rgba(224,67,53,0.5)',
-            bannerColor: '#FF8A80',
-            banner: `🔒 Suscripción Inactiva por falta de pago. Verifica un comprobante para reactivarlo.`,
-            heroClase: 'danger',
-            heroIcono: '🔒',
-            heroTitulo: 'Suscripción Inactiva',
-            heroSub: `Verifica tu comprobante de transferencia para reactivarlo`
-          });
-          document.getElementById('gpSusOverlay').classList.add('activo');
-        }
-      }
-    });
-  },300);
-})();
-
+function gpAbrirOverlay(){ document.getElementById('gpSusOverlay').classList.add('activo'); }
 function gpCerrarOverlay(){
   document.getElementById('gpSusOverlay').classList.remove('activo');
   sessionStorage.setItem('gpSusRecordar_'+Math.floor(Date.now()/3600000),'1');
 }
 
-// ══════════════════════════════════════════════
-// PREVIEW IMAGEN
-// ══════════════════════════════════════════════
-let gpImagenBase64 = null;
+function gpIniciarSuscripcion(){
+  if(gpIniciarSuscripcion._ok) return; gpIniciarSuscripcion._ok = true;
+  document.getElementById('gpSusChip').onclick = gpAbrirOverlay;
+  document.getElementById('gpSusBtnCerrar').onclick = gpCerrarOverlay;
+  document.getElementById('gpContactBtn').onclick = gpContactarDiego;
+  document.getElementById('gpOwnerBtn').onclick = gpOwnerAbrir;
 
-document.getElementById('gpSusInput').addEventListener('change', function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    gpImagenBase64 = e.target.result;
-    const preview = document.getElementById('gpSusPreview');
-    preview.src = gpImagenBase64;
-    preview.style.display = 'block';
-    document.getElementById('gpSusUploadArea').classList.add('con-imagen');
-    document.getElementById('gpSusUploadArea').innerHTML =
-      '<div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-size:0.8rem;color:#33d17a;font-weight:700;">Imagen lista · Toca para cambiarla</div>';
-    document.getElementById('gpSusBtn').disabled = false;
-    document.getElementById('gpSusEstado').textContent = '';
-  };
-  reader.readAsDataURL(file);
-});
+  db.ref(GP_RTDB_PATH).on('value', snap=>{
+    const sus = snap.val() || {};
+    const ahora = Date.now();
+    const pagadoHasta = Number(sus.paidUntil) || 0;
+    const activo = sus.isPaid === true && pagadoHasta > ahora;
+    gpEstadoSus = { activo, pagadoHasta };
+    const overlay = document.getElementById('gpSusOverlay');
+    const yaRecordado = !!sessionStorage.getItem('gpSusRecordar_'+Math.floor(ahora/3600000));
 
-// ══════════════════════════════════════════════
-// VERIFICAR COMPROBANTE (vía Worker "pasamano" hacia Gemini)
-// ══════════════════════════════════════════════
-async function gpAnalizarConGemini(){
-  const mimeType = gpImagenBase64.split(';')[0].split(':')[1]; // ej: image/jpeg
-  const base64Puro = gpImagenBase64.split(',')[1];
-
-  const geminiBody = {
-    contents: [{
-      parts: [
-        // Cambia la primera línea del prompt a esto:
-{ text: `Analiza este comprobante bancario chileno y extrae los datos exactos. Si el comprobante no muestra explícitamente el RUT del destinatario, deja el campo "rut" como una cadena vacía "". El campo "banco" debe ser el banco DESTINATARIO. El campo "destinatario" es el nombre de la persona que recibió la transferencia.` },
-        { inline_data: { mime_type: mimeType, data: base64Puro } }
-      ]
-    }],
-    safetySettings: [
-      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-    ],
-    generationConfig: {
-      temperature: 0,
-      maxOutputTokens: 2048,
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: 'OBJECT',
-        properties: {
-          esValido: { type: 'BOOLEAN' },
-          monto: { type: 'NUMBER' },
-          fecha: { type: 'STRING' },
-          numeroOperacion: { type: 'STRING' },
-          banco: { type: 'STRING' },
-          destinatario: { type: 'STRING' },
-          rut: { type: 'STRING' },
-          confianza: { type: 'STRING', enum: ['alta','media','baja'] }
-        },
-        required: ['esValido','monto','fecha','numeroOperacion','banco','destinatario','confianza']
-      }
+    if(activo){
+      overlay.classList.remove('activo');
+      const dias = Math.max(1, Math.ceil((pagadoHasta - ahora)/GP_DIA_MS));
+      const porVencer = dias <= GP_DIAS_GRACIA1;
+      gpActualizarUI({
+        nivel: porVencer ? 'soon' : 'ok',
+        chip: porVencer
+          ? `⏳ Vence en <span class="gp-chip-days">${dias}d</span>`
+          : `🌿 Activa · <span class="gp-chip-days">${dias}d</span> restantes`,
+        bannerBg: porVencer ? 'linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.03))' : 'linear-gradient(135deg,rgba(51,209,122,0.1),rgba(51,209,122,0.03))',
+        bannerBorder: porVencer ? 'rgba(255,204,0,0.4)' : 'rgba(51,209,122,0.3)',
+        bannerColor: porVencer ? '#FFD166' : '#cdeedb',
+        banner: porVencer
+          ? `⏳ Tu suscripción vence en <b>${gpDias(dias)}</b> (el ${gpFormatoFecha(pagadoHasta)}). Puedes renovar cuando quieras.`
+          : `✅ Suscripción activa hasta <b>${gpFormatoFecha(pagadoHasta)}</b> · quedan ${gpDias(dias)}.`,
+        heroClase: porVencer ? 'warn' : 'ok',
+        heroIcono: porVencer ? '⏳' : '✅',
+        heroTitulo: porVencer ? `Vence en ${gpDias(dias)}` : 'Suscripción activa',
+        heroSub: `Válida hasta el <b>${gpFormatoFecha(pagadoHasta)}</b>`,
+        cerrable: true
+      });
+      return;
     }
-  };
 
-  const res = await fetch(GP_VERIFY_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(geminiBody)
+    // Vencida (o nunca pagada)
+    const diasVencido = pagadoHasta > 0 ? Math.floor((ahora - pagadoHasta)/GP_DIA_MS) : Infinity;
+    const diasParaBloqueo = GP_DIAS_GRACIA2 - diasVencido;
+    const venc = pagadoHasta > 0 ? gpFormatoFecha(pagadoHasta) : '';
+
+    if(diasVencido <= GP_DIAS_GRACIA1){
+      gpActualizarUI({
+        nivel: 'warn',
+        chip: `⚠️ Renueva · <span class="gp-chip-days">${diasVencido}d</span>`,
+        bannerBg: 'linear-gradient(135deg,rgba(255,152,0,0.14),rgba(255,152,0,0.04))',
+        bannerBorder: 'rgba(255,152,0,0.45)',
+        bannerColor: '#FFB65C',
+        banner: `⚠️ Tu suscripción venció el ${venc}. Renueva dentro de <b>${gpDias(diasParaBloqueo)}</b> para que el panel no se bloquee.`,
+        heroClase: 'warn', heroIcono: '⚠️',
+        heroTitulo: 'Renueva tu suscripción',
+        heroSub: `Venció el <b>${venc}</b>. Te quedan <b>${gpDias(diasParaBloqueo)}</b> antes del bloqueo.`,
+        cerrable: true
+      });
+      if(!yaRecordado) overlay.classList.add('activo');
+
+    } else if(diasVencido < GP_DIAS_GRACIA2){
+      gpActualizarUI({
+        nivel: 'danger',
+        chip: `🚨 Bloqueo en <span class="gp-chip-days">${diasParaBloqueo}d</span>`,
+        bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
+        bannerBorder: 'rgba(224,67,53,0.5)',
+        bannerColor: '#FF8A80',
+        banner: `🚨 Suscripción vencida. El panel se bloqueará en <b>${gpDias(diasParaBloqueo)}</b> si no renuevas.`,
+        heroClase: 'danger', heroIcono: '🚨',
+        heroTitulo: `Bloqueo en ${gpDias(diasParaBloqueo)}`,
+        heroSub: `Venció el <b>${venc}</b>. Renueva ahora para evitar interrupciones.`,
+        cerrable: true
+      });
+      if(!yaRecordado) overlay.classList.add('activo');
+
+    } else {
+      gpActualizarUI({
+        nivel: 'danger',
+        chip: `🔒 Suscripción inactiva`,
+        bannerBg: 'linear-gradient(135deg,rgba(224,67,53,0.16),rgba(224,67,53,0.05))',
+        bannerBorder: 'rgba(224,67,53,0.5)',
+        bannerColor: '#FF8A80',
+        banner: `🔒 Suscripción inactiva por falta de pago. Contacta a Diego para reactivarla.`,
+        heroClase: 'danger', heroIcono: '🔒',
+        heroTitulo: 'Suscripción inactiva',
+        heroSub: `Realiza el pago y avisa a Diego para reactivar el panel.`,
+        cerrable: false
+      });
+      overlay.classList.add('activo');
+    }
+  }, err=>{
+    console.error('Suscripción:', err);
+    const chip = document.getElementById('gpSusChip');
+    chip.className = 'gp-chip gp-chip-danger';
+    chip.textContent = '⚠️ Sin acceso a la suscripción';
   });
-
-  const data = await res.json();
-
-  if(!res.ok){
-    throw new Error('Gemini: ' + (data.error?.message || res.status));
-  }
-
-  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if(!texto){
-    const finishReason = data.candidates?.[0]?.finishReason;
-    throw new Error(`La IA no devolvió texto legible. Razón: ${finishReason || 'desconocida'}. Intenta con una imagen más clara.`);
-  }
-
-  // Por seguridad, por si algún día se saca responseSchema y vuelve texto con backticks:
-  const limpio = texto.replace(/```json|```/g,'').trim();
-  const match = limpio.match(/\{[\s\S]*\}/);
-  if(!match) throw new Error('No se pudo interpretar la respuesta de la IA.');
-  return JSON.parse(match[0]);
 }
 
 // ══════════════════════════════════════════════
-// VALIDAR Y GUARDAR EN FIREBASE
+// CONTACTAR CON DIEGO (WhatsApp con mensaje listo)
 // ══════════════════════════════════════════════
-async function gpValidarYGuardar(a){
-  const errores=[];
-  if(!a.esValido) errores.push('La imagen no parece un comprobante válido.');
-  if(a.confianza==='baja') errores.push('Imagen poco clara. Intenta con una captura más nítida.');
-  if(a.monto < GP_MONTO_MIN) errores.push(`Monto insuficiente. Se requieren $${GP_MONTO_MIN.toLocaleString('es-CL')} y el comprobante muestra $${(a.monto||0).toLocaleString('es-CL')}.`);
-  // Banco origen no se valida: se aceptan transferencias desde cualquier banco chileno.
-  if(!(a.destinatario||'').toLowerCase().includes('diego')||!(a.destinatario||'').toLowerCase().includes('palma')) errores.push('El destinatario no coincide. Verifica que transferiste a Diego Francisco Palma.');
-if (a.rut && a.rut.trim() !== '') {
-  const rutLimpio = a.rut.toString().toLowerCase().replace(/[.\-\s]/g, '');
-  if (rutLimpio.length >= 7 && rutLimpio !== GP_RUT_DEST) {
-    errores.push('El RUT del destinatario no coincide.');
-  }
+function gpMensajeWhatsApp(){
+  const { activo, pagadoHasta } = gpEstadoSus;
+  let situacion;
+  if(!pagadoHasta)   situacion = 'Quiero activar la suscripción del panel.';
+  else if(activo)    situacion = `Mi suscripción vence el ${gpFormatoFecha(pagadoHasta)} y quiero renovarla.`;
+  else               situacion = `Mi suscripción venció el ${gpFormatoFecha(pagadoHasta)} y quiero regularizarla.`;
+  return `Hola Diego, te escribo por la mensualidad del panel de administración de Ginkko Paisajismo. ${situacion}\n\n` +
+         `Ya realicé la transferencia de $${GP_MONTO.toLocaleString('es-CL')} y te adjunto el comprobante para que registres el pago.\n\n` +
+         `Quedo atento a tu confirmación. ¡Muchas gracias!`;
 }
-  if(!a.numeroOperacion||!a.numeroOperacion.trim()) errores.push('No se pudo leer el número de operación.');
-  if(errores.length) throw new Error(errores.join('\n'));
-
-  const snap = await db.ref(GP_RTDB_PATH+'/usedComprobantes').once('value');
-  const usados = snap.val()||{};
-  if(Object.values(usados).includes(a.numeroOperacion.trim())) throw new Error('Este comprobante ya fue utilizado.');
-
-  const ahora = Date.now();
-  const paidUntil = ahora+(30*24*60*60*1000);
-  await db.ref(GP_RTDB_PATH+'/usedComprobantes').push(a.numeroOperacion.trim());
-  await db.ref().update({
-    [GP_RTDB_PATH+'/isPaid']: true,
-    [GP_RTDB_PATH+'/paidUntil']: paidUntil,
-    [GP_RTDB_PATH+'/ultimoPago']: {fecha:a.fecha,monto:a.monto,numeroOperacion:a.numeroOperacion.trim(),ts:ahora}
-  });
-  return paidUntil;
+function gpContactarDiego(){
+  const url = `https://wa.me/${GP_WHATSAPP}?text=${encodeURIComponent(gpMensajeWhatsApp())}`;
+  const w = window.open(url, '_blank', 'noopener');
+  if(!w) location.href = url; // si el navegador bloquea la ventana, abre en la misma pestaña
 }
 
 // ══════════════════════════════════════════════
-// FLUJO PRINCIPAL
+// REGISTRAR PAGO (solo Diego) — usa una SEGUNDA sesión de Firebase
+// para no cerrar la sesión del panel. Las reglas deciden quién puede escribir.
 // ══════════════════════════════════════════════
-async function gpVerificarComprobante(){
-  if(!gpImagenBase64) return;
-  const btn = document.getElementById('gpSusBtn');
+let gpOwnerApp = null;
+let gpOwnerPlan = null;
+const gpOwnerEl = id => document.getElementById(id);
+
+function gpOwnerMsg(t, ok){ const m = gpOwnerEl('gpOwnerMsg'); m.textContent = t || ''; m.className = 'msg ' + (ok ? 'ok' : 'err'); if(ok) m.style.color = '#7CE8A4'; else m.style.color = ''; }
+function gpOwnerGetApp(){
+  if(!gpOwnerApp) gpOwnerApp = firebase.initializeApp(firebaseConfig, 'owner');
+  return gpOwnerApp;
+}
+async function gpOwnerSalir(){
+  try{ if(gpOwnerApp) await gpOwnerApp.auth().signOut(); }catch(e){}
+}
+function gpOwnerAbrir(){
+  gpOwnerPlan = null;
+  gpOwnerEl('gpOwnerPaso1').style.display = 'block';
+  gpOwnerEl('gpOwnerPaso2').style.display = 'none';
+  gpOwnerEl('gpOwnerOk').textContent = 'Continuar';
+  gpOwnerEl('gpOwnerOk').disabled = false;
+  gpOwnerEl('gpOwnerPass').value = '';
+  gpOwnerMsg('');
+  gpOwnerEl('gpOwnerModal').classList.add('open');
+  gpOwnerEl('gpOwnerEmail').focus();
+}
+async function gpOwnerCerrar(){
+  gpOwnerEl('gpOwnerModal').classList.remove('open');
+  gpOwnerEl('gpOwnerPass').value = '';
+  gpOwnerPlan = null;
+  await gpOwnerSalir();
+}
+gpOwnerEl('gpOwnerCancel').onclick = gpOwnerCerrar;
+gpOwnerEl('gpOwnerPass').addEventListener('keydown', e=>{ if(e.key==='Enter') gpOwnerEl('gpOwnerOk').click(); });
+
+gpOwnerEl('gpOwnerOk').onclick = async ()=>{
+  const btn = gpOwnerEl('gpOwnerOk');
   btn.disabled = true;
-  try {
-    gpLoaderMostrar();
-    let analisis;
-    for(let intento=1; intento<=3; intento++){
-      try { analisis = await gpAnalizarConGemini(); break; }
-      catch(e){
-        if(intento===3) throw e;
-        await new Promise(r=>setTimeout(r, intento*4000));
+  try{
+    if(!gpOwnerPlan){
+      // ── Paso 1: iniciar sesión y calcular el nuevo vencimiento
+      const email = gpOwnerEl('gpOwnerEmail').value.trim();
+      const pass = gpOwnerEl('gpOwnerPass').value;
+      if(!email || !pass){ gpOwnerMsg('Ingresa correo y clave.'); btn.disabled = false; return; }
+      gpOwnerMsg('Verificando…', true);
+      const app = gpOwnerGetApp();
+      await app.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+      const cred = await app.auth().signInWithEmailAndPassword(email, pass);
+      let actual = 0;
+      try{
+        const snap = await app.database().ref(GP_RTDB_PATH+'/paidUntil').once('value');
+        actual = Number(snap.val()) || 0;
+      }catch(e){
+        await gpOwnerSalir();
+        gpOwnerMsg('Esta cuenta no tiene permiso para registrar pagos.');
+        btn.disabled = false; return;
       }
+      const ahora = Date.now();
+      const nuevo = gpProximoVencimiento(actual, ahora);
+      if(nuevo > ahora + 62*GP_DIA_MS){
+        await gpOwnerSalir();
+        gpOwnerMsg(`El próximo ciclo ya está pagado (activa hasta el ${gpFormatoFecha(actual)}). No se puede registrar otro por adelantado.`);
+        btn.disabled = false; return;
+      }
+      gpOwnerPlan = { uid: cred.user.uid, actual, nuevo };
+      gpOwnerEl('gpOwnerResumen').innerHTML =
+        `Pago de <b>$${GP_MONTO.toLocaleString('es-CL')}</b><br>` +
+        `Vencimiento actual: <b>${actual ? gpFormatoFecha(actual) : 'sin suscripción'}</b><br>` +
+        `Quedará activa hasta el <b>${gpFormatoFecha(nuevo)}</b>`;
+      gpOwnerEl('gpOwnerPaso1').style.display = 'none';
+      gpOwnerEl('gpOwnerPaso2').style.display = 'block';
+      btn.textContent = 'Confirmar y registrar pago';
+      gpOwnerMsg('');
+      btn.disabled = false;
+
+    } else {
+      // ── Paso 2: escribir (una sola operación atómica)
+      gpOwnerMsg('Registrando…', true);
+      const app = gpOwnerGetApp();
+      const odb = app.database();
+      const ahora = Date.now();
+      const key = odb.ref(GP_RTDB_PATH+'/historial').push().key;
+      const upd = {};
+      upd[GP_RTDB_PATH+'/isPaid'] = true;
+      upd[GP_RTDB_PATH+'/paidUntil'] = gpOwnerPlan.nuevo;
+      upd[GP_RTDB_PATH+'/ultimoPago'] = { ts: ahora, monto: GP_MONTO, registradoPor: gpOwnerPlan.uid };
+      upd[GP_RTDB_PATH+'/historial/'+key] = { ts: ahora, monto: GP_MONTO, paidUntil: gpOwnerPlan.nuevo, registradoPor: gpOwnerPlan.uid };
+      await odb.ref().update(upd);
+      const hasta = gpFormatoFecha(gpOwnerPlan.nuevo);
+      await gpOwnerCerrar();
+      const est = document.getElementById('gpSusEstado');
+      est.textContent = `✅ Pago registrado. Suscripción activa hasta el ${hasta}.`;
+      est.className = 'gpSusEstado ok';
+      setTimeout(()=>{ est.textContent=''; }, 6000);
     }
-    gpLoaderOcultar();
-    const paidUntil = await gpValidarYGuardar(analisis);
-    gpMostrarExito(paidUntil);
-  } catch(err){
-    gpLoaderOcultar();
-    const msg = err.message||'';
-    const esSaturacion = msg.includes('high demand')||msg.includes('429')||msg.includes('503')||msg.includes('overloaded');
-    document.getElementById('gpSusEstado').textContent = esSaturacion
-      ? '⏳ El servicio de verificación está ocupado en este momento. Espera 30 segundos e intenta de nuevo.'
-      : msg||'Error al verificar.';
-    document.getElementById('gpSusEstado').className = 'gpSusEstado error';
+  }catch(e){
+    const code = (e && e.code) || '';
+    let t;
+    if(code.startsWith('auth/')) t = authErrMsg(e);
+    else if(/permission/i.test(code + ' ' + (e && e.message))) t = 'Sin permiso para registrar el pago con esta cuenta.';
+    else t = 'No se pudo registrar el pago: ' + ((e && e.message) || 'error');
+    gpOwnerMsg(t);
+    if(!gpOwnerPlan) await gpOwnerSalir();
     btn.disabled = false;
   }
-}
-
-function gpMostrarExito(paidUntil){
-  const vence = new Date(paidUntil).toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('gpSusContenido').innerHTML=`
-    <span class="gpSusExitoIcono">✅</span>
-    <div class="gpSusExitoTitulo">¡Suscripción activada!</div>
-    <p class="gpSusExitoSub">Activa hasta el <b style="color:#FFD700;">${vence}</b></p>
-    <p class="gpSusExitoSub" style="margin-top:8px;font-size:0.73rem;">El panel se abrirá en 3 segundos...</p>`;
-  setTimeout(()=>{
-  document.getElementById('gpSusOverlay').classList.remove('activo');
-  window.open('https://wa.me/56954998792?text=Hola%20Diego%2C%20te%20escribo%20para%20confirmarte%20que%20el%20pago%20ya%20ha%20sido%20realizado.','_blank');
-},3000);
-}
+};
 
 // ══════════════════════════════════════════════
 // COPIAR AL PORTAPAPELES
 // ══════════════════════════════════════════════
+function gpToast(){
+  const t = document.getElementById('gpToastCopy');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
 function gpCopiar(texto, btn){
-  navigator.clipboard.writeText(texto).then(()=>{
-    const t=document.getElementById('gpToastCopy');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2000);
-    if(btn){const o=btn.textContent;btn.textContent='✅';setTimeout(()=>btn.textContent=o,2000);}
-  });
+  const ok = ()=>{
+    gpToast();
+    if(btn){ const o = btn.textContent; btn.textContent = '✅'; setTimeout(()=>btn.textContent = o, 2000); }
+  };
+  const fallback = ()=>{
+    const ta = document.createElement('textarea');
+    ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); ok(); }catch(e){}
+    ta.remove();
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(ok, fallback);
+  } else { fallback(); }
 }
 function gpCopiarTodo(){
   gpCopiar(`Transferencia Ginkko Paisajismo\nMonto: $25.000\nNombre: Diego Francisco Palma\nRUT: 22.141.143-9\nBanco: BancoEstado\nTipo: CuentaRUT\nN° cuenta: 22141143`);
-  const btn=document.querySelector('.gpBtnCopiarTodo');
-  if(btn){btn.textContent='✅ ¡Datos copiados!';setTimeout(()=>btn.textContent='📋 Copiar todos los datos',2500);}
+  const btn = document.querySelector('.gpBtnCopiarTodo');
+  if(btn){ btn.textContent = '✅ ¡Datos copiados!'; setTimeout(()=>btn.textContent = '📋 Copiar todos los datos', 2500); }
 }
-function gpAbrirBanco(){
-  const links=[
-    {n:'BancoEstado',u:'bancoestado://'},
-    {n:'Santander',u:'santander://'},
-    {n:'BCI',u:'bci://'},
-    {n:'Scotiabank',u:'scotiabank://'},
-    {n:'Mercado Pago',u:'mercadopago://'}
-  ];
-  let m=document.getElementById('gpBancoModal');
-  if(!m){m=document.createElement('div');m.id='gpBancoModal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
-    m.onclick=e=>{if(e.target===m)m.remove();};document.body.appendChild(m);}
-  m.innerHTML=`<div style="background:#1a1a2e;border-radius:20px 20px 14px 14px;padding:22px;width:92%;max-width:380px;border:1px solid rgba(255,215,0,0.2);">
-    <p style="color:#888;font-size:0.73rem;text-align:center;margin-bottom:14px;">Selecciona tu banco</p>
-    ${links.map(b=>`<button onclick="window.location.href='${b.u}';document.getElementById('gpBancoModal').remove();"
-      style="width:100%;padding:12px;margin-bottom:7px;background:#12121f;border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;text-align:left;">🏦 ${b.n}</button>`).join('')}
-    <button onclick="document.getElementById('gpBancoModal').remove()"
-      style="width:100%;padding:10px;margin-top:4px;background:none;border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:10px;font-size:0.8rem;cursor:pointer;">Cancelar</button>
-  </div>`;
-}
-
-// ══════════════════════════════════════════════
-// LOADER ANIMADO
-// ══════════════════════════════════════════════
-const GP_LOADER_MSGS=['Procesando imagen con visión artificial...','Identificando campos del comprobante...','Comparando datos bancarios...','Verificando autenticidad...','Comprobando número de operación único...','Aplicando validaciones de seguridad...','Casi listo...'];
-let gpLoaderInterval=null, gpLoaderMsgIdx=0;
-
-function gpLoaderMostrar(){
-  document.getElementById('gpSusLoader').classList.add('activo');
-  gpLoaderBarraFill(0);
-  ['gpPaso1','gpPaso2','gpPaso3','gpPaso4','gpPaso5'].forEach(id=>{document.getElementById(id).className='gpLoaderPaso';});
-  gpLoaderMsgIdx=0;
-  document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[0];
-  const cont=document.getElementById('gpLoaderParticulas');cont.innerHTML='';
-  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='gpLoaderParticula';
-    p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*5)+'s';
-    p.style.animationDelay=(Math.random()*4)+'s';cont.appendChild(p);}
-  setTimeout(()=>gpLoaderActivar('gpPaso1'),200);
-  setTimeout(()=>{gpLoaderListo('gpPaso1');gpLoaderActivar('gpPaso2');gpLoaderBarraFill(20);},800);
-  setTimeout(()=>{gpLoaderListo('gpPaso2');gpLoaderActivar('gpPaso3');gpLoaderBarraFill(40);},1600);
-  setTimeout(()=>{gpLoaderListo('gpPaso3');gpLoaderActivar('gpPaso4');gpLoaderBarraFill(60);},2400);
-  setTimeout(()=>{gpLoaderListo('gpPaso4');gpLoaderActivar('gpPaso5');gpLoaderBarraFill(80);},3200);
-  gpLoaderInterval=setInterval(()=>{
-    gpLoaderMsgIdx=(gpLoaderMsgIdx+1)%GP_LOADER_MSGS.length;
-    document.getElementById('gpLoaderMsg').textContent=GP_LOADER_MSGS[gpLoaderMsgIdx];
-  },1100);
-}
-function gpLoaderOcultar(){
-  gpLoaderListo('gpPaso5');gpLoaderBarraFill(100);
-  clearInterval(gpLoaderInterval);
-  setTimeout(()=>document.getElementById('gpSusLoader').classList.remove('activo'),600);
-}
-function gpLoaderActivar(id){document.getElementById(id).classList.add('activo');}
-function gpLoaderListo(id){
-  const el=document.getElementById(id);
-  el.classList.remove('activo');el.classList.add('listo');
-  el.querySelector('.gpLoaderPasoIcono').textContent='✅';
-}
-function gpLoaderBarraFill(pct){document.getElementById('gpLoaderBarraFill').style.width=pct+'%';}
 </script>
 </body>
 </html>
