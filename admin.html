@@ -7,6 +7,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js"></script>
 <meta name="robots" content="noindex,nofollow">
 <style>
 :root{
@@ -1154,8 +1155,20 @@ button{
 .gpOwnerLink:hover{color:#FFD700;border-color:rgba(255,215,0,.4);}
 .gpBtnWsp{width:100%;padding:13px;background:#25D366;color:#06210f;font-weight:800;font-size:.92rem;border:none;border-radius:12px;cursor:pointer;margin-top:4px;font-family:inherit;}
 .gpBtnWsp:hover{background:#2ee673;}
+.push-settings{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 26px;padding:16px 20px;background:#fff;border:1px solid var(--line);border-radius:14px;}
+.push-settings h2{margin:0 0 4px;color:var(--dark);font-size:16px;}
+.push-settings p{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.5;}
+.push-settings .push-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.push-settings button{padding:10px 14px;border:0;border-radius:8px;background:var(--primary);color:#fff;font-weight:700;}
+.push-settings button.secondary{background:#EFE9DC;color:var(--dark);}
+.push-settings button:disabled{opacity:.55;cursor:not-allowed;}
+.push-status{display:block;margin-top:6px;color:var(--ink-soft);font-size:12px;}
+#pushOnlyScreen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px;background:var(--cream);}
+#pushOnlyScreen .push-settings{display:block;width:100%;max-width:560px;margin:0;padding:24px;}
+#pushOnlyScreen .push-settings .push-actions{margin-top:18px;flex-wrap:wrap;}
 @media(max-width:768px){.gpSusHero{margin:-24px -16px 18px;}}
 @media(max-width:480px){.gpSusHero{margin:-20px -14px 18px;}}
+@media(max-width:650px){.push-settings{align-items:flex-start;flex-direction:column;margin:12px 14px;padding:14px;}.push-settings .push-actions{flex-wrap:wrap;}}
 </style>
 </head>
 <body>
@@ -1164,13 +1177,28 @@ button{
 <div id="loginScreen" style="display:none;">
   <div class="login-box">
     <h1>Panel Ginkko</h1>
-    <p>Ingresa con tu correo y tu clave de administración.</p>
+    <p>Ingresa con tu correo y tu clave autorizada.</p>
     <input type="email" id="loginEmail" placeholder="Correo" autocomplete="username" inputmode="email">
     <input type="password" id="loginPass" placeholder="Clave de acceso" autocomplete="current-password">
     <div id="loginError"></div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Ingresar</button>
     <button type="button" class="linkBtn" id="loginResetBtn">¿Olvidaste tu clave?</button>
   </div>
+</div>
+
+<!-- ================= CONFIRMACIONES (acceso limitado) ================= -->
+<div id="pushOnlyScreen">
+  <section class="push-settings">
+    <h2>Confirmaciones de recordatorios</h2>
+    <p>Este acceso solo recibe una confirmación cuando se envía el recordatorio de pago a Ginkko. Requiere HTTPS, Internet y permiso para este dispositivo; no permite administrar el sitio.</p>
+    <span class="push-status" id="pushOnlyStatus" role="status" aria-live="polite"></span>
+    <div class="push-actions">
+      <button type="button" id="pushOnlyEnable">Activar confirmaciones</button>
+      <button type="button" class="secondary" id="pushOnlyTest">Enviar prueba a este dispositivo</button>
+      <button type="button" class="secondary" id="pushOnlyDisable">Desactivar en este dispositivo</button>
+      <button type="button" class="secondary" id="pushOnlyLogout">Salir</button>
+    </div>
+  </section>
 </div>
 
 <!-- ================= APP ================= -->
@@ -1184,6 +1212,19 @@ button{
       <button class="logout" id="logoutBtn">Salir</button>
     </div>
   </div>
+  <section class="push-settings" id="pushSettings" aria-label="Recordatorios de pago">
+    <div>
+      <h2>Recordatorio mensual de pago</h2>
+      <p>Actívalo para recordar la cuota el día 30 (en febrero, el último día). Requiere HTTPS, permiso e Internet; el permiso se solicita una sola vez al tocar el botón.</p>
+      <span class="push-status" id="pushStatus" role="status" aria-live="polite"></span>
+    </div>
+    <div class="push-actions">
+      <button type="button" id="pushEnable">Activar recordatorios</button>
+      <button type="button" class="secondary" id="pushTest">Enviar prueba a este dispositivo</button>
+      <button type="button" class="secondary" id="pushWorkflowTest">Probar recordatorio y confirmación</button>
+      <button type="button" class="secondary" id="pushDisable">Desactivar en este dispositivo</button>
+    </div>
+  </section>
   <!-- Banner de estado de suscripción -->
   <div id="gpBannerSus"></div>
   <div class="tabs">
@@ -1312,6 +1353,7 @@ button{
   </div>
 </div>
 
+<script src="push-client.js"></script>
 <script>
 /* ================================================================
    1) CONFIGURACIÓN — REEMPLAZAR ANTES DE PUBLICAR
@@ -1322,6 +1364,8 @@ button{
 //   Firebase Console > Authentication > Users > Add user
 // con el correo de abajo, y su UID se pega en las reglas (reemplazando "keyauth").
 const ADMIN_EMAIL = "ginkko@palmacodes.cl";
+const CONFIRMATION_EMAIL = "palmacodes@palmacodes.cl";
+const AUTHORIZED_PANEL_EMAILS = [ADMIN_EMAIL, CONFIRMATION_EMAIL];
 
 // --- FIREBASE REALTIME DATABASE (debe ser el MISMO proyecto que index.html) ---
 const firebaseConfig = {
@@ -1375,6 +1419,7 @@ const MAX_FILE_SIZE_MB   = 10;   // rechaza fotos más pesadas que esto
    ================================================================ */
 const loginScreen = document.getElementById('loginScreen');
 const appScreen = document.getElementById('appScreen');
+const pushOnlyScreen = document.getElementById('pushOnlyScreen');
 const loginEmailEl = document.getElementById('loginEmail');
 const loginPassEl = document.getElementById('loginPass');
 const loginErrorEl = document.getElementById('loginError');
@@ -1440,21 +1485,35 @@ document.getElementById('logoutBtn').onclick = async ()=>{
   try{ await auth.signOut(); }catch(e){ console.error(e); }
   location.reload();
 };
+document.getElementById('pushOnlyLogout').onclick = async ()=>{
+  try{ await auth.signOut(); }catch(e){ console.error(e); }
+  location.reload();
+};
 
 let appStarted = false;
 auth.onAuthStateChanged(user=>{
   if(user){
-    if((user.email||'').toLowerCase() !== ADMIN_EMAIL.toLowerCase()){
+    const email = (user.email||'').toLowerCase();
+    if(!AUTHORIZED_PANEL_EMAILS.includes(email)){
       auth.signOut();
       loginScreen.style.display = 'flex';
       setLoginMsg('Esta cuenta no está autorizada para el panel.');
       return;
     }
     loginScreen.style.display = 'none';
+    if(email === CONFIRMATION_EMAIL){
+      appScreen.style.display = 'none';
+      pushOnlyScreen.style.display = 'flex';
+      if(window.gpSetupPush) window.gpSetupPush(user);
+      return;
+    }
+    pushOnlyScreen.style.display = 'none';
     appScreen.style.display = 'block';
     if(!appStarted){ appStarted = true; initApp(); }
+    if(window.gpSetupPush) window.gpSetupPush(user);
   } else {
     appScreen.style.display = 'none';
+    pushOnlyScreen.style.display = 'none';
     loginScreen.style.display = 'flex';
   }
 });
